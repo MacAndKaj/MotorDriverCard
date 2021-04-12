@@ -8,7 +8,8 @@
   ******************************************************************************
   */
 #include <MDC/platform/platform.h>
-#include <MDC/com/com.h>
+#include <MDC/com/interface/message_ids.h>
+#include <MDC/com/interface/defs/Message.h>
 #include <MDC/com/interface/defs/PlatformSetMotorSpeed.h>
 
 #include <malloc.h>
@@ -16,12 +17,9 @@
 #include <MDC/platform/motor_info.h>
 #include <MDC/platform/motor_control.h>
 #include <MDC/main/defs.h>
+#include <stdio.h>
 
 double speedUpdateTime = 1./SPEED_UPDATE_FREQ;
-
-/// Function initializing Motor Driver configuration.
-/// \return [int]: 0 if not error, 1 - otherwise
-int init_MotorDriver();
 
 typedef struct MotorProperties
 {
@@ -30,40 +28,32 @@ typedef struct MotorProperties
     double speed;
 } MotorProperties;
 
-struct PlatformContext
+typedef struct PlatformContext
 {
     MotorProperties leftMotorProperties;
     MotorProperties rightMotorProperties;
-};
+} PlatformContext;
+
+PlatformContext* platformContext;
+
+/// Function initializing Motor Driver configuration.
+void init_MotorDriver();
+
+/// Creates default PlatformContext object.
+/// \return Pointer to PlatformContext
+PlatformContext* createPlatformContext();
 
 /* PUBLIC DEFINITIONS BEGIN */
 
-PlatformContext* createPlatformContext()
+
+void initPlatform()
 {
-    PlatformContext* platformContext = (struct PlatformContext*)malloc(sizeof(struct PlatformContext));
-    PID temporaryPID = {
-        .kP = 4000.,
-        .kI = 150.,
-        .kD = 30.
-    };
-    platformContext->rightMotorProperties.pidController = temporaryPID;
-    platformContext->leftMotorProperties.pidController = temporaryPID;
+    platformContext = createPlatformContext();
 
-    platformContext->rightMotorProperties.controlError = 0;
-    platformContext->leftMotorProperties.controlError = 0;
-
-    platformContext->rightMotorProperties.speed = 0;
-    platformContext->leftMotorProperties.speed = 0;
-
-    return platformContext;
+    init_MotorDriver();
 }
 
-void initPlatform(PlatformContext* platformContext)
-{
-    (void*)platformContext;
-}
-
-void workPlatform(PlatformContext* platformContext)
+void workPlatform()
 {
     MotorProperties* mP;
     if (isSpeedUpdateFlagSet(&leftMotorHandle))
@@ -90,6 +80,25 @@ void workPlatform(PlatformContext* platformContext)
 
 
 /* PRIVATE DEFINITIONS BEGIN */
+PlatformContext* createPlatformContext()
+{
+    PlatformContext* temp = (struct PlatformContext*)malloc(sizeof(struct PlatformContext));
+    PID temporaryPID = {
+        .kP = 4000.,
+        .kI = 150.,
+        .kD = 30.
+    };
+    platformContext->rightMotorProperties.pidController = temporaryPID;
+    platformContext->leftMotorProperties.pidController = temporaryPID;
+
+    platformContext->rightMotorProperties.controlError = 0;
+    platformContext->leftMotorProperties.controlError = 0;
+
+    platformContext->rightMotorProperties.speed = 0;
+    platformContext->leftMotorProperties.speed = 0;
+
+    return platformContext;
+}
 
 double transformSpeed(int8_t speedInt, uint8_t speedFl)
 {
@@ -100,13 +109,58 @@ double transformSpeed(int8_t speedInt, uint8_t speedFl)
     return speedInt + (speedFl * 0.01);
 }
 
-int init_MotorDriver()
+void init_MotorDriver()
 {
     initializeLeftMotor();
     initializeRightMotor();
     setLeftDirection(FORWARD);
     setRightDirection(FORWARD);
-    return 0;
+}
+
+void workPlatformPeriodical()
+{
+    updateSpeed(&rightMotorHandle, speedUpdateTime);
+    updateSpeed(&leftMotorHandle, speedUpdateTime);
+    enableSpeedUpdateFlag(&rightMotorHandle);
+    enableSpeedUpdateFlag(&leftMotorHandle);
+}
+
+void rightMotorEncoderCallback()
+{
+    updateLeftMotorParameters();
+}
+
+void leftMotorEncoderCallback()
+{
+    updateRightMotorParameters();
+}
+
+
+void toggleSpeed(PlatformSetMotorSpeedReq* req)
+{
+    if (req->motor == 0)
+    {
+        platformContext->leftMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
+        printf("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
+    }
+    else
+    {
+        platformContext->rightMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
+        printf("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
+    }
+}
+
+void onMessageReceivedPlatform(struct Message* message)
+{
+    printf("[platform]Message with id=%d received.\r\n", message->messageId);
+    switch (message->messageId)
+    {
+        case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
+            toggleSpeed(&message->msg.platformSetMotorSpeedReq);
+            break;
+        default:
+            printf("Unknown messageId, ignoring!\r\n");
+    }
 }
 
 

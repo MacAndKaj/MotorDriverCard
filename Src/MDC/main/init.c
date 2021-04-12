@@ -25,7 +25,6 @@
 /* CONTEXTS BEGIN */
 
 CommunicationContext communicationContext;
-PlatformContext* platformContext;
 
 /* CONTEXTS END */
 
@@ -49,8 +48,8 @@ int mainInit()
 
     initCom(&communicationContext);
 
-    platformContext = createPlatformContext();
-    initPlatform(platformContext);
+    initPlatform();
+    subscribe(&communicationContext, PLATFORM_SET_MOTOR_SPEED_REQ_ID, onMessageReceivedPlatform);
 
     return 0;
 }
@@ -85,14 +84,13 @@ int initPeripheries()
 
 void onRun(ModuleName moduleName)
 {
-//    subscribe(&communicationContext, PLATFORM_SET_MOTOR_SPEED_REQ_ID, toggleSpeed);
     switch (moduleName)
     {
         case Com:
             workCom(&communicationContext);
             break;
         case Platform:
-            workPlatform(platformContext);
+            workPlatform();
             break;
         default:
             printf("Unknown module!\r\n");
@@ -104,10 +102,10 @@ void onExtInterrupt(uint16_t GPIO_Pin)
     switch (GPIO_Pin)
     {
         case LeftMotorEncoderB_Pin:
-            updateLeftMotorParameters();
+            leftMotorEncoderCallback();
             break;
         case RightMotorEncoderB_Pin:
-            updateRightMotorParameters();
+            rightMotorEncoderCallback();
             break;
         case UserButton_Pin:
             break;
@@ -119,10 +117,7 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM17)
     {
-        updateSpeed(&rightMotorHandle, speedUpdateTime);
-        updateSpeed(&leftMotorHandle, speedUpdateTime);
-        enableSpeedUpdateFlag(&rightMotorHandle);
-        enableSpeedUpdateFlag(&leftMotorHandle);
+        workPlatformPeriodical();
     }
 }
 

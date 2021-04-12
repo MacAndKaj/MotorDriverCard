@@ -12,16 +12,22 @@
 
 #define SPEED_UPDATE_FREQ 100.0
 
+/* FORWARD DECLARATION BEGIN*/
 extern double speedUpdateTime;
 
-struct CommunicationContext;
+struct Message;
+/* FORWARD DECLARATION END*/
 
-struct PlatformContext;
-typedef struct PlatformContext PlatformContext;
 
-PlatformContext* createPlatformContext();
+/* FUNCTIONS DECLARATION BEGIN*/
+void initPlatform();
+void workPlatform();
+void workPlatformPeriodical();
 
-void initPlatform(PlatformContext* platformContext);
-void workPlatform(PlatformContext* platformContext);
+void leftMotorEncoderCallback();
+void rightMotorEncoderCallback();
+
+void onMessageReceivedPlatform(struct Message* message);
+/* FUNCTIONS DECLARATION END*/
 
 #endif //MOTORDRIVER_PLATFORM_H

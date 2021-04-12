@@ -100,6 +100,7 @@ void workCom(CommunicationContext *communicationContext)
     clearBuffer(&communicationContext->rxBuffer);
     startUartRx(&communicationContext->rxBuffer, nextReadDataSize);
 
+    //TODO use events from FreeRTOS!!!
     processSubscriptions(&communicationContext->msgControl);
     setNextMessageId(communicationContext, newNextRead);
     setNextReadType(communicationContext, newNextRead);
