@@ -28,6 +28,9 @@
 /* USER CODE BEGIN Includes */
 #include <MDC/main/init.h>
 
+//TODO: take out interface to highest dir level or some other place
+#include <MDC/com/interface/defs/Message.h>
+
 #include <stdio.h>
 /* USER CODE END Includes */
 
@@ -64,13 +67,23 @@ const osThreadAttr_t comTask_attributes = {
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128 * 4
 };
+/* Definitions for messagesQueue */
+osMessageQueueId_t messagesQueueHandle;
+const osMessageQueueAttr_t messagesQueue_attributes = {
+  .name = "messagesQueue"
+};
+/* Definitions for messageReceived */
+osEventFlagsId_t messageReceivedHandle;
+const osEventFlagsAttr_t messageReceived_attributes = {
+  .name = "messageReceived"
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 
 /* USER CODE END FunctionPrototypes */
 
-_Noreturn void startMotorControlTask(void *argument);
+void startMotorControlTask(void *argument);
 void startCommunicationTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -92,7 +105,7 @@ void MX_FREERTOS_Init(void) {
     HAL_Delay(300);
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
-    /* USER CODE END Init */
+  /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -105,6 +118,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
+
+  /* Create the queue(s) */
+  /* creation of messagesQueue */
+  messagesQueueHandle = osMessageQueueNew (10, sizeof(Message), &messagesQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -120,6 +137,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
+
+  /* Create the event(s) */
+  /* creation of messageReceived */
+  messageReceivedHandle = osEventFlagsNew(&messageReceived_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */

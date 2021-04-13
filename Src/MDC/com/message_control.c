@@ -12,11 +12,13 @@
 
 #include <MDC/com/interface/consts.h>
 #include <MDC/com/interface/messages_size_map.h>
+#include <MDC/com/interface/defs/Message.h>
 #include <MDC/com/interface/ser_des/deserializers/PlatformSetMotorSpeed.h>
 #include <MDC/com/interface/ser_des/serializers/PlatformSetMotorSpeed.h>
 
 #include <stddef.h>
 #include <malloc.h>
+#include <stdio.h>
 
 int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_SIZE])
 {
@@ -48,7 +50,7 @@ char* serialize(void* resp, uint8_t id)
 Message* deserialize(char* data, uint8_t id)
 {
     struct Message* message = malloc(sizeof(struct Message));
-    message->messageId=id;
+    message->messageId = id;
     switch (id)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
@@ -60,38 +62,16 @@ Message* deserialize(char* data, uint8_t id)
     return NULL;
 }
 
-uint16_t addSubscriptionForMessage(MessageControl* messageControl, uint8_t id, MessageHandler messageHandler)
+void forwardMessage(MessageControl* messageControl, const Message* msg)
 {
-    if (findSizeForMessageId(id) == NULL)
+    printf("Forwarding message with id %d\r\n", msg->messageId);
+
+    osStatus_t status = osMessageQueuePut(messageControl->interThreadComIfParams.messageQueueId, msg, 0, 0);
+    if (status != osOK)
     {
-        return -1;
+        printf("Error %d occurred when putting message to %s\r\n",
+               (int)status,
+               osMessageQueueGetName(messageControl->interThreadComIfParams.messageQueueId));
     }
-
-    return addSubscription(messageControl->subscriptionContainer, id, messageHandler);
-}
-
-void removeSubscriptionWithId(MessageControl* messageControl, uint16_t subscriptionId)
-{
-    removeSubscription(messageControl->subscriptionContainer, subscriptionId);
-}
-
-void processSubscriptions(MessageControl* messageControl)
-{
-    struct HandlersList handlersList;
-    while (!isEmpty(messageControl->storage))
-    {
-        Message message = popMessage(messageControl->storage);
-        if (subscriptionExists(messageControl->subscriptionContainer, message.messageId))
-        {
-            handlersList = getHandlersForMessageId(messageControl->subscriptionContainer, message.messageId);
-            struct HandlerNode* current = handlersList.head;
-
-            while (current != NULL)
-            {
-                current->messageHandler(&message);
-                current = current->next;
-            }
-        }
-    }
-
+    osEventFlagsSet(messageControl->interThreadComIfParams.messageReceivedFlagsId, FLAG_SET);
 }

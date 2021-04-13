@@ -22,13 +22,6 @@
 #include <tim.h>
 #include <stdio.h>
 
-/* CONTEXTS BEGIN */
-
-CommunicationContext communicationContext;
-
-/* CONTEXTS END */
-
-
 /* DECLARATIONS BEGIN */
 
 /// Function initializing STM32 peripheries used in project.
@@ -46,10 +39,8 @@ int mainInit()
         return 1;
     }
 
-    initCom(&communicationContext);
-
+    initCom();
     initPlatform();
-    subscribe(&communicationContext, PLATFORM_SET_MOTOR_SPEED_REQ_ID, onMessageReceivedPlatform);
 
     return 0;
 }
@@ -87,7 +78,7 @@ void onRun(ModuleName moduleName)
     switch (moduleName)
     {
         case Com:
-            workCom(&communicationContext);
+            workCom();
             break;
         case Platform:
             workPlatform();
@@ -123,5 +114,5 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void onRxCpltCallback(UART_HandleTypeDef *huart)
 {
-    comReceiveCallback(huart, &communicationContext);
+    comReceiveCallback(huart);
 }

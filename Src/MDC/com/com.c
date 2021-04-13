@@ -16,6 +16,7 @@
 
 #include <malloc.h>
 
+CommunicationContext* communicationContext;
 
 /*
  * STRUCTURES FUNCTIONS DECLARATIONS BEGIN
@@ -30,15 +31,15 @@ uint8_t isNewData(RxBuffer *rxBuffer);
 
 enum DataType nextReadType(RxBuffer *rxBuffer);
 
-void setNextMessageId(CommunicationContext *communicationContext, uint8_t newNextReadMessageId);
+void setNextMessageId(uint8_t newNextReadMessageId);
 
-void setNextReadType(CommunicationContext *communicationContext, enum DataType dataType);
+void setNextReadType(enum DataType dataType);
 
 void clearBuffer(RxBuffer *rxBuffer);
 
-enum DataType processFrameCtrlData(CommunicationContext* communicationContext);
+enum DataType processFrameCtrlData();
 
-void processUserData(CommunicationContext* communicationContext);
+void processUserData();
 
 /*
  *      STRUCTURES FUNCTIONS DECLARATIONS END
@@ -48,7 +49,7 @@ void processUserData(CommunicationContext* communicationContext);
  *  PUBLIC BEGIN
  */
 
-void initCom(CommunicationContext *communicationContext)
+void initCom()
 {
     communicationContext->rxBuffer.data = NULL;
     communicationContext->rxBuffer.nextRead = FrameCtrlData;
@@ -56,11 +57,9 @@ void initCom(CommunicationContext *communicationContext)
     noNewRxData(&communicationContext->rxBuffer);
     startUartRx(&communicationContext->rxBuffer, HEADER_SIZE);
 
-    communicationContext->msgControl.storage = createMessageStorage();
-    communicationContext->msgControl.subscriptionContainer = createSubscriptionContainer();
 }
 
-void workCom(CommunicationContext *communicationContext)
+void workCom()
 {
     if (!isNewData(&communicationContext->rxBuffer))
     {
@@ -73,13 +72,13 @@ void workCom(CommunicationContext *communicationContext)
         case FrameCtrlData:
         {
             printf("Received FrameCtrlData\r\n");
-            newNextRead = processFrameCtrlData(communicationContext);
+            newNextRead = processFrameCtrlData();
             break;
         }
         case UserData:
         {
             printf("Received UserData\r\n");
-            processUserData(communicationContext);
+            processUserData();
             newNextRead = FrameCtrlData;
             break;
         }
@@ -100,13 +99,11 @@ void workCom(CommunicationContext *communicationContext)
     clearBuffer(&communicationContext->rxBuffer);
     startUartRx(&communicationContext->rxBuffer, nextReadDataSize);
 
-    //TODO use events from FreeRTOS!!!
-    processSubscriptions(&communicationContext->msgControl);
-    setNextMessageId(communicationContext, newNextRead);
-    setNextReadType(communicationContext, newNextRead);
+    setNextMessageId(newNextRead);
+    setNextReadType(newNextRead);
 }
 
-void comReceiveCallback(UART_HandleTypeDef *huart, CommunicationContext *communicationContext)
+void comReceiveCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance != USART2)
     {
@@ -114,17 +111,6 @@ void comReceiveCallback(UART_HandleTypeDef *huart, CommunicationContext *communi
     }
     newRxData(&communicationContext->rxBuffer);
 }
-
-uint16_t subscribe(CommunicationContext* communicationContext, uint8_t id, MessageHandler messageHandler)
-{
-    return addSubscriptionForMessage(&communicationContext->msgControl, id, messageHandler);
-}
-
-void unsubscribe(CommunicationContext* communicationContext, uint16_t subscriptionId)
-{
-    removeSubscriptionWithId(&communicationContext->msgControl, subscriptionId);
-}
-
 
 /*
  *  PUBLIC END
@@ -167,12 +153,12 @@ enum DataType nextReadType(RxBuffer *rxBuffer)
     return rxBuffer->nextRead;
 }
 
-void setNextMessageId(CommunicationContext *communicationContext, uint8_t newNextReadMessageId)
+void setNextMessageId(uint8_t newNextReadMessageId)
 {
     communicationContext->msgControl.nextReadMessageId = newNextReadMessageId;
 }
 
-void setNextReadType(CommunicationContext *communicationContext, enum DataType dataType)
+void setNextReadType(enum DataType dataType)
 {
     communicationContext->rxBuffer.nextRead = dataType;
 }
@@ -186,7 +172,7 @@ void clearBuffer(RxBuffer *rxBuffer)
     noNewRxData(rxBuffer);
 }
 
-enum DataType processFrameCtrlData(CommunicationContext* communicationContext)
+enum DataType processFrameCtrlData()
 {
     int status = validateCtrlData(&communicationContext->msgControl, communicationContext->rxBuffer.data);
 
@@ -197,7 +183,7 @@ enum DataType processFrameCtrlData(CommunicationContext* communicationContext)
     return UserData;
 }
 
-void processUserData(CommunicationContext* communicationContext)
+void processUserData()
 {
     struct Message* deserializedMsg = deserialize((char*)communicationContext->rxBuffer.data,
         communicationContext->msgControl.nextReadMessageId);
@@ -208,7 +194,7 @@ void processUserData(CommunicationContext* communicationContext)
         return;
     }
 
-    addMessage(communicationContext->msgControl.storage, deserializedMsg);
+    forwardMessage(&communicationContext->msgControl, deserializedMsg);
 }
 
 /*

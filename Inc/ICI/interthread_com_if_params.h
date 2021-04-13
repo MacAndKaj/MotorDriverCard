@@ -2,21 +2,22 @@
   * Copyright (c) 2021 M. Kajdak. All rights reserved.
   *
   ******************************************************************************
-  * @file           : com.h
+  * @file           : interthread_com_if_params.h
   * @brief          : Header for <source file name> file.
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MDC_COM_COM_H
-#define MDC_COM_COM_H
+#ifndef ICI_INTERTHREAD_COM_IF_PARAMS_H
+#define ICI_INTERTHREAD_COM_IF_PARAMS_H
 
-#include <MDC/com/communication_context.h>
+#include <cmsis_os2.h>
 
-#include <usart.h>
+#define FLAG_SET 0x00000001U
 
-void initCom();
-void workCom();
+typedef struct
+{
+    osEventFlagsId_t messageReceivedFlagsId;
+    osMessageQueueId_t messageQueueId;
+} InterThreadComIfParams;
 
-void comReceiveCallback(UART_HandleTypeDef *huart);
-
-#endif //MDC_COM_COM_H
+#endif //ICI_INTERTHREAD_COM_IF_PARAMS_H

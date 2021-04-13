@@ -7,20 +7,20 @@
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MOTORDRIVER_MESSAGE_CONTROL_H
-#define MOTORDRIVER_MESSAGE_CONTROL_H
+#ifndef MDC_COM_MESSAGE_CONTROL_H
+#define MDC_COM_MESSAGE_CONTROL_H
 
 #include <MDC/com/interface/consts.h>
-#include <MDC/com/message_storage.h>
-#include <MDC/com/subscriptions_container.h>
+
+#include <ICI/interthread_com_if_params.h>
+#include <MDC/com/interface/defs/Message.h>
 
 #include <stdint.h>
 
 struct MessageControl
 {
     uint8_t nextReadMessageId;
-    MessageStorage* storage;
-    SubscriptionContainer* subscriptionContainer;
+    InterThreadComIfParams interThreadComIfParams;
 };
 typedef struct MessageControl MessageControl;
 
@@ -34,13 +34,14 @@ int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_S
 /// \return size of message in bytes + end byte 0xF0
 uint16_t getMessageSize(uint8_t id);
 
+/// Function to serialize message(Response) to byte form to be sent.
+/// \param resp
+/// \param id
+/// \return
 char* serialize(void* resp, uint8_t id);
 
 Message* deserialize(char* data, uint8_t id);
 
-uint16_t addSubscriptionForMessage(MessageControl* messageControl, uint8_t id,  MessageHandler messageHandler);
-void removeSubscriptionWithId(MessageControl* messageControl, uint16_t subscriptionId);
+void forwardMessage(MessageControl* messageControl, const Message* msg);
 
-void processSubscriptions(MessageControl* messageControl);
-
-#endif //MOTORDRIVER_MESSAGE_CONTROL_H
+#endif //MDC_COM_MESSAGE_CONTROL_H
