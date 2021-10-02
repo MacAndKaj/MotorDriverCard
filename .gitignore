@@ -30,3 +30,17 @@
 *.exe
 *.out
 *.app
+
+# Generators files
+.mxproject
+.cproject
+.idea/
+CMakeLists_template.txt
+
+# Drivers
+Drivers/
+Middlewares/
+
+# Compilation
+cmake-build*/
+build/
