@@ -69,9 +69,9 @@ void forwardMessage(MessageControl* messageControl, const Message* msg)
     osStatus_t status = osMessageQueuePut(messageControl->interThreadComIfParams.messageQueueId, msg, 0, 0);
     if (status != osOK)
     {
-        printf("Error %d occurred when putting message to %s\r\n",
-               (int)status,
-               osMessageQueueGetName(messageControl->interThreadComIfParams.messageQueueId));
+//        printf("Error %d occurred when putting message to %s\r\n",
+//               (int)status,
+//               osMessageQueueGetName(messageControl->interThreadComIfParams.messageQueueId));
     }
     osEventFlagsSet(messageControl->interThreadComIfParams.messageReceivedFlagsId, FLAG_SET);
 }

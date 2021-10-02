@@ -57,15 +57,15 @@
 osThreadId_t motorCtrlTaskHandle;
 const osThreadAttr_t motorCtrlTask_attributes = {
   .name = "motorCtrlTask",
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
 };
 /* Definitions for comTask */
 osThreadId_t comTaskHandle;
 const osThreadAttr_t comTask_attributes = {
   .name = "comTask",
+  .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
-  .stack_size = 128 * 4
 };
 /* Definitions for messagesQueue */
 osMessageQueueId_t messagesQueueHandle;
