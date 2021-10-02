@@ -1,0 +1,19 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: macandkaj/stm32_dev_env
+    steps:
+      - checkout
+      - run:
+          name: prepare
+          command: chmod a+x bootstrapper.sh; ./bootstrapper.sh prepare;
+      - run:
+          name: build-app
+          command: ./bootstrapper.sh build;
+
+workflows:
+  MDC-workflow:
+    jobs:
+      - build
