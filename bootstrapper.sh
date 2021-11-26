@@ -23,7 +23,13 @@ function prepare_fun() {
       "$STM32CUBE_LOCATION"/STM32Cube/Repository/"$STM32CUBE_VERSION"
 
     cd "$SCRIPT_DIR" || exit
+
     python3.9 env_configuration.py -p "$STM32CUBE_LOCATION"
+    if [[ ! $? = 0 ]]
+    then
+      echo "Exit code of $?, failure"
+      exit 1
+    fi
 
     echo "STM32Cube environment available in $STM32CUBE_LOCATION"
 }
