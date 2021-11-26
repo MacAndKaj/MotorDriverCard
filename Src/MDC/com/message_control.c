@@ -16,6 +16,8 @@
 #include <MDC/com/interface/ser_des/deserializers/PlatformSetMotorSpeed.h>
 #include <MDC/com/interface/ser_des/serializers/PlatformSetMotorSpeed.h>
 
+#include <cmsis_os2.h>
+
 #include <stddef.h>
 #include <malloc.h>
 #include <stdio.h>
@@ -24,16 +26,6 @@ int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_S
 {
     if (data[0] != FRAME_CTRL_DATA) return 1;
 
-    return 0;
-}
-
-uint16_t getMessageSize(uint8_t id)
-{
-    Node* idAndSize = findSizeForMessageId(id);
-    if (idAndSize != NULL)
-    {
-        return idAndSize->size;
-    }
     return 0;
 }
 
@@ -69,9 +61,9 @@ void forwardMessage(MessageControl* messageControl, const Message* msg)
     osStatus_t status = osMessageQueuePut(messageControl->interThreadComIfParams.messageQueueId, msg, 0, 0);
     if (status != osOK)
     {
-//        printf("Error %d occurred when putting message to %s\r\n",
-//               (int)status,
-//               osMessageQueueGetName(messageControl->interThreadComIfParams.messageQueueId));
+//       printf("Error %d occurred when putting message to %s\r\n",
+//              (int)status,
+//              osMessageQueueGetName(messageControl->interThreadComIfParams.messageQueueId));
     }
     osEventFlagsSet(messageControl->interThreadComIfParams.messageReceivedFlagsId, FLAG_SET);
 }

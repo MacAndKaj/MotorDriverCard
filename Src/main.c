@@ -27,6 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <MDC/main/init.h>
 
 /* USER CODE END Includes */
 
@@ -95,6 +96,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM17_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -158,6 +160,15 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
+{
+    onExtInterrupt(GPIO_Pin);
+}
+
+void HAL_UART_RxCpltCallback (UART_HandleTypeDef* huart)
+{
+    onRxCpltCallback(huart);
+}
 
 /* USER CODE END 4 */
 
@@ -172,7 +183,7 @@ void SystemClock_Config(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-
+    onPeriodElapsedCallback(htim);
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();

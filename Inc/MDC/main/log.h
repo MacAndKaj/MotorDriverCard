@@ -12,6 +12,8 @@
 
 #include <stdio.h>
 
+#define MAX_LOG_LENGTH 256
+
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
   (byte & 0x80 ? '1' : '0'), \
@@ -22,6 +24,8 @@
   (byte & 0x04 ? '1' : '0'), \
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0')
+
+void initLog();
 
 /*
  *  Overriden system call _write(int file, char *ptr, int len)

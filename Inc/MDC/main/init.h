@@ -17,7 +17,7 @@
 typedef enum ModuleName
 {
     Com,
-    Platform
+    MotorControl
 } ModuleName;
 
 /// Function initializing MDC.

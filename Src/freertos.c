@@ -159,7 +159,7 @@ _Noreturn
 void startMotorControlTask(void *argument)
 {
   /* USER CODE BEGIN startMotorControlTask */
-  enum ModuleName motorControlModuleName = Platform;
+  enum ModuleName motorControlModuleName = MotorControl;
   /* Infinite loop */
   for(;;)
   {

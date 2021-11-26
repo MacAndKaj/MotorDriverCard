@@ -15,6 +15,7 @@
 #include <MDC/main/log.h>
 
 #include <malloc.h>
+#include <MDC/com/interface/messages_size_map.h>
 
 CommunicationContext* communicationContext;
 
@@ -49,14 +50,24 @@ void processUserData();
  *  PUBLIC BEGIN
  */
 
+CommunicationContext* createCommunicationContext()
+{
+    CommunicationContext* contextPtr = malloc(sizeof(CommunicationContext));
+
+    contextPtr->rxBuffer.data = NULL;
+    contextPtr->rxBuffer.nextRead = FrameCtrlData;
+
+    return contextPtr;
+}
+
 void initCom()
 {
-    communicationContext->rxBuffer.data = NULL;
-    communicationContext->rxBuffer.nextRead = FrameCtrlData;
+    communicationContext = createCommunicationContext();
 
     noNewRxData(&communicationContext->rxBuffer);
     startUartRx(&communicationContext->rxBuffer, HEADER_SIZE);
 
+    printf("Com initialized");
 }
 
 void workCom()
@@ -92,7 +103,7 @@ void workCom()
     uint16_t nextReadDataSize = HEADER_SIZE;
     if (newNextRead == UserData)
     {
-        nextReadDataSize = getMessageSize(communicationContext->rxBuffer.data[1]);
+        nextReadDataSize = findSizeForMessageId(communicationContext->rxBuffer.data[1]);
     }
     printf("Next read will have %d bytes\r\n", nextReadDataSize);
 

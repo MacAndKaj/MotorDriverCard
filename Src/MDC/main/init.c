@@ -22,29 +22,6 @@
 #include <tim.h>
 #include <stdio.h>
 
-/* DECLARATIONS BEGIN */
-
-/// Function initializing STM32 peripheries used in project.
-/// \return [int]: 0 if not error, 1 - otherwise
-int initPeripheries();
-
-
-/* DECLARATIONS END */
-
-int mainInit()
-{
-    if (initPeripheries() != 0)
-    {
-        printf("Peripheries initialization failed!\r\n");
-        return 1;
-    }
-
-    initCom();
-    initPlatform();
-
-    return 0;
-}
-
 int initPeripheries()
 {
     HAL_StatusTypeDef state;
@@ -72,6 +49,21 @@ int initPeripheries()
     return 0;
 }
 
+int mainInit()
+{
+    initLog();
+
+    if (initPeripheries() != 0)
+    {
+        printf("Peripheries initialization failed!\r\n");
+        return 1;
+    }
+
+    initCom();
+    initPlatform();
+
+    return 0;
+}
 
 void onRun(ModuleName moduleName)
 {
@@ -80,7 +72,7 @@ void onRun(ModuleName moduleName)
         case Com:
             workCom();
             break;
-        case Platform:
+        case MotorControl:
             workPlatform();
             break;
         default:

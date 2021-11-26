@@ -29,11 +29,6 @@ typedef struct MessageControl MessageControl;
 /// \return 0 if data correct, 1 otherwise.
 int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_SIZE]);
 
-/// Function returns message size in bytes for ID of message.
-/// \param data: const array with size HEADER_SIZE containing {CTRL_DATA|ID}.
-/// \return size of message in bytes + end byte 0xF0
-uint16_t getMessageSize(uint8_t id);
-
 /// Function to serialize message(Response) to byte form to be sent.
 /// \param resp
 /// \param id

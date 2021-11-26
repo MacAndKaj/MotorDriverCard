@@ -51,6 +51,8 @@ void initPlatform()
     platformContext = createPlatformContext();
 
     init_MotorDriver();
+
+    printf("Motor control initialized");
 }
 
 void workPlatform()
@@ -88,16 +90,16 @@ PlatformContext* createPlatformContext()
         .kI = 150.,
         .kD = 30.
     };
-    platformContext->rightMotorProperties.pidController = temporaryPID;
-    platformContext->leftMotorProperties.pidController = temporaryPID;
+    temp->rightMotorProperties.pidController = temporaryPID;
+    temp->leftMotorProperties.pidController = temporaryPID;
 
-    platformContext->rightMotorProperties.controlError = 0;
-    platformContext->leftMotorProperties.controlError = 0;
+    temp->rightMotorProperties.controlError = 0;
+    temp->leftMotorProperties.controlError = 0;
 
-    platformContext->rightMotorProperties.speed = 0;
-    platformContext->leftMotorProperties.speed = 0;
+    temp->rightMotorProperties.speed = 0;
+    temp->leftMotorProperties.speed = 0;
 
-    return platformContext;
+    return temp;
 }
 
 double transformSpeed(int8_t speedInt, uint8_t speedFl)
