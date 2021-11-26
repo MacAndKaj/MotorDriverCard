@@ -30,6 +30,12 @@ if __name__ == '__main__':
 
     files_to_move = filter(correct_xml_element,
                            [elem.text for elem in references_config.findall('linkedResources/link/location')])
+    
+    def not_duplicated_files(elem):
+        return 'PARENT-1-PROJECT_LOC/' in elem
+
+    files_to_move = filter(not_duplicated_files, files_to_move)
+    
     files_to_move = [file_path.replace('PARENT-1-PROJECT_LOC/', '') for file_path in files_to_move]
 
     old_to_new_path = {}
