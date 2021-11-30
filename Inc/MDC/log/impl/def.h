@@ -1,18 +1,13 @@
 /**
-  * Copyright (c) 2020 M. Kajdak. All rights reserved.
+  * Copyright (c) 2021 M. Kajdak. All rights reserved.
   *
   ******************************************************************************
-  * @file           : log.h
-  * @brief          : Header for <source file name> file.
-  *                   This file contains <what does the file contains>
+  * @file           : def.h
+  * @brief          : This file contains implementation declarations and definitons for logger.
   ******************************************************************************
   */
-#ifndef MOTORDRIVER_PLATFORM_LOG_H
-#define MOTORDRIVER_PLATFORM_LOG_H
-
-#include <stdio.h>
-
-#define MAX_LOG_LENGTH 256
+#ifndef MOTORDRIVERCARD_LOG_IMPL_DEF_H
+#define MOTORDRIVERCARD_LOG_IMPL_DEF_H
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)  \
@@ -25,4 +20,8 @@
   (byte & 0x02 ? '1' : '0'), \
   (byte & 0x01 ? '1' : '0')
 
-#endif //MOTORDRIVER_PLATFORM_LOG_H
+#define MAX_LINE_LENGTH 140
+
+#define TRANSFER_COMPLETED_FLAG 0x0001
+
+#endif // MOTORDRIVERCARD_LOG_IMPL_DEF_H

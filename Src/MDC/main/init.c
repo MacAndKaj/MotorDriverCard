@@ -4,63 +4,44 @@
   ******************************************************************************
   * @file           : init.c
   * @brief          : Sources for init.h file.
-  *                   This file contains definitions of init funcitons.
+  *                   This file contains definitions of init functions.
   ******************************************************************************
   */
 
 #include <MDC/com/com.h>
-#include <MDC/main/boolean.h>
-#include <MDC/main/defs.h>
 #include <MDC/main/init.h>
-#include <MDC/main/log.h>
 #include <MDC/platform/motor_control.h>
-#include <MDC/platform/motor_info.h>
-#include <MDC/platform/pid.h>
-#include <MDC/com/interface/message_ids.h>
 #include <MDC/platform/platform.h>
-
+#include <MDC/log/interface.h>
 #include <tim.h>
-#include <stdio.h>
 
-int initPeripheries()
+void initPeripheries()
 {
     HAL_StatusTypeDef state;
     state = HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, &leftControllerHandle.pwmDuty, ONE_WORD);
     if (state != HAL_OK)
     {
-        printf("Left Motor PWM start failed\r\n");
-        return 1;
+        Error_Handler();
     }
 
     state = HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, &rightControllerHandle.pwmDuty, ONE_WORD);
     if (state != HAL_OK)
     {
-        printf("Right Motor PWM start failed\r\n");
-        return 1;
+        Error_Handler();
     }
 
     state = HAL_TIM_Base_Start_IT(&htim17);
     if (state != HAL_OK)
     {
-        printf("Timer start failed\r\n");
-        return 1;
+        Error_Handler();
     }
-
-    return 0;
 }
 
 int mainInit()
 {
-    initLog();
-
-    if (initPeripheries() != 0)
-    {
-        printf("Peripheries initialization failed!\r\n");
-        return 1;
-    }
-
     initCom();
     initPlatform();
+    initPeripheries();
 
     return 0;
 }
@@ -76,7 +57,7 @@ void onRun(ModuleName moduleName)
             workPlatform();
             break;
         default:
-            printf("Unknown module!\r\n");
+            Error_Handler();
     }
 }
 
@@ -91,6 +72,7 @@ void onExtInterrupt(uint16_t GPIO_Pin)
             rightMotorEncoderCallback();
             break;
         case UserButton_Pin:
+            LOG("No new data");
             break;
     }
 }
@@ -107,4 +89,9 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 void onRxCpltCallback(UART_HandleTypeDef *huart)
 {
     comReceiveCallback(huart);
+}
+
+void onTxCpltCallback(UART_HandleTypeDef *huart)
+{
+    onTransmitCompleted(huart);
 }

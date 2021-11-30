@@ -18,6 +18,7 @@
 #include <MDC/platform/motor_control.h>
 #include <MDC/main/defs.h>
 #include <stdio.h>
+#include <MDC/log/interface.h>
 
 double speedUpdateTime = 1./SPEED_UPDATE_FREQ;
 
@@ -51,8 +52,6 @@ void initPlatform()
     platformContext = createPlatformContext();
 
     init_MotorDriver();
-
-    printf("Motor control initialized");
 }
 
 void workPlatform()
@@ -161,7 +160,7 @@ void onMessageReceivedPlatform(struct Message* message)
             toggleSpeed(&message->msg.platformSetMotorSpeedReq);
             break;
         default:
-            printf("Unknown messageId, ignoring!\r\n");
+            LOG("Unknown messageId, ignoring!\r\n");
     }
 }
 

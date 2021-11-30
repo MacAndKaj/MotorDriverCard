@@ -30,6 +30,7 @@
 
 //TODO: take out interface to highest dir level or some other place
 #include <MDC/com/interface/defs/Message.h>
+#include <MDC/log/interface.h>
 
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -67,10 +68,22 @@ const osThreadAttr_t comTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for logTask */
+osThreadId_t logTaskHandle;
+const osThreadAttr_t logTask_attributes = {
+  .name = "logTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for messagesQueue */
 osMessageQueueId_t messagesQueueHandle;
 const osMessageQueueAttr_t messagesQueue_attributes = {
   .name = "messagesQueue"
+};
+/* Definitions for logsQueue */
+osMessageQueueId_t logsQueueHandle;
+const osMessageQueueAttr_t logsQueue_attributes = {
+  .name = "logsQueue"
 };
 /* Definitions for messageReceived */
 osEventFlagsId_t messageReceivedHandle;
@@ -85,6 +98,7 @@ const osEventFlagsAttr_t messageReceived_attributes = {
 
 void startMotorControlTask(void *argument);
 void startCommunicationTask(void *argument);
+void startLoggerTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -97,7 +111,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
     if (mainInit() != 0)
     {
-        printf("Error during Motor Driver Card initialization!\r\n");
         return;
     }
 
@@ -121,7 +134,10 @@ void MX_FREERTOS_Init(void) {
 
   /* Create the queue(s) */
   /* creation of messagesQueue */
-  messagesQueueHandle = osMessageQueueNew (10, sizeof(Message), &messagesQueue_attributes);
+  messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
+
+  /* creation of logsQueue */
+  logsQueueHandle = osMessageQueueNew (3, sizeof(LogLine), &logsQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -134,6 +150,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of comTask */
   comTaskHandle = osThreadNew(startCommunicationTask, NULL, &comTask_attributes);
 
+  /* creation of logTask */
+  logTaskHandle = osThreadNew(startLoggerTask, NULL, &logTask_attributes);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -144,6 +163,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
+    configureLog(&logsQueueHandle, &logTaskHandle);
+
   /* USER CODE END RTOS_EVENTS */
 
 }
@@ -159,12 +180,13 @@ _Noreturn
 void startMotorControlTask(void *argument)
 {
   /* USER CODE BEGIN startMotorControlTask */
+    LOG("Start motor control");
   enum ModuleName motorControlModuleName = MotorControl;
   /* Infinite loop */
   for(;;)
   {
       onRun(motorControlModuleName);
-      osDelay(1);
+      osThreadYield();
   }
   /* USER CODE END startMotorControlTask */
 }
@@ -180,14 +202,36 @@ _Noreturn
 void startCommunicationTask(void *argument)
 {
   /* USER CODE BEGIN startCommunicationTask */
+    LOG("Start communication");
     enum ModuleName communicationModuleName = Com;
     /* Infinite loop */
   for(;;)
   {
       onRun(communicationModuleName);
-      osDelay(1);
+      osThreadYield();
   }
   /* USER CODE END startCommunicationTask */
+}
+
+/* USER CODE BEGIN Header_startLoggerTask */
+/**
+* @brief Function implementing the logTask thread.
+* @param argument: Not used
+* @retval None
+*/
+_Noreturn
+/* USER CODE END Header_startLoggerTask */
+void startLoggerTask(void *argument)
+{
+  /* USER CODE BEGIN startLoggerTask */
+    LOG("Start logger");
+  /* Infinite loop */
+  for(;;)
+  {
+      workLog();
+      osThreadYield();
+  }
+  /* USER CODE END startLoggerTask */
 }
 
 /* Private application code --------------------------------------------------*/

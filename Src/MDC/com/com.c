@@ -16,6 +16,7 @@
 
 #include <malloc.h>
 #include <MDC/com/interface/messages_size_map.h>
+#include <MDC/log/interface.h>
 
 CommunicationContext* communicationContext;
 
@@ -66,8 +67,6 @@ void initCom()
 
     noNewRxData(&communicationContext->rxBuffer);
     startUartRx(&communicationContext->rxBuffer, HEADER_SIZE);
-
-    printf("Com initialized");
 }
 
 void workCom()
@@ -82,13 +81,13 @@ void workCom()
     {
         case FrameCtrlData:
         {
-            printf("Received FrameCtrlData\r\n");
+            LOG("Received FrameCtrlData\r\n");
             newNextRead = processFrameCtrlData();
             break;
         }
         case UserData:
         {
-            printf("Received UserData\r\n");
+            LOG("Received UserData\r\n");
             processUserData();
             newNextRead = FrameCtrlData;
             break;

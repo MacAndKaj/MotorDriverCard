@@ -28,8 +28,10 @@ int mainInit();
 /// \param moduleName enum ModuleName for specific task
 void onRun(ModuleName moduleName);
 
+//TODO: HalEvents module - proxy module between HAL events and application with subscription mechanism instead of calling functions
 void onExtInterrupt(uint16_t GPIO_Pin);
 void onPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void onRxCpltCallback(UART_HandleTypeDef *huart);
+void onTxCpltCallback(UART_HandleTypeDef *huart);
 
 #endif //MOTORDRIVER_PLATFORM_INIT_H
