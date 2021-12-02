@@ -39,7 +39,7 @@ void workLogImpl()
     static LogLine buffer = {};
     uint8_t charactersAmountToBeSent = MAX_LINE_LENGTH;
 
-    osStatus_t messageQueueStatus = osMessageQueueGet(*logTaskContext.logsQueueHandle, &buffer, NULL, 1);
+    osStatus_t messageQueueStatus = osMessageQueueGet(*logTaskContext.logsQueueHandle, &buffer, NULL, osWaitForever);
     if (messageQueueStatus != osOK)
     {
         return;
@@ -54,7 +54,7 @@ void workLogImpl()
     send(logTaskContext.txBuffer, charactersAmountToBeSent);
     free(buffer.line);
 
-    osThreadFlagsWait(TRANSFER_COMPLETED_FLAG, osFlagsWaitAny, osWaitForever);
+    osThreadFlagsWait(TRANSFER_COMPLETED_FLAG, osFlagsWaitAll, osWaitForever);
 }
 
 void sendToLogImpl(const char* characters)

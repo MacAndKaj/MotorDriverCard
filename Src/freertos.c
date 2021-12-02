@@ -186,7 +186,7 @@ void startMotorControlTask(void *argument)
   for(;;)
   {
       onRun(motorControlModuleName);
-      osThreadYield();
+//      osThreadYield();
   }
   /* USER CODE END startMotorControlTask */
 }
@@ -208,7 +208,7 @@ void startCommunicationTask(void *argument)
   for(;;)
   {
       onRun(communicationModuleName);
-      osThreadYield();
+//      osThreadYield();
   }
   /* USER CODE END startCommunicationTask */
 }
@@ -229,7 +229,7 @@ void startLoggerTask(void *argument)
   for(;;)
   {
       workLog();
-      osThreadYield();
+//      osThreadYield();
   }
   /* USER CODE END startLoggerTask */
 }

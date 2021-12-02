@@ -71,8 +71,11 @@ void onExtInterrupt(uint16_t GPIO_Pin)
         case RightMotorEncoderB_Pin:
             rightMotorEncoderCallback();
             break;
-        case UserButton_Pin:
+        case MasterInterrupt_Pin:
+//        case UserButton_Pin:
             LOG("No new data");
+            break;
+        default:
             break;
     }
 }

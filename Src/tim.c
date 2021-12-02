@@ -223,7 +223,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 
     /* TIM3 DMA Init */
     /* TIM3_CH1_TRIG Init */
-    hdma_tim3_ch1_trig.Instance = DMA1_Channel4;
+    hdma_tim3_ch1_trig.Instance = DMA1_Channel6;
     hdma_tim3_ch1_trig.Init.Direction = DMA_MEMORY_TO_PERIPH;
     hdma_tim3_ch1_trig.Init.PeriphInc = DMA_PINC_DISABLE;
     hdma_tim3_ch1_trig.Init.MemInc = DMA_MINC_DISABLE;
@@ -235,6 +235,8 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     {
       Error_Handler();
     }
+
+    __HAL_DMA_REMAP_CHANNEL_ENABLE(DMA_REMAP_TIM3_DMA_CH6);
 
     /* Several peripheral DMA handle pointers point to the same DMA handle.
      Be aware that there is only one channel to perform all the requested DMAs. */
