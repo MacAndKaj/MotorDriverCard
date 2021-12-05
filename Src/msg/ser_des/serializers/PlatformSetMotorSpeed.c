@@ -7,7 +7,7 @@
   ******************************************************************************
   */
 
-#include <MDC/com/interface/ser_des/serializers/PlatformSetMotorSpeed.h>
+#include <msg/ser_des/serializers/PlatformSetMotorSpeed.h>
 
 #include <malloc.h>
 #include <memory.h>

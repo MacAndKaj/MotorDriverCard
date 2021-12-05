@@ -11,11 +11,11 @@
 #include <MDC/com/com.h>
 
 #include <MDC/com/message_control.h>
-#include <MDC/com/interface/consts.h>
+#include <msg/consts.h>
 #include <MDC/main/log.h>
 
 #include <malloc.h>
-#include <MDC/com/interface/messages_size_map.h>
+#include <msg/messages_size_map.h>
 #include <MDC/log/interface.h>
 
 CommunicationContext* communicationContext;

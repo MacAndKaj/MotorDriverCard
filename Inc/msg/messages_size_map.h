@@ -10,7 +10,7 @@
 #ifndef MOTORDRIVER_MESSAGES_SIZE_MAP_H
 #define MOTORDRIVER_MESSAGES_SIZE_MAP_H
 
-#include <MDC/com/interface/message_ids.h>
+#include <msg/message_ids.h>
 
 #include <stdint.h>
 

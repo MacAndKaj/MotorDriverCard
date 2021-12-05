@@ -28,8 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include <MDC/main/init.h>
 
-//TODO: take out interface to highest dir level or some other place
-#include <MDC/com/interface/defs/Message.h>
+#include <msg/defs/Message.h>
 #include <MDC/log/interface.h>
 
 #include <stdio.h>

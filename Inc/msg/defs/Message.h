@@ -10,7 +10,7 @@
 #ifndef MOTORDRIVER_COM_INTERFACE_DEFS_MESSAGE_H
 #define MOTORDRIVER_COM_INTERFACE_DEFS_MESSAGE_H
 
-#include <MDC/com/interface/defs/PlatformSetMotorSpeed.h>
+#include <msg/defs/PlatformSetMotorSpeed.h>
 
 struct Message
 {

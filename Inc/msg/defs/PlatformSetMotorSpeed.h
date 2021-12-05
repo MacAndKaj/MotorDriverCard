@@ -10,7 +10,7 @@
 #ifndef MOTORDRIVER_COM_INTERFACE_DEFS_PLATFORMSETMOTORSPEED_H
 #define MOTORDRIVER_COM_INTERFACE_DEFS_PLATFORMSETMOTORSPEED_H
 
-#include <MDC/com/interface/consts.h>
+#include <msg/consts.h>
 
 #include <stdint.h>
 

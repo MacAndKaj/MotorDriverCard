@@ -8,9 +8,9 @@
   ******************************************************************************
   */
 #include <MDC/platform/platform.h>
-#include <MDC/com/interface/message_ids.h>
-#include <MDC/com/interface/defs/Message.h>
-#include <MDC/com/interface/defs/PlatformSetMotorSpeed.h>
+#include <msg/message_ids.h>
+#include <msg/defs/Message.h>
+#include <msg/defs/PlatformSetMotorSpeed.h>
 
 #include <malloc.h>
 #include <MDC/platform/pid.h>

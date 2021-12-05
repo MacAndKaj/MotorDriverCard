@@ -10,10 +10,9 @@
 #ifndef MDC_COM_MESSAGE_CONTROL_H
 #define MDC_COM_MESSAGE_CONTROL_H
 
-#include <MDC/com/interface/consts.h>
-
+#include <msg/consts.h>
+#include <msg/defs/Message.h>
 #include <ICI/interthread_com_if_params.h>
-#include <MDC/com/interface/defs/Message.h>
 
 #include <stdint.h>
 

@@ -7,9 +7,8 @@
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#include <MDC/com/interface/messages_size_map.h>
-#include <MDC/com/interface/defs/PlatformSetMotorSpeed.h>
-#include <stddef.h>
+#include <msg/messages_size_map.h>
+#include <msg/defs/PlatformSetMotorSpeed.h>
 
 Node map[MESSAGES_NUM] = {
     {.id = PLATFORM_SET_MOTOR_SPEED_REQ_ID, .size=sizeof(struct PlatformSetMotorSpeedReq)}

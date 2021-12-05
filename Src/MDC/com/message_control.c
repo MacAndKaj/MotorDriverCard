@@ -10,11 +10,11 @@
 
 #include <MDC/com/message_control.h>
 
-#include <MDC/com/interface/consts.h>
-#include <MDC/com/interface/messages_size_map.h>
-#include <MDC/com/interface/defs/Message.h>
-#include <MDC/com/interface/ser_des/deserializers/PlatformSetMotorSpeed.h>
-#include <MDC/com/interface/ser_des/serializers/PlatformSetMotorSpeed.h>
+#include <msg/consts.h>
+#include <msg/messages_size_map.h>
+#include <msg/defs/Message.h>
+#include <msg/ser_des/deserializers/PlatformSetMotorSpeed.h>
+#include <msg/ser_des/serializers/PlatformSetMotorSpeed.h>
 
 #include <cmsis_os2.h>
 
