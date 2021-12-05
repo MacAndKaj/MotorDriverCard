@@ -23,7 +23,7 @@ void configureSender(osThreadId_t* threadIdHandle)
 
 int send(uint8_t* bytes, uint8_t count)
 {
-    return HAL_UART_Transmit_DMA(&huart3, bytes, count) == HAL_OK;
+    return HAL_UART_Transmit_DMA(&huart4, bytes, count) == HAL_OK;
 }
 
 void onTransmitCompletedImpl()

@@ -11,6 +11,8 @@
 
 #include <cmsis_os2.h>
 
+uint32_t getLogMessageSizeImpl();
+
 void configureLogImpl(osMessageQueueId_t* messageQueueHandle, osThreadId_t* threadIdHandle);
 
 void workLogImpl();

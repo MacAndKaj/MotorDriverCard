@@ -8,7 +8,6 @@
   */
 #include <MDC/log/impl/log.h>
 
-#include <MDC/log/interface.h>
 #include <MDC/log/impl/def.h>
 #include <MDC/log/impl/sender.h>
 
@@ -24,6 +23,10 @@ struct {
     uint8_t txBuffer[MAX_LINE_LENGTH];
 } logTaskContext;
 
+uint32_t getLogMessageSizeImpl()
+{
+    return sizeof(LogLine);
+}
 
 void configureLogImpl(osMessageQueueId_t* messageQueueHandle, osThreadId_t* threadIdHandle)
 {

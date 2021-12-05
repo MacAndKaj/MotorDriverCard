@@ -60,9 +60,9 @@ extern DMA_HandleTypeDef hdma_tim2_ch3;
 extern DMA_HandleTypeDef hdma_tim3_ch1_trig;
 extern TIM_HandleTypeDef htim17;
 extern DMA_HandleTypeDef hdma_usart2_rx;
-extern DMA_HandleTypeDef hdma_usart3_tx;
+extern DMA_HandleTypeDef hdma_usart4_tx;
 extern UART_HandleTypeDef huart2;
-extern UART_HandleTypeDef huart3;
+extern UART_HandleTypeDef huart4;
 extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN EV */
@@ -149,7 +149,7 @@ void DMA1_Channel4_5_6_7_IRQHandler(void)
   /* USER CODE END DMA1_Channel4_5_6_7_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_usart2_rx);
   HAL_DMA_IRQHandler(&hdma_tim3_ch1_trig);
-  HAL_DMA_IRQHandler(&hdma_usart3_tx);
+  HAL_DMA_IRQHandler(&hdma_usart4_tx);
   /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 1 */
 
   /* USER CODE END DMA1_Channel4_5_6_7_IRQn 1 */
@@ -205,7 +205,7 @@ void USART3_4_IRQHandler(void)
   /* USER CODE BEGIN USART3_4_IRQn 0 */
 
   /* USER CODE END USART3_4_IRQn 0 */
-  HAL_UART_IRQHandler(&huart3);
+  HAL_UART_IRQHandler(&huart4);
   /* USER CODE BEGIN USART3_4_IRQn 1 */
 
   /* USER CODE END USART3_4_IRQn 1 */

@@ -137,7 +137,7 @@ void MX_FREERTOS_Init(void) {
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
 
   /* creation of logsQueue */
-  logsQueueHandle = osMessageQueueNew (3, sizeof(LogLine), &logsQueue_attributes);
+  logsQueueHandle = osMessageQueueNew (3, getLogMessageSize(), &logsQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -186,7 +186,7 @@ void startMotorControlTask(void *argument)
   for(;;)
   {
       onRun(motorControlModuleName);
-//      osThreadYield();
+      osThreadYield();
   }
   /* USER CODE END startMotorControlTask */
 }
@@ -208,7 +208,7 @@ void startCommunicationTask(void *argument)
   for(;;)
   {
       onRun(communicationModuleName);
-//      osThreadYield();
+      osThreadYield();
   }
   /* USER CODE END startCommunicationTask */
 }
@@ -229,7 +229,6 @@ void startLoggerTask(void *argument)
   for(;;)
   {
       workLog();
-//      osThreadYield();
   }
   /* USER CODE END startLoggerTask */
 }

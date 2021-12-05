@@ -19,12 +19,9 @@
 /// \param characters
 void sendToLog(const char* characters);
 
-//TODO: move to log impl, change to function returning size of LogLine
-typedef struct
-{
-    uint8_t* line;
-    uint8_t lineLength;
-} LogLine;
+/// Getter for message size for log queue initialization.
+/// \return size of log line
+uint32_t getLogMessageSize();
 
 /// Message to configure LogTask.
 /// \param messageQueueHandle: handle to messageQueue used to queue new logs to be sent

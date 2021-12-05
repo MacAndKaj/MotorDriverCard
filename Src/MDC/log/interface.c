@@ -11,6 +11,11 @@
 #include <MDC/log/impl/log.h>
 #include <MDC/log/impl/sender.h>
 
+uint32_t getLogMessageSize()
+{
+    return getLogMessageSizeImpl();
+}
+
 void configureLog(osMessageQueueId_t* messageQueueHandle, osThreadId_t* threadIdHandle)
 {
     configureLogImpl(messageQueueHandle, threadIdHandle);

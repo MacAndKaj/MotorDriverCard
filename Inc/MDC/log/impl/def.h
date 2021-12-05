@@ -24,4 +24,11 @@
 
 #define TRANSFER_COMPLETED_FLAG 0x0001
 
+typedef struct
+{
+    uint8_t* line;
+    uint8_t lineLength;
+} LogLine;
+
+
 #endif // MOTORDRIVERCARD_LOG_IMPL_DEF_H
