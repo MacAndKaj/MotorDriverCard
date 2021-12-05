@@ -8,7 +8,7 @@
   ******************************************************************************
   */
 
-#include <MDC/com/com.h>
+#include <MDC/com/impl/rx.h>
 #include <MDC/main/init.h>
 #include <MDC/platform/motor_control.h>
 #include <MDC/platform/platform.h>
@@ -39,7 +39,7 @@ void initPeripheries()
 
 int mainInit()
 {
-    initCom();
+    configureComImpl();
     initPlatform();
     initPeripheries();
 

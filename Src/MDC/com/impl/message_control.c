@@ -8,7 +8,7 @@
   ******************************************************************************
   */
 
-#include <MDC/com/message_control.h>
+#include <MDC/com/impl/message_control.h>
 
 #include <msg/consts.h>
 #include <msg/messages_size_map.h>

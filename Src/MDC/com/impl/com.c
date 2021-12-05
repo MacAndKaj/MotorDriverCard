@@ -8,9 +8,9 @@
   ******************************************************************************
   */
 
-#include <MDC/com/com.h>
+#include <MDC/com/impl/rx.h>
 
-#include <MDC/com/message_control.h>
+#include <MDC/com/impl/message_control.h>
 #include <msg/consts.h>
 #include <MDC/main/log.h>
 
@@ -61,7 +61,7 @@ CommunicationContext* createCommunicationContext()
     return contextPtr;
 }
 
-void initCom()
+void configureComImpl()
 {
     communicationContext = createCommunicationContext();
 
@@ -136,51 +136,11 @@ void newRxData(RxBuffer *rxBuffer)
     rxBuffer->newData = 1;
 }
 
-void startUartRx(RxBuffer *rxBuffer, uint16_t N)
-{
-    printf("UART receiving DMA start for %d bytes\n", N);
-    rxBuffer->data = (uint8_t *) malloc(N * sizeof(uint8_t));
-    HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart2, rxBuffer->data, N);
-
-    if (status != HAL_OK)
-    {
-        printf("UART receiving DMA start failed with status: %d\n", status);
-    }
-}
-
-void noNewRxData(RxBuffer *rxBuffer)
-{
-    rxBuffer->newData = 0;
-}
-
-uint8_t isNewData(RxBuffer *rxBuffer)
-{
-    return rxBuffer->newData;
-}
-
-enum DataType nextReadType(RxBuffer *rxBuffer)
-{
-    return rxBuffer->nextRead;
-}
-
 void setNextMessageId(uint8_t newNextReadMessageId)
 {
     communicationContext->msgControl.nextReadMessageId = newNextReadMessageId;
 }
 
-void setNextReadType(enum DataType dataType)
-{
-    communicationContext->rxBuffer.nextRead = dataType;
-}
-
-void clearBuffer(RxBuffer *rxBuffer)
-{
-    if (rxBuffer->data == NULL) return;
-
-    free(rxBuffer->data);
-    rxBuffer->data = NULL;
-    noNewRxData(rxBuffer);
-}
 
 enum DataType processFrameCtrlData()
 {

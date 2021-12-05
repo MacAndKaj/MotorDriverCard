@@ -2,21 +2,18 @@
   * Copyright (c) 2021 M. Kajdak. All rights reserved.
   *
   ******************************************************************************
-  * @file           : com.h
+  * @file           : interface.h
   * @brief          : Header for <source file name> file.
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MDC_COM_COM_H
-#define MDC_COM_COM_H
+#ifndef MDC_RX_INTERFACE_H
+#define MDC_RX_INTERFACE_H
 
-#include <MDC/com/communication_context.h>
+/// Function to configure RxTask
+void configureRx();
 
-#include <usart.h>
+/// Callback when new data was received and should be dispatched
+void onReceptionCompleted();
 
-void initCom();
-void workCom();
-
-void comReceiveCallback(UART_HandleTypeDef *huart);
-
-#endif //MDC_COM_COM_H
+#endif //MDC_RX_INTERFACE_H

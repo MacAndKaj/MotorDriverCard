@@ -10,7 +10,7 @@
 #ifndef MDC_COM_COMMUNICATIONCONTEXT_H
 #define MDC_COM_COMMUNICATIONCONTEXT_H
 
-#include <MDC/com/message_control.h>
+#include <MDC/com/impl/message_control.h>
 
 #include <stdint.h>
 

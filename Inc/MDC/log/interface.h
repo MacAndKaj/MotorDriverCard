@@ -23,7 +23,7 @@ void sendToLog(const char* characters);
 /// \return size of log line
 uint32_t getLogMessageSize();
 
-/// Message to configure LogTask.
+/// Function to configure LogTask.
 /// \param messageQueueHandle: handle to messageQueue used to queue new logs to be sent
 /// \param threadIdHandle: threadId of LogTask
 void configureLog(osMessageQueueId_t* messageQueueHandle, osThreadId_t* threadIdHandle);
