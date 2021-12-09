@@ -7,31 +7,21 @@
   ******************************************************************************
   */
 
-#include <MDC/com/impl/rx.h>
+#include <MDC/rx/impl/rx.h>
 
-#include <MDC/com/impl/message_control.h>
-#include <msg/consts.h>
-#include <MDC/main/log.h>
-
-#include <malloc.h>
-#include <msg/messages_size_map.h>
 #include <MDC/log/interface.h>
 #include <MDC/rx/impl/receiver.h>
+#include <MDC/rx/impl/msg_processor.h>
+#include <MDC/rx/impl/msg_distributor.h>
+
+#include <msg/consts.h>
+
+#include <malloc.h>
 
 struct
 {
-    uint8_t newData;
-    uint8_t *data;
-    enum DataType nextRead;
+    uint8_t* data;
 } rxBuffer;
-
-void configureRxImpl()
-{
-    rxBuffer.data = NULL;
-    rxBuffer.nextRead = FrameCtrlData;
-
-    startReception(rxBuffer.data, HEADER_SIZE);
-}
 
 void clearBuffer(uint16_t nextReadSize)
 {
@@ -41,41 +31,40 @@ void clearBuffer(uint16_t nextReadSize)
     rxBuffer.data = (uint8_t *) malloc(nextReadSize * sizeof(uint8_t));
 }
 
-void workCom()
+void configureRxImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
-    // TODO: wait for new data
+    configureMsgProcessor();
+    configureMsgDistributor(messageQueueHandle);
+    configureReceiver(threadIdHandle);
 
-    enum DataType newNextRead;
-    switch (rxBuffer.nextRead)
+    rxBuffer.data = (uint8_t *) malloc(getNextMessageSize() * sizeof(uint8_t));
+    startReception(rxBuffer.data, getNextMessageSize());
+}
+
+void workRxImpl()
+{
+    osThreadFlagsWait(DATA_RECEIVED_THREAD_FLAG, osFlagsWaitAny, osWaitForever);
+
+    switch (getNextDataType())
     {
         case FrameCtrlData:
         {
-            newNextRead = processFrameCtrlData();
+            LOG("Waiting for new message to be received");
+            processFrameCtrlData(rxBuffer.data);
             break;
         }
         case UserData:
         {
-            processUserData();
-            newNextRead = FrameCtrlData;
+            LOG("__FUNCTION__|Received message");
+            forwardMessage(processUserData(rxBuffer.data));
             break;
         }
         default:
         {
             LOG("Incorrect data type");
-            newNextRead = FrameCtrlData;
         }
     }
 
-    uint16_t nextReadDataSize = HEADER_SIZE;
-    if (newNextRead == UserData)
-    {
-        nextReadDataSize = findSizeForMessageId(rxBuffer.data[1]);
-    }
-//    printf("Next read will have %d bytes\r\n", nextReadDataSize);
-
-    clearBuffer(nextReadDataSize);
-    startReception(rxBuffer.data, nextReadDataSize);
-
-    setNextMessageId(newNextRead);
-    rxBuffer.nextRead = newNextRead;
+    clearBuffer(getNextMessageSize());
+    startReception(rxBuffer.data, getNextMessageSize());
 }

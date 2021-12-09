@@ -8,11 +8,11 @@
   ******************************************************************************
   */
 
-#include <MDC/com/impl/rx.h>
 #include <MDC/main/init.h>
 #include <MDC/platform/motor_control.h>
 #include <MDC/platform/platform.h>
 #include <MDC/log/interface.h>
+#include <MDC/rx/interface.h>
 #include <tim.h>
 
 void initPeripheries()
@@ -39,7 +39,6 @@ void initPeripheries()
 
 int mainInit()
 {
-    configureComImpl();
     initPlatform();
     initPeripheries();
 
@@ -50,9 +49,6 @@ void onRun(ModuleName moduleName)
 {
     switch (moduleName)
     {
-        case Com:
-            workCom();
-            break;
         case MotorControl:
             workPlatform();
             break;
@@ -90,10 +86,16 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void onRxCpltCallback(UART_HandleTypeDef *huart)
 {
-    comReceiveCallback(huart);
+    if (huart->Instance == USART2)
+    {
+        onReceptionCompleted();
+    }
 }
 
 void onTxCpltCallback(UART_HandleTypeDef *huart)
 {
-    onTransmitCompleted(huart);
+    if (huart->Instance == USART4)
+    {
+        onTransmitCompleted();
+    }
 }

@@ -75,7 +75,7 @@ int main(void)
 
   /* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash msg and the Systick. */
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -188,13 +188,12 @@ void HAL_UART_TxCpltCallback (UART_HandleTypeDef* huart)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   /* USER CODE BEGIN Callback 0 */
-    onPeriodElapsedCallback(htim);
   /* USER CODE END Callback 0 */
   if (htim->Instance == TIM6) {
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-
+    onPeriodElapsedCallback(htim);
   /* USER CODE END Callback 1 */
 }
 

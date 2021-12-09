@@ -8,13 +8,19 @@
   */
 
 #include <MDC/rx/impl/rx.h>
+#include <stddef.h>
 
-void configureRx()
+void configureRx(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
-    configureRxImpl();
+    configureRxImpl(threadIdHandle, messageQueueHandle);
 }
 
 void onReceptionCompleted()
 {
     onReceptionCompletedImpl();
+}
+
+void workRx()
+{
+    workRxImpl();
 }

@@ -11,9 +11,12 @@
 #define MDC_RX_INTERFACE_H
 
 /// Function to configure RxTask
-void configureRx();
+void configureRx(osThreadId_t *threadIdHandle, osMessageQueueId_t *messageQueueHandle);
 
 /// Callback when new data was received and should be dispatched
 void onReceptionCompleted();
+
+/// Runtime function of RxTask
+void workRx();
 
 #endif //MDC_RX_INTERFACE_H

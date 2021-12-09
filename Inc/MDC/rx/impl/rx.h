@@ -10,8 +10,12 @@
 #ifndef MDC_RX_IMPL_RX_H
 #define MDC_RX_IMPL_RX_H
 
-void configureRxImpl();
+#include <cmsis_os2.h>
+
+void configureRxImpl(osThreadId_t *threadIdHandle, osMessageQueueId_t *messageQueueHandle);
 
 void onReceptionCompletedImpl();
+
+void workRxImpl();
 
 #endif //MDC_RX_IMPL_RX_H

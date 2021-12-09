@@ -26,7 +26,7 @@ void workLog()
     workLogImpl();
 }
 
-//TODO: get rid of this function, it should be done by sub-cbk mechanism between sender and HalEventProxy
+//TODO: get rid of this function, it should be done by sub-clbk mechanism between sender and HalEventProxy
 void onTransmitCompleted()
 {
     onTransmitCompletedImpl();

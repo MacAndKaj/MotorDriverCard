@@ -76,6 +76,8 @@ void workPlatform()
 
         setRightPwm((int64_t)evaluate(&mP->pidController, mP->controlError, speedUpdateTime));
     }
+
+    if (osMessageQueueGet())
 }
 /* PUBLIC DEFINITIONS END */
 

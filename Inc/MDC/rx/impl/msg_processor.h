@@ -7,13 +7,17 @@
   ******************************************************************************
   */
 
+#include <stdint.h>
+
 #ifndef MDC_RX_IMPL_MSG_PROCESSOR_H
 #define MDC_RX_IMPL_MSG_PROCESSOR_H
 
-/// Function validates received frame control data.
-/// \param data: const array with size FRAME_CTRL_DATA_SIZE containing {CTRL_DATA|ID}.
-/// \return 0 if data correct, 1 otherwise.
-int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_SIZE]);
+/// Startup function to initialize msgProcessor
+void configureMsgProcessor();
+
+/// Returns next data type expected on Rx line.
+enum DataType getNextDataType();
+uint16_t getNextMessageSize();
 
 /// Function to serialize message(Response) to byte form to be sent.
 /// \param resp
@@ -21,6 +25,10 @@ int validateCtrlData(MessageControl* messageControl, const uint8_t data[HEADER_S
 /// \return
 char* serialize(void* resp, uint8_t id);
 
-Message* deserialize(char* data, uint8_t id);
+struct Message* deserialize(char* data, uint8_t id);
+
+enum DataType processFrameCtrlData(const uint8_t* data);
+
+struct Message* processUserData(uint8_t* data);
 
 #endif //MDC_RX_IMPL_MSG_PROCESSOR_H

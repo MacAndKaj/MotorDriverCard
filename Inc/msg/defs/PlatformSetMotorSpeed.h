@@ -16,6 +16,7 @@
 
 struct PlatformSetMotorSpeedReq
 {
+    //TODO: multimotor option
     uint8_t motor;
     int8_t speedI;
     uint8_t speedF;

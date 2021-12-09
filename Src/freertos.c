@@ -30,6 +30,7 @@
 
 #include <msg/defs/Message.h>
 #include <MDC/log/interface.h>
+#include <MDC/rx/interface.h>
 
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -60,10 +61,10 @@ const osThreadAttr_t motorCtrlTask_attributes = {
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for comTask */
-osThreadId_t comTaskHandle;
-const osThreadAttr_t comTask_attributes = {
-  .name = "comTask",
+/* Definitions for rxTask */
+osThreadId_t rxTaskHandle;
+const osThreadAttr_t rxTask_attributes = {
+  .name = "rxTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -146,8 +147,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of motorCtrlTask */
   motorCtrlTaskHandle = osThreadNew(startMotorControlTask, NULL, &motorCtrlTask_attributes);
 
-  /* creation of comTask */
-  comTaskHandle = osThreadNew(startCommunicationTask, NULL, &comTask_attributes);
+  /* creation of rxTask */
+  rxTaskHandle = osThreadNew(startCommunicationTask, NULL, &rxTask_attributes);
 
   /* creation of logTask */
   logTaskHandle = osThreadNew(startLoggerTask, NULL, &logTask_attributes);
@@ -163,7 +164,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
     configureLog(&logsQueueHandle, &logTaskHandle);
-
+    configureRx(&rxTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 
 }
@@ -201,13 +202,11 @@ _Noreturn
 void startCommunicationTask(void *argument)
 {
   /* USER CODE BEGIN startCommunicationTask */
-    LOG("Start communication");
-    enum ModuleName communicationModuleName = Com;
-    /* Infinite loop */
+    LOG("Start Rx");
+  /* Infinite loop */
   for(;;)
   {
-      onRun(communicationModuleName);
-      osThreadYield();
+      workRx();
   }
   /* USER CODE END startCommunicationTask */
 }
