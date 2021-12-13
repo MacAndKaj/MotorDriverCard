@@ -56,7 +56,12 @@ void workRxImpl()
         case UserData:
         {
             LOG("__FUNCTION__|Received message");
-            forwardMessage(processUserData(rxBuffer.data));
+            Message* msg = processUserData(rxBuffer.data);
+            forwardMessage(msg);
+            if (msg != NULL)
+            {
+                free(msg);
+            }
             break;
         }
         default:

@@ -99,5 +99,7 @@ struct Message* processUserData(uint8_t* data)
         LOG("Unknown message");
     }
     msgControl.nextDataType = FrameCtrlData;
+    msgControl.nextMessageSize = HEADER_SIZE;
+
     return deserializedMsg;
 }

@@ -19,6 +19,7 @@
 /// \param characters
 void sendToLog(const char* characters);
 
+
 /// Getter for message size for log queue initialization.
 /// \return size of log line
 uint32_t getLogMessageSize();

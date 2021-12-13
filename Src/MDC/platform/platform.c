@@ -54,7 +54,7 @@ void initPlatform()
     init_MotorDriver();
 }
 
-void workPlatform()
+void workPlatform(osMessageQueueId_t* messageQueueHandle)
 {
     MotorProperties* mP;
     if (isSpeedUpdateFlagSet(&leftMotorHandle))
@@ -77,7 +77,12 @@ void workPlatform()
         setRightPwm((int64_t)evaluate(&mP->pidController, mP->controlError, speedUpdateTime));
     }
 
-    if (osMessageQueueGet())
+    static Message buffer;
+    if (osMessageQueueGet(*messageQueueHandle, &buffer, NULL, 0) == osOK)
+    {
+        LOG("New message to platform");
+        onMessageReceivedPlatform(&buffer);
+    }
 }
 /* PUBLIC DEFINITIONS END */
 

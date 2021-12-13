@@ -10,6 +10,8 @@
 #ifndef MOTORDRIVER_PLATFORM_H
 #define MOTORDRIVER_PLATFORM_H
 
+#include "cmsis_os2.h"
+
 #define SPEED_UPDATE_FREQ 100.0
 
 /* FORWARD DECLARATION BEGIN*/
@@ -21,7 +23,7 @@ struct Message;
 
 /* FUNCTIONS DECLARATION BEGIN*/
 void initPlatform();
-void workPlatform();
+void workPlatform(osMessageQueueId_t* messageQueueHandle);
 void workPlatformPeriodical();
 
 void leftMotorEncoderCallback();

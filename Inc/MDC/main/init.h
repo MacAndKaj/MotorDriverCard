@@ -24,10 +24,6 @@ typedef enum ModuleName
 /// \return [int]: 0 if not error, 1 - otherwise
 int mainInit();
 
-/// Main function for tasks.
-/// \param moduleName enum ModuleName for specific task
-void onRun(ModuleName moduleName);
-
 //TODO: HalEvents module - proxy module between HAL events and application with subscription mechanism instead of calling functions
 void onExtInterrupt(uint16_t GPIO_Pin);
 void onPeriodElapsedCallback(TIM_HandleTypeDef *htim);

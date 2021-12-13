@@ -45,18 +45,6 @@ int mainInit()
     return 0;
 }
 
-void onRun(ModuleName moduleName)
-{
-    switch (moduleName)
-    {
-        case MotorControl:
-            workPlatform();
-            break;
-        default:
-            Error_Handler();
-    }
-}
-
 void onExtInterrupt(uint16_t GPIO_Pin)
 {
     switch (GPIO_Pin)

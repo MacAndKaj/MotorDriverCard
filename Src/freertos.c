@@ -23,6 +23,7 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
+#include "MDC/platform/platform.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -181,11 +182,10 @@ void startMotorControlTask(void *argument)
 {
   /* USER CODE BEGIN startMotorControlTask */
     LOG("Start motor control");
-  enum ModuleName motorControlModuleName = MotorControl;
   /* Infinite loop */
   for(;;)
   {
-      onRun(motorControlModuleName);
+      workPlatform(&messagesQueueHandle);
       osThreadYield();
   }
   /* USER CODE END startMotorControlTask */
