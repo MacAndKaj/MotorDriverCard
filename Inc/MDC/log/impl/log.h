@@ -17,6 +17,6 @@ void configureLogImpl(osMessageQueueId_t* messageQueueHandle, osThreadId_t* thre
 
 void workLogImpl();
 
-void sendToLogImpl(const char* characters);
+void sendToLogImpl(const char *characters, uint8_t len);
 
 #endif // MOTORDRIVERCARD_LOG_IMPL_LOG_H

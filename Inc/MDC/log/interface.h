@@ -12,13 +12,9 @@
 #include <cmsis_os2.h>
 
 #include <stdint.h>
+#include <stdio.h>
 
-#define LOG(line) sendToLog(line"\r\n")
-
-/// Logging function - can be used from other threads.
-/// \param characters
-void sendToLog(const char* characters);
-
+#define LOG(...) printf(__VA_ARGS__)
 
 /// Getter for message size for log queue initialization.
 /// \return size of log line

@@ -32,7 +32,16 @@ void onTransmitCompleted()
     onTransmitCompletedImpl();
 }
 
-void sendToLog(const char* characters)
+
+int _write(int file, char *ptr, int len)
 {
-    sendToLogImpl(characters);
+    (void*)file;
+    if (len == 0)
+    {
+        return len;
+    }
+
+    sendToLogImpl(ptr, len);
+
+    return 0;
 }

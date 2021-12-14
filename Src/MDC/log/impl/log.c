@@ -60,9 +60,8 @@ void workLogImpl()
     osThreadFlagsWait(TRANSFER_COMPLETED_FLAG, osFlagsWaitAll, osWaitForever);
 }
 
-void sendToLogImpl(const char* characters)
+void sendToLogImpl(const char *characters, uint8_t len)
 {
-    uint8_t len = strlen(characters);
 
     uint8_t* bytes = malloc(len + 1);
     strcpy((char *)bytes, characters);
