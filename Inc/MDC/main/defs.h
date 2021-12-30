@@ -13,10 +13,10 @@
 // Max value of counters for timers used in PWM generation.
 #define PWM_PERIOD 10000-1
 
-// Value for backward direction.
+// Value for backward currentDirection.
 #define BACKWARD 0
 
-// Value for forward direction.
+// Value for forward currentDirection.
 #define FORWARD 1
 
 // Amount of encoder pulses per round.

@@ -7,19 +7,26 @@
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MOTORDRIVER_COM_INTERFACE_DEFS_PLATFORMSETMOTORSPEED_H
-#define MOTORDRIVER_COM_INTERFACE_DEFS_PLATFORMSETMOTORSPEED_H
+#ifndef MOTORDRIVER_MSG_DEFS_PLATFORMSETMOTORSPEED_H
+#define MOTORDRIVER_MSG_DEFS_PLATFORMSETMOTORSPEED_H
 
 #include <msg/consts.h>
 
 #include <stdint.h>
 
+/*
+ * lMotor/rMotor - should be set to 1 if values for right/left motor sent, 0 otherwise
+ * lSpeedF/rSpeedF - fraction part of speed values
+ * lSpeedI/rSpeedI - integer part of speed values
+ */
 struct PlatformSetMotorSpeedReq
 {
-    //TODO: multimotor option
-    uint8_t motor;
-    int8_t speedI;
-    uint8_t speedF;
+    uint8_t lMotor;
+    int8_t lSpeedI;
+    uint8_t lSpeedF;
+    uint8_t rMotor;
+    int8_t rSpeedI;
+    uint8_t rSpeedF;
 };
 typedef struct PlatformSetMotorSpeedReq PlatformSetMotorSpeedReq;
 
@@ -30,4 +37,4 @@ struct PlatformSetMotorSpeedResp
 };
 typedef struct PlatformSetMotorSpeedResp PlatformSetMotorSpeedResp;
 
-#endif //MOTORDRIVER_COM_INTERFACE_DEFS_PLATFORMSETMOTORSPEED_H
+#endif //MOTORDRIVER_MSG_DEFS_PLATFORMSETMOTORSPEED_H

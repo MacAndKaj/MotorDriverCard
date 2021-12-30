@@ -31,9 +31,7 @@
 #include <msg/defs/Message.h>
 #include <MDC/log/interface.h>
 #include <MDC/rx/interface.h>
-#include "MDC/platform/platform.h"
-
-#include <stdio.h>
+#include <MDC/motors/interface.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,10 +53,10 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for motorCtrlTask */
-osThreadId_t motorCtrlTaskHandle;
-const osThreadAttr_t motorCtrlTask_attributes = {
-  .name = "motorCtrlTask",
+/* Definitions for motorsTask */
+osThreadId_t motorsTaskHandle;
+const osThreadAttr_t motorsTask_attributes = {
+  .name = "motorsTask",
   .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -145,8 +143,8 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of motorCtrlTask */
-  motorCtrlTaskHandle = osThreadNew(startMotorControlTask, NULL, &motorCtrlTask_attributes);
+  /* creation of motorsTask */
+  motorsTaskHandle = osThreadNew(startMotorControlTask, NULL, &motorsTask_attributes);
 
   /* creation of rxTask */
   rxTaskHandle = osThreadNew(startCommunicationTask, NULL, &rxTask_attributes);
@@ -185,8 +183,7 @@ void startMotorControlTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-      workPlatform(&messagesQueueHandle);
-      osThreadYield();
+      workMotors();
   }
   /* USER CODE END startMotorControlTask */
 }

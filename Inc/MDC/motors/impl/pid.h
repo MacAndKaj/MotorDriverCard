@@ -11,15 +11,16 @@
 #ifndef MOTORDRIVER_PLATFORM_PID_H
 #define MOTORDRIVER_PLATFORM_PID_H
 
-typedef struct pid
+typedef struct PIDParameters
 {
     double kP;      // P factor(proportional)
     double kI;      // I factor(integral)
     double kD;      // D factor(derivative)
 
+    // TODO: leave public only PID parameters(kP,kI,kD) and rest should be hidden
     double lastError;    // Last value of error used to compute new value of derivative.
     double vI;           // Variable to keep integral of error
-} PID;
+};
 
 ///Evaluate control value from PID handle, current error and timestamp.
 /// \param pidHandle: pointer to PID structure with factors etc

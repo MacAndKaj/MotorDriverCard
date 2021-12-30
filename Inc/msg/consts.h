@@ -3,7 +3,7 @@
   *
   ******************************************************************************
   * @file           : consts.h
-  * @brief          : Header for constants of platform interface.
+  * @brief          : Header for constants of motors interface.
   *                   This file contains definitions of constants.
   ******************************************************************************
   */

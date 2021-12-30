@@ -2,23 +2,23 @@
   * Copyright (c) 2021 M. Kajdak. All rights reserved.
   *
   ******************************************************************************
-  * @file           : platform.c
+  * @file           : motors.c
   * @brief          : Header for <source file name> file.
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
 #include <MDC/platform/platform.h>
-#include <msg/message_ids.h>
-#include <msg/defs/Message.h>
-#include <msg/defs/PlatformSetMotorSpeed.h>
+#include "msg/message_ids.h"
+#include "msg/defs/Message.h"
+#include "msg/defs/PlatformSetMotorSpeed.h"
 
 #include <malloc.h>
 #include <MDC/platform/pid.h>
 #include <MDC/platform/motor_info.h>
 #include <MDC/platform/motor_control.h>
-#include <MDC/main/defs.h>
+#include "MDC/main/defs.h"
 #include <stdio.h>
-#include <MDC/log/interface.h>
+#include "MDC/log/interface.h"
 
 double speedUpdateTime = 1./SPEED_UPDATE_FREQ;
 
@@ -47,43 +47,13 @@ PlatformContext* createPlatformContext();
 /* PUBLIC DEFINITIONS BEGIN */
 
 
-void initPlatform()
+void initPlatform(void)
 {
     platformContext = createPlatformContext();
 
     init_MotorDriver();
 }
 
-void workPlatform(osMessageQueueId_t* messageQueueHandle)
-{
-    MotorProperties* mP;
-    if (isSpeedUpdateFlagSet(&leftMotorHandle))
-    {
-        mP = &platformContext->leftMotorProperties;
-        disableSpeedUpdateFlag(&leftMotorHandle);
-
-        mP->controlError = mP->speed - getSpeed(&leftMotorHandle);
-
-        setLeftPwm((int64_t)evaluate(&mP->pidController, mP->controlError, speedUpdateTime));
-    }
-
-    if (isSpeedUpdateFlagSet(&rightMotorHandle))
-    {
-        mP = &platformContext->rightMotorProperties;
-        disableSpeedUpdateFlag(&rightMotorHandle);
-
-        mP->controlError = mP->speed - getSpeed(&rightMotorHandle);
-
-        setRightPwm((int64_t)evaluate(&mP->pidController, mP->controlError, speedUpdateTime));
-    }
-
-    static Message buffer;
-    if (osMessageQueueGet(*messageQueueHandle, &buffer, 0, 0) == osOK)
-    {
-        logInfo("New message to platform");
-        onMessageReceivedPlatform(&buffer);
-    }
-}
 /* PUBLIC DEFINITIONS END */
 
 
@@ -108,14 +78,6 @@ PlatformContext* createPlatformContext()
     return temp;
 }
 
-double transformSpeed(int8_t speedInt, uint8_t speedFl)
-{
-    if (speedInt < 0)
-    {
-        return speedInt - (speedFl * 0.01);
-    }
-    return speedInt + (speedFl * 0.01);
-}
 
 void init_MotorDriver()
 {
@@ -146,21 +108,22 @@ void leftMotorEncoderCallback()
 
 void toggleSpeed(PlatformSetMotorSpeedReq* req)
 {
-    if (req->motor == 0)
+    if (req->lMotor == 1)
     {
-        platformContext->leftMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
+        platformContext->leftMotorProperties.speed = transformSpeed(req->lSpeedI, req->lSpeedF);
         logInfo("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
     }
-    else
+
+    if (req->rMotor == 1)
     {
-        platformContext->rightMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
+        platformContext->rightMotorProperties.speed = transformSpeed(req->rSpeedI, req->rSpeedF);
         logInfo("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
     }
 }
 
 void onMessageReceivedPlatform(struct Message* message)
 {
-    logInfo("[platform]Message with id=%d received.\r\n", message->messageId);
+    logInfo("[motors]Message with id=%d received.\r\n", message->messageId);
     switch (message->messageId)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
