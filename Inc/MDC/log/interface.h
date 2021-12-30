@@ -11,10 +11,7 @@
 
 #include <cmsis_os2.h>
 
-#include <stdint.h>
-#include <stdio.h>
-
-#define LOG(...) printf(__VA_ARGS__)
+void logInfo(const char* logStr, ...);
 
 /// Getter for message size for log queue initialization.
 /// \return size of log line

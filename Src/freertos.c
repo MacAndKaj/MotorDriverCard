@@ -23,7 +23,6 @@
 #include "task.h"
 #include "main.h"
 #include "cmsis_os.h"
-#include "MDC/platform/platform.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -32,6 +31,7 @@
 #include <msg/defs/Message.h>
 #include <MDC/log/interface.h>
 #include <MDC/rx/interface.h>
+#include "MDC/platform/platform.h"
 
 #include <stdio.h>
 /* USER CODE END Includes */
@@ -59,21 +59,21 @@
 osThreadId_t motorCtrlTaskHandle;
 const osThreadAttr_t motorCtrlTask_attributes = {
   .name = "motorCtrlTask",
-  .stack_size = 128 * 4,
+  .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for rxTask */
 osThreadId_t rxTaskHandle;
 const osThreadAttr_t rxTask_attributes = {
   .name = "rxTask",
-  .stack_size = 128 * 4,
+  .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for logTask */
 osThreadId_t logTaskHandle;
 const osThreadAttr_t logTask_attributes = {
   .name = "logTask",
-  .stack_size = 128 * 4,
+  .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for messagesQueue */
@@ -181,7 +181,7 @@ _Noreturn
 void startMotorControlTask(void *argument)
 {
   /* USER CODE BEGIN startMotorControlTask */
-    LOG("Start motor control");
+    logInfo("Start motor control");
   /* Infinite loop */
   for(;;)
   {
@@ -202,7 +202,7 @@ _Noreturn
 void startCommunicationTask(void *argument)
 {
   /* USER CODE BEGIN startCommunicationTask */
-    LOG("Start Rx");
+    logInfo("Start Rx");
   /* Infinite loop */
   for(;;)
   {
@@ -222,7 +222,7 @@ _Noreturn
 void startLoggerTask(void *argument)
 {
   /* USER CODE BEGIN startLoggerTask */
-    LOG("Start logger");
+    logInfo("Start logger");
   /* Infinite loop */
   for(;;)
   {

@@ -56,7 +56,7 @@ void onExtInterrupt(uint16_t GPIO_Pin)
             rightMotorEncoderCallback();
             break;
         case MasterInterrupt_Pin:
-            LOG("Interrupt!");
+            logInfo("Interrupt!");
             break;
         default:
             break;

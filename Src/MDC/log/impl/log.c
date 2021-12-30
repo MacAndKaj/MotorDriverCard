@@ -14,6 +14,8 @@
 #include <memory.h>
 #include <stddef.h>
 #include <malloc.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #define PRIORITY_0 0
 #define NO_WAITING 0
@@ -42,13 +44,13 @@ void workLogImpl()
     static LogLine buffer = {};
     uint8_t charactersAmountToBeSent = MAX_LINE_LENGTH;
 
-    osStatus_t messageQueueStatus = osMessageQueueGet(*logTaskContext.logsQueueHandle, &buffer, NULL, osWaitForever);
+    osStatus_t messageQueueStatus = osMessageQueueGet(*logTaskContext.logsQueueHandle, &buffer, PRIORITY_0, osWaitForever);
     if (messageQueueStatus != osOK)
     {
         return;
     }
 
-    if (buffer.lineLength < MAX_LINE_LENGTH)
+    if (buffer.lineLength <= MAX_LINE_LENGTH)
     {
         charactersAmountToBeSent = buffer.lineLength;
     }
@@ -60,15 +62,28 @@ void workLogImpl()
     osThreadFlagsWait(TRANSFER_COMPLETED_FLAG, osFlagsWaitAll, osWaitForever);
 }
 
-void sendToLogImpl(const char *characters, uint8_t len)
+void logImpl(const char* severityStr, const char* characters, ...)
 {
+    char logFormatBuffer[MAX_LINE_LENGTH];
 
-    uint8_t* bytes = malloc(len + 1);
-    strcpy((char *)bytes, characters);
+    size_t severityStrLen = strlen(severityStr);
+    memcpy(logFormatBuffer, severityStr, severityStrLen);
 
+    va_list args;
+    va_start(args, characters);
+    vsnprintf(logFormatBuffer + severityStrLen, (MAX_LINE_LENGTH-severityStrLen), characters, args);
+    va_end(args);
+
+    uint8_t logLength = strlen(logFormatBuffer);
+    logFormatBuffer[logLength]='\n';
+    logLength = logLength + 1;
+
+    uint8_t* bytes = malloc(logLength);
+    memcpy(bytes, logFormatBuffer, logLength);
     LogLine message = {
         .line = bytes,
-        .lineLength = len
+        .lineLength = logLength
     };
-    osMessageQueuePut(*logTaskContext.logsQueueHandle, &message, PRIORITY_0, NO_WAITING);
+
+    osMessageQueuePut(*logTaskContext.logsQueueHandle, &message, PRIORITY_0, 0);
 }

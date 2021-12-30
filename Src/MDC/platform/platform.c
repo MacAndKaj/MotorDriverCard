@@ -78,9 +78,9 @@ void workPlatform(osMessageQueueId_t* messageQueueHandle)
     }
 
     static Message buffer;
-    if (osMessageQueueGet(*messageQueueHandle, &buffer, NULL, 0) == osOK)
+    if (osMessageQueueGet(*messageQueueHandle, &buffer, 0, 0) == osOK)
     {
-        LOG("New message to platform");
+        logInfo("New message to platform");
         onMessageReceivedPlatform(&buffer);
     }
 }
@@ -149,25 +149,25 @@ void toggleSpeed(PlatformSetMotorSpeedReq* req)
     if (req->motor == 0)
     {
         platformContext->leftMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
-        printf("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
+        logInfo("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
     }
     else
     {
         platformContext->rightMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
-        printf("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
+        logInfo("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
     }
 }
 
 void onMessageReceivedPlatform(struct Message* message)
 {
-    printf("[platform]Message with id=%d received.\r\n", message->messageId);
+    logInfo("[platform]Message with id=%d received.\r\n", message->messageId);
     switch (message->messageId)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
             toggleSpeed(&message->msg.platformSetMotorSpeedReq);
             break;
         default:
-            LOG("Unknown messageId, ignoring!\r\n");
+            logInfo("Unknown messageId, ignoring!\r\n");
     }
 }
 

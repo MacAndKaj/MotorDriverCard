@@ -11,6 +11,9 @@
 #include <MDC/log/impl/log.h>
 #include <MDC/log/impl/sender.h>
 
+#include <stdio.h>
+#include <stdarg.h>
+
 uint32_t getLogMessageSize()
 {
     return getLogMessageSizeImpl();
@@ -32,16 +35,11 @@ void onTransmitCompleted()
     onTransmitCompletedImpl();
 }
 
-
-int _write(int file, char *ptr, int len)
+void logInfo(const char* logStr, ...)
 {
-    (void*)file;
-    if (len == 0)
-    {
-        return len;
-    }
 
-    sendToLogImpl(ptr, len);
-
-    return 0;
+    va_list args;
+    va_start(args, logStr);
+    logImpl("[INFO]", logStr, args);
+    va_end(args);
 }
