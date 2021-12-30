@@ -43,9 +43,22 @@ function build_fun() {
     fi
 
     cd "$STM32CUBE_LOCATION" || exit
+
     CMAKE_FLAGS=( -DSTM32_REPO_LOCATION="$STM32CUBE_LOCATION" )
     cmake "${CMAKE_FLAGS[@]}" ..
+    if [[ ! $? = 0 ]]
+    then
+      echo "cmake failure"
+      exit 1
+    fi
+
     make "$TARGET_NAME"
+    if [[ ! $? = 0 ]]
+    then
+      echo "make failure"
+      exit 1
+    fi
+
     echo "Project MotorDriverCard binary built."
 }
 
