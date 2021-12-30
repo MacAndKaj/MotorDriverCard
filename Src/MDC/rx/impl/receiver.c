@@ -1,5 +1,3 @@
-#include <stdint-gcc.h>
-
 /**
   * Copyright (c) 2021 M. Kajdak. All rights reserved.
   *
