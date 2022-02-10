@@ -6,20 +6,22 @@
   * @brief          : Sources for motor.h file.
   ******************************************************************************
   */
-#include "MDC/main/defs.h"
 #include <MDC/motors/impl/feedback.h>
 
+#include <MDC/main/defs.h>
+
 #include <math.h>
-#include <stdint.h>
 #include <malloc.h>
 
-typedef struct MotorFeedback
+struct MotorFeedback
 {
     double speed;                       /// Speed of motor in radians per second.
     int32_t pulses;                     /// Actual number of pulses read from encoder.
     uint8_t direction;                  /// Actual currentDirection of motor.
     GPIO_PinState lastPinAEncoderState; /// Last state of encoder A pin
-} MotorFeedback;
+};
+typedef struct MotorFeedback MotorFeedback;
+
 
 /**
   ******************************************************************************
@@ -63,7 +65,7 @@ double getSpeed(const MotorFeedback *handle)
     return handle->speed;
 }
 
-void updateSpeed(MotorFeedback *handle, double t)
+void handleFeedback(MotorFeedback *handle, double t)
 {
     if (t == 0.) return;
 

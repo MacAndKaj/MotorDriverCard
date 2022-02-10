@@ -17,4 +17,7 @@ void configureMotors(osMessageQueueId_t* receivedMessageQueueHandle);
 /// Runtime function of MotorsTask
 void workMotors();
 
+/// Function called from periodical callback with 1kHz freq
+void periodicalCallback();
+
 #endif //MDC_MOTORS_INTERFACE_H

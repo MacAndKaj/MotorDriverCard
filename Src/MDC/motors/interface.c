@@ -21,3 +21,8 @@ void workMotors()
 {
     workMotorsImpl();
 }
+
+void periodicalCallback()
+{
+    periodicalCallbackImpl();
+}

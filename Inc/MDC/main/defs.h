@@ -7,8 +7,8 @@
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MOTORDRIVER_PLATFORM_DEFS_H
-#define MOTORDRIVER_PLATFORM_DEFS_H
+#ifndef MDC_MAIN_DEFS_H
+#define MDC_MAIN_DEFS_H
 
 // Max value of counters for timers used in PWM generation.
 #define PWM_PERIOD 10000-1
@@ -28,4 +28,7 @@
 // Value of computed PWM that should drop PWM value to 0
 #define STOP_THRESHOLD 1500
 
-#endif //MOTORDRIVER_PLATFORM_DEFS_H
+// Word length in bytes
+#define ONE_WORD 1
+
+#endif //MDC_MAIN_DEFS_H

@@ -12,5 +12,7 @@
 
 void configureMotorsImpl();
 void workMotorsImpl();
+void periodicalCallbackImpl();
+
 
 #endif //MDC_MOTORS_IMPL_MOTORS_H

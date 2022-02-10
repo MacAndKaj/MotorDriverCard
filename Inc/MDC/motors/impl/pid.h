@@ -11,7 +11,7 @@
 #ifndef MOTORDRIVER_PLATFORM_PID_H
 #define MOTORDRIVER_PLATFORM_PID_H
 
-typedef struct PIDParameters
+struct PIDParameters
 {
     double kP;      // P factor(proportional)
     double kI;      // I factor(integral)
@@ -21,15 +21,16 @@ typedef struct PIDParameters
     double lastError;    // Last value of error used to compute new value of derivative.
     double vI;           // Variable to keep integral of error
 };
+ typedef struct PIDParameters PIDParameters; 
 
 ///Evaluate control value from PID handle, current error and timestamp.
 /// \param pidHandle: pointer to PID structure with factors etc
 /// \param error: current error = q_d - q_c
 /// \return new control value
-double evaluate(PID* pidHandle, double error, double dt);
+double evaluate(PIDParameters* pidHandle, double error, double dt);
 
 ///
 /// \param pidHandle
-void resetPid(PID* pidHandle);
+void resetPid(PIDParameters* pidHandle);
 
 #endif //MOTORDRIVER_PLATFORM_PID_H

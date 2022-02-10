@@ -10,9 +10,9 @@
 #ifndef MDC_MOTORS_IMPL_MOTOR_PROVESS_H
 #define MDC_MOTORS_IMPL_MOTOR_PROVESS_H
 
-#include <stdint.h>
+#include <tim.h>
 
-#include <stm32f072xb.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 struct ControlParameters;
@@ -25,9 +25,11 @@ struct OutputConfiguration
     uint16_t motorControl1Pin;
     GPIO_TypeDef* motorControl2Port;
     uint16_t motorControl2Pin;
+    TIM_HandleTypeDef* timer;
+    uint32_t channel;
     struct ControlParameters* parameters;
 };
 
-void updateU(struct OutputConfiguration* u, int64_t newPwmDuty, bool leftMotor);
+void updateU(struct OutputConfiguration* config, int64_t u, bool leftMotor);
 
 #endif //MDC_MOTORS_IMPL_MOTOR_PROVESS_H
