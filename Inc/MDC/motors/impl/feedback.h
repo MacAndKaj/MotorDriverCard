@@ -10,6 +10,8 @@
 
 #include <gpio.h>
 
+#include <stdbool.h>
+
 struct MotorFeedback;
 
 struct FeedbackConfiguration
@@ -23,7 +25,8 @@ struct FeedbackConfiguration
 
 // TODO: change to FeedbackHandle configureFeedback(struct FeedbackConfiguration* handle) to avoid passing later configuration for computing purposes
 void configureFeedback(struct FeedbackConfiguration* handle);
-void updateFeedback(struct FeedbackConfiguration* handle, uint8_t leftSide);
-void handleFeedback(struct MotorFeedback *handle, double t);
+void updateFeedback(struct FeedbackConfiguration* handle, bool leftSide);
+void handleFeedback(struct FeedbackConfiguration *handle, double t);
+double getSpeed(const struct FeedbackConfiguration* handle);
 
 #endif //MDC_MOTORS_IMPL_FEEDBACK_H

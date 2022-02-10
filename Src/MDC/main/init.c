@@ -19,10 +19,8 @@ void onExtInterrupt(uint16_t GPIO_Pin)
     switch (GPIO_Pin)
     {
         case LeftMotorEncoderB_Pin:
-            leftMotorEncoderCallback();
-            break;
         case RightMotorEncoderB_Pin:
-            rightMotorEncoderCallback();
+            onExtInterruptMotors(GPIO_Pin);
             break;
         case MasterInterrupt_Pin:
             logInfo("Interrupt!");
@@ -37,7 +35,7 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM17)
     {
-        workPlatformPeriodical();
+        periodicalCallback();
     }
 }
 

@@ -60,19 +60,20 @@ void setSpeed(MotorFeedback *handle, double newSpeed)
     handle->speed = newSpeed;
 }
 
-double getSpeed(const MotorFeedback *handle)
+double getSpeed(const struct FeedbackConfiguration* handle)
 {
-    return handle->speed;
+    return handle->feedback->speed;
 }
 
-void handleFeedback(MotorFeedback *handle, double t)
+void handleFeedback(struct FeedbackConfiguration *handle, double t)
 {
     if (t == 0.) return;
 
-    double rounds = getPulses(handle) / PULSES_PER_ROUND;
-    setPulses(handle, 0);
+    MotorFeedback* fb = handle->feedback;
+    double rounds = getPulses(fb) / PULSES_PER_ROUND;
+    setPulses(fb, 0);
 
-    setSpeed(handle, 2.*M_PI*rounds / t);
+    setSpeed(fb, 2.*M_PI*rounds / t);
 }
 
 void configureFeedback(struct FeedbackConfiguration* handle)
@@ -84,13 +85,13 @@ void configureFeedback(struct FeedbackConfiguration* handle)
     handle->feedback->lastPinAEncoderState = HAL_GPIO_ReadPin(handle->encoderAPort,handle->encoderAPin);
 }
 
-void updateFeedback(struct FeedbackConfiguration* handle, uint8_t leftSide)
+void updateFeedback(struct FeedbackConfiguration* handle, bool leftSide)
 {
     GPIO_PinState state = HAL_GPIO_ReadPin(handle->encoderAPort, handle->encoderAPin);
     GPIO_PinState val = HAL_GPIO_ReadPin(handle->encoderBPort, handle->encoderBPin);
     GPIO_PinState val1 = GPIO_PIN_SET, val2 = GPIO_PIN_RESET; //TODO: change name to more meaningful
     MotorFeedback* fb = handle->feedback;
-    if (leftSide == 1 )
+    if (leftSide)
     {
         val1 = GPIO_PIN_RESET;
         val2 = GPIO_PIN_SET;

@@ -20,4 +20,6 @@ void workMotors();
 /// Function called from periodical callback with 1kHz freq
 void periodicalCallback();
 
+void onExtInterruptMotors(uint16_t GPIO_Pin);
+
 #endif //MDC_MOTORS_INTERFACE_H

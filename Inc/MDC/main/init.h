@@ -12,8 +12,6 @@
 
 #include <gpio.h>
 
-#define ONE_WORD 1
-
 typedef enum ModuleName
 {
     Com,

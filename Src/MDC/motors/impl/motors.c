@@ -11,13 +11,14 @@
 #include <MDC/motors/impl/feedback.h>
 #include <MDC/motors/impl/defs.h>
 #include <MDC/motors/impl/handlers/platform_set_motor_speed_req_handler.h>
+#include <MDC/log/interface.h>
 #include <MDC/main/defs.h>
 #include <msg/defs/Message.h>
 #include <msg/message_ids.h>
 
-#include "gpio.h"
-#include "cmsis_os2.h"
-#include "MDC/log/interface.h"
+#include <gpio.h>
+
+#include <cmsis_os2.h>
 
 /*
 
@@ -165,4 +166,20 @@ void control()
     bool left = true;
     updateU(&motorsContext.leftMotorConfiguration.controlConfiguration, uLeft, left);
     updateU(&motorsContext.rightMotorConfiguration.controlConfiguration, uRight, !left);
+}
+
+void onExtInterruptMotorsImpl(uint16_t GPIO_Pin)
+{
+    bool left = true, right = false;
+    switch (GPIO_Pin)
+    {
+        case LeftMotorEncoderB_Pin:
+            updateFeedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, left);
+            break;
+        case RightMotorEncoderB_Pin:
+            updateFeedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, right);
+            break;
+        default:
+            break;
+    }
 }

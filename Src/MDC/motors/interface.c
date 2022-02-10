@@ -26,3 +26,8 @@ void periodicalCallback()
 {
     periodicalCallbackImpl();
 }
+
+void onExtInterruptMotors(uint16_t GPIO_Pin)
+{
+    onExtInterruptMotorsImpl(GPIO_Pin);
+}
