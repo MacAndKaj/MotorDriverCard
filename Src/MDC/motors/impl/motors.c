@@ -107,9 +107,12 @@ void configureMotorsImpl()
         .motorControl2Port = RightMotorIn2_GPIO_Port,
         .motorControl2Pin = RightMotorIn2_Pin,
         .timer = &htim3,
-       .channel = TIM_CHANNEL_1,
+        .channel = TIM_CHANNEL_1,
     };
     motorsContext.rightMotorConfiguration.controlConfiguration = rightMotorConfig;
+
+    configureMotorProcess(&motorsContext.leftMotorConfiguration.controlConfiguration,
+                          &motorsContext.rightMotorConfiguration.controlConfiguration);
 }
 
 void workMotorsImpl()

@@ -11,7 +11,6 @@
 #include <MDC/motors/impl/motor_process.h>
 #include <MDC/main/defs.h>
 
-#include <gpio.h>
 #include <tim.h>
 
 #include <stdlib.h>
@@ -35,6 +34,20 @@ uint32_t getPwmDuty(const struct ControlParameters *handle)
     return handle->pwmDuty;
 }
 
+void setPwmDuty(struct OutputConfiguration *handle, uint32_t newPwmDuty)
+{
+    if (newPwmDuty < handle->stopThreshold)
+    {
+        newPwmDuty = 0;
+    }
+
+    if (newPwmDuty > handle->pwmPeriod)
+    {
+        newPwmDuty = handle->pwmPeriod;
+    }
+    handle->parameters->pwmDuty = newPwmDuty;
+}
+
 void initPwm(TIM_HandleTypeDef* timer, uint32_t channel, uint32_t* pwmSource)
 {
     HAL_StatusTypeDef state = HAL_TIM_PWM_Start_DMA(timer, channel, pwmSource, ONE_WORD);
@@ -44,10 +57,18 @@ void initPwm(TIM_HandleTypeDef* timer, uint32_t channel, uint32_t* pwmSource)
     }
 }
 
-void configureMotorProcess(struct OutputConfiguration* config1, struct OutputConfiguration* config2)
+void configureMotorProcess(struct OutputConfiguration* left, struct OutputConfiguration* right)
 {
-    initPwm(config1->timer, config1->channel, &config1->parameters->pwmDuty);
-    initPwm(config2->timer, config2->channel, &config2->parameters->pwmDuty);
+    left->parameters = malloc(sizeof(struct ControlParameters));
+    left->parameters->pwmDuty = 0;
+    setLeftDirection(left, Forward);
+
+    right->parameters = malloc(sizeof(struct ControlParameters));
+    right->parameters->pwmDuty = 0;
+    setRightDirection(right, Forward);
+
+    initPwm(left->timer, left->channel, &left->parameters->pwmDuty);
+    initPwm(right->timer, right->channel, &right->parameters->pwmDuty);
 
     HAL_StatusTypeDef state = HAL_TIM_Base_Start_IT(&htim17);
     if (state != HAL_OK)
@@ -66,27 +87,13 @@ void updateU(struct OutputConfiguration* config, int64_t newPwmDuty, bool leftMo
     {
         leftMotor ? setLeftDirection(config, FORWARD) : setRightDirection(config, BACKWARD);
     }
-    setPwmDuty(config->parameters, llabs(newPwmDuty));
-}
-
-void setPwmDuty(struct ControlParameters *handle, uint32_t newPwmDuty)
-{
-    if (newPwmDuty < STOP_THRESHOLD)
-    {
-        newPwmDuty = 0;
-    }
-
-    if (newPwmDuty > PWM_PERIOD)
-    {
-        newPwmDuty = PWM_PERIOD;
-    }
-    handle->pwmDuty = newPwmDuty;
+    setPwmDuty(config, llabs(newPwmDuty));
 }
 
 void setLeftDirection(struct OutputConfiguration* u, Dir direction)
 {
     uint32_t pwm_duty_temp = getPwmDuty(u->parameters);
-    setPwmDuty(u->parameters, 0);
+    setPwmDuty(u, 0);
     if (direction == Forward)
     {
         HAL_GPIO_WritePin(u->motorControl1Port, u->motorControl1Pin, GPIO_PIN_RESET);
@@ -97,13 +104,13 @@ void setLeftDirection(struct OutputConfiguration* u, Dir direction)
         HAL_GPIO_WritePin(u->motorControl1Port, u->motorControl1Pin, GPIO_PIN_SET);
         HAL_GPIO_WritePin(u->motorControl2Port, u->motorControl2Pin, GPIO_PIN_RESET);
     }
-    setPwmDuty(u->parameters, pwm_duty_temp);
+    setPwmDuty(u, pwm_duty_temp);
 }
 
 void setRightDirection(struct OutputConfiguration* u, Dir direction)
 {
     uint32_t pwm_duty_temp = getPwmDuty(u->parameters);
-    setPwmDuty(u->parameters, 0);
+    setPwmDuty(u, 0);
     if (direction == Forward)
     {
         HAL_GPIO_WritePin(u->motorControl1Port, u->motorControl1Pin, GPIO_PIN_SET);
@@ -114,5 +121,5 @@ void setRightDirection(struct OutputConfiguration* u, Dir direction)
         HAL_GPIO_WritePin(u->motorControl1Port, u->motorControl1Pin, GPIO_PIN_RESET);
         HAL_GPIO_WritePin(u->motorControl2Port, u->motorControl2Pin, GPIO_PIN_SET);
     }
-    setPwmDuty(u->parameters, pwm_duty_temp);
+    setPwmDuty(u, pwm_duty_temp);
 }
