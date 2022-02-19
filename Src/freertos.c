@@ -160,7 +160,7 @@ void MX_FREERTOS_Init(void) {
   /* add events, ... */
     configureLog(&logsQueueHandle, &logTaskHandle);
     configureRx(&rxTaskHandle, &messagesQueueHandle);
-    configureMotors(&messagesQueueHandle);
+    configureMotors(&motorsTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 
 }

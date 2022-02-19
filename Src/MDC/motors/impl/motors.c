@@ -58,11 +58,14 @@ static struct
 } motorsContext;
 
 
-void onMessageReceived(const Message* message);
+void onMessageReceived(const Message* msg);
 void control();
 
-void configureMotorsImpl()
+void configureMotorsImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
+    motorsContext.messageQueueHandle = messageQueueHandle;
+    motorsContext.threadIdHandle = threadIdHandle;
+
     struct PIDParameters params = {
         .kP = 4000.,
         .kI = 150.,
@@ -78,6 +81,7 @@ void configureMotorsImpl()
         .encoderBPin = LeftMotorEncoderB_Pin,
     };
     motorsContext.leftMotorConfiguration.feedbackConfiguration = leftFeedback;
+    configureFeedback(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
 
     struct FeedbackConfiguration rightFeedback = {
         .encoderAPort = RightMotorEncoderA_GPIO_Port,
@@ -86,6 +90,7 @@ void configureMotorsImpl()
         .encoderBPin = RightMotorEncoderB_Pin,
     };
     motorsContext.rightMotorConfiguration.feedbackConfiguration = rightFeedback;
+    configureFeedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
 
     struct OutputConfiguration leftMotorConfig = {
         .stopThreshold = STOP_THRESHOLD,

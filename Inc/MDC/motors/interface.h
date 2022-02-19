@@ -12,7 +12,7 @@
 #include <cmsis_os2.h>
 
 /// Function to configure MotorsTask
-void configureMotors(osMessageQueueId_t* receivedMessageQueueHandle);
+void configureMotors(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle);
 
 /// Runtime function of MotorsTask
 void workMotors();

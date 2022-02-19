@@ -12,9 +12,9 @@
 
 #include <cmsis_os2.h>
 
-void configureMotors(osMessageQueueId_t* receivedMessageQueueHandle)
+void configureMotors(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
-    configureMotorsImpl();
+    configureMotorsImpl(threadIdHandle, messageQueueHandle);
 }
 
 void workMotors()
