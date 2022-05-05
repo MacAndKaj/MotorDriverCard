@@ -11,7 +11,7 @@
 
 #include <cmsis_os2.h>
 
-void logInfo(const char* logStr, ...);
+void logInfo(const char* logStr);
 
 /// Getter for message size for log queue initialization.
 /// \return size of log line

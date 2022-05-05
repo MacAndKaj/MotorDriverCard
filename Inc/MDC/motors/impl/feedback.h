@@ -24,9 +24,9 @@ struct FeedbackConfiguration
 };
 
 // TODO: change to FeedbackHandle configureFeedback(struct FeedbackConfiguration* handle) to avoid passing later configuration for computing purposes
-void configureFeedback(struct FeedbackConfiguration* handle);
-void updateFeedback(struct FeedbackConfiguration* handle, bool leftSide);
-void handleFeedback(struct FeedbackConfiguration *handle, double t);
-double getSpeed(const struct FeedbackConfiguration* handle);
+void feedback_configure(struct FeedbackConfiguration* handle);
+void feedback_update(struct FeedbackConfiguration* handle, bool leftSide);
+void feedback_handleFeedback(struct FeedbackConfiguration *handle, double t);
+double feedback_getSpeed(const struct FeedbackConfiguration* handle);
 
 #endif //MDC_MOTORS_IMPL_FEEDBACK_H

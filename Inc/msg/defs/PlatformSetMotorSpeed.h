@@ -15,16 +15,13 @@
 #include <stdint.h>
 
 /*
- * lMotor/rMotor - should be set to 1 if values for right/left motor sent, 0 otherwise
  * lSpeedF/rSpeedF - fraction part of speed values
  * lSpeedI/rSpeedI - integer part of speed values
  */
 struct PlatformSetMotorSpeedReq
 {
-    uint8_t lMotor;
     int8_t lSpeedI;
     uint8_t lSpeedF;
-    uint8_t rMotor;
     int8_t rSpeedI;
     uint8_t rSpeedF;
 };
@@ -32,7 +29,6 @@ typedef struct PlatformSetMotorSpeedReq PlatformSetMotorSpeedReq;
 
 struct PlatformSetMotorSpeedResp
 {
-    uint8_t motor;
     enum Status status;
 };
 typedef struct PlatformSetMotorSpeedResp PlatformSetMotorSpeedResp;

@@ -10,6 +10,8 @@
 #ifndef MDC_MAIN_DEFS_H
 #define MDC_MAIN_DEFS_H
 
+#include "cmsis_os.h"
+
 // Max value of counters for timers used in PWM generation.
 #define PWM_PERIOD 10000-1
 

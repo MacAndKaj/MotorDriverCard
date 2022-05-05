@@ -57,18 +57,18 @@ void initPwm(TIM_HandleTypeDef* timer, uint32_t channel, uint32_t* pwmSource)
     }
 }
 
-void configureMotorProcess(struct OutputConfiguration* left, struct OutputConfiguration* right)
+void motor_process_configure(struct OutputConfiguration* config1, struct OutputConfiguration* config2)
 {
-    left->parameters = malloc(sizeof(struct ControlParameters));
-    left->parameters->pwmDuty = 0;
-    setLeftDirection(left, Forward);
+    config1->parameters = malloc(sizeof(struct ControlParameters));
+    config1->parameters->pwmDuty = 0;
+    setLeftDirection(config1, Forward);
 
-    right->parameters = malloc(sizeof(struct ControlParameters));
-    right->parameters->pwmDuty = 0;
-    setRightDirection(right, Forward);
+    config2->parameters = malloc(sizeof(struct ControlParameters));
+    config2->parameters->pwmDuty = 0;
+    setRightDirection(config2, Forward);
 
-    initPwm(left->timer, left->channel, &left->parameters->pwmDuty);
-    initPwm(right->timer, right->channel, &right->parameters->pwmDuty);
+    initPwm(config1->timer, config1->channel, &config1->parameters->pwmDuty);
+    initPwm(config2->timer, config2->channel, &config2->parameters->pwmDuty);
 
     HAL_StatusTypeDef state = HAL_TIM_Base_Start_IT(&htim17);
     if (state != HAL_OK)
@@ -77,17 +77,17 @@ void configureMotorProcess(struct OutputConfiguration* left, struct OutputConfig
     }
 }
 
-void updateU(struct OutputConfiguration* config, int64_t newPwmDuty, bool leftMotor)
+void motor_process_updateU(struct OutputConfiguration* config, int64_t u, bool leftMotor)
 {
-    if (newPwmDuty < 0 && config->parameters->currentDirection == Forward)
+    if (u < 0 && config->parameters->currentDirection == Forward)
     {
         leftMotor ? setLeftDirection(config, BACKWARD) : setRightDirection(config, FORWARD);
     }
-    else if (newPwmDuty > 0 && config->parameters->currentDirection == Backward)
+    else if (u > 0 && config->parameters->currentDirection == Backward)
     {
         leftMotor ? setLeftDirection(config, FORWARD) : setRightDirection(config, BACKWARD);
     }
-    setPwmDuty(config, llabs(newPwmDuty));
+    setPwmDuty(config, llabs(u));
 }
 
 void setLeftDirection(struct OutputConfiguration* u, Dir direction)

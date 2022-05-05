@@ -9,6 +9,7 @@
 
 #include <msg/defs/PlatformSetMotorSpeed.h>
 
-void handlePlatformSetMotorSpeedReq(const PlatformSetMotorSpeedReq* msg);
+void platform_set_motor_speed_req_handler_configure(double *destLSpeed, double *destRSpeed);
+void platform_set_motor_speed_req_handler_handle(const PlatformSetMotorSpeedReq* msg);
 
 #endif //MDC_MOTORS_IMPL_PLATFORM_SET_MOTOR_SPEED_REQ_HANDLER_H

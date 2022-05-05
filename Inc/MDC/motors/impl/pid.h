@@ -27,7 +27,7 @@ struct PIDParameters
 /// \param pidHandle: pointer to PID structure with factors etc
 /// \param error: current error = q_d - q_c
 /// \return new control value
-double evaluate(PIDParameters* pidHandle, double error, double dt);
+double pid_evaluate(PIDParameters* pidHandle, double error, double dt);
 
 ///
 /// \param pidHandle

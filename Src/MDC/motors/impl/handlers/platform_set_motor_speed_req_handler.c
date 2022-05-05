@@ -10,6 +10,17 @@
 
 #include <stdint.h>
 
+struct
+{
+    double *destLSpeed, *destRSpeed;
+} platformSetMotorSpeedReqHandler;
+
+void platform_set_motor_speed_req_handler_configure(double *destLSpeed, double *destRSpeed)
+{
+    platformSetMotorSpeedReqHandler.destRSpeed = destRSpeed;
+    platformSetMotorSpeedReqHandler.destLSpeed = destLSpeed;
+}
+
 double transformSpeed(int8_t speedInt, uint8_t speedFl)
 {
     if (speedInt < 0)
@@ -19,7 +30,8 @@ double transformSpeed(int8_t speedInt, uint8_t speedFl)
     return speedInt + (speedFl * 0.01);
 }
 
-void handlePlatformSetMotorSpeedReq(const PlatformSetMotorSpeedReq* msg)
+void platform_set_motor_speed_req_handler_handle(const PlatformSetMotorSpeedReq* msg)
 {
-    (void*)msg;
+    *platformSetMotorSpeedReqHandler.destRSpeed = transformSpeed(msg->rSpeedI, msg->rSpeedF);
+    *platformSetMotorSpeedReqHandler.destLSpeed = transformSpeed(msg->lSpeedI, msg->lSpeedF);
 }

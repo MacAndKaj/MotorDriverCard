@@ -35,11 +35,8 @@ void onTransmitCompleted()
     onTransmitCompletedImpl();
 }
 
-void logInfo(const char* logStr, ...)
+void logInfo(const char* logStr)
 {
 
-    va_list args;
-    va_start(args, logStr);
-    logImpl("[INFO]", logStr, args);
-    va_end(args);
+    logImpl("[INFO]", logStr);
 }

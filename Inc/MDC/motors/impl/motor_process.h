@@ -30,7 +30,7 @@ struct OutputConfiguration
     struct ControlParameters* parameters;
 };
 
-void configureMotorProcess(struct OutputConfiguration* config1, struct OutputConfiguration* config2);
-void updateU(struct OutputConfiguration* config, int64_t u, bool leftMotor);
+void motor_process_configure(struct OutputConfiguration* config1, struct OutputConfiguration* config2);
+void motor_process_updateU(struct OutputConfiguration* config, int64_t u, bool leftMotor);
 
 #endif //MDC_MOTORS_IMPL_MOTOR_PROVESS_H

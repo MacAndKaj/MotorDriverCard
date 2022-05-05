@@ -21,17 +21,17 @@ void setLastError(struct PIDParameters* pidHandle, double val);
 double getIntegral(const struct PIDParameters* pidHandle);
 void setIntegral(struct PIDParameters* pidHandle, double val);
 
-double evaluate(struct PIDParameters* pid, double error, double dt)
+double pid_evaluate(struct PIDParameters* pidHandle, double error, double dt)
 {
     assert(dt != 0.);
 
-    double derivative = (error - getLastError(pid))/dt;
-    double integral =  getIntegral(pid) + error*dt;
+    double derivative = (error - getLastError(pidHandle)) / dt;
+    double integral = getIntegral(pidHandle) + error * dt;
 
-    double output = (getKP(pid) * error) + (getKI(pid) * integral) + (getKD(pid) * derivative);
+    double output = (getKP(pidHandle) * error) + (getKI(pidHandle) * integral) + (getKD(pidHandle) * derivative);
 
-    setIntegral(pid, integral);
-    setLastError(pid, error);
+    setIntegral(pidHandle, integral);
+    setLastError(pidHandle, error);
 
     return output;
 }

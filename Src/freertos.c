@@ -132,7 +132,7 @@ void MX_FREERTOS_Init(void) {
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
 
   /* creation of logsQueue */
-  logsQueueHandle = osMessageQueueNew (3, getLogMessageSize(), &logsQueue_attributes);
+  logsQueueHandle = osMessageQueueNew (5, getLogMessageSize(), &logsQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

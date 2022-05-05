@@ -16,6 +16,8 @@
 #include <malloc.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <MDC/main/defs.h>
+#include <main.h>
 
 #define PRIORITY_0 0
 #define NO_WAITING 0
@@ -57,33 +59,29 @@ void workLogImpl()
 
     memcpy(logTaskContext.txBuffer, buffer.line, charactersAmountToBeSent);
     send(logTaskContext.txBuffer, charactersAmountToBeSent);
-    free(buffer.line);
 
     osThreadFlagsWait(TRANSFER_COMPLETED_FLAG, osFlagsWaitAll, osWaitForever);
+    free(buffer.line);
 }
 
-void logImpl(const char* severityStr, const char* characters, ...)
+void logImpl(const char* severityStr, const char* characters)
 {
-    char logFormatBuffer[MAX_LINE_LENGTH];
-
+    // TODO: here is problematic part when va_args used, need to be debugged
     size_t severityStrLen = strlen(severityStr);
-    memcpy(logFormatBuffer, severityStr, severityStrLen);
+    size_t charactersLen = strlen(characters);
+    size_t limit = severityStrLen + charactersLen < MAX_LINE_LENGTH ? severityStrLen + charactersLen : MAX_LINE_LENGTH;
 
-    va_list args;
-    va_start(args, characters);
-    vsnprintf(logFormatBuffer + severityStrLen, (MAX_LINE_LENGTH-severityStrLen), characters, args);
-    va_end(args);
-
-    uint8_t logLength = strlen(logFormatBuffer);
-    logFormatBuffer[logLength]='\n';
-    logLength = logLength + 1;
-
-    uint8_t* bytes = malloc(logLength);
-    memcpy(bytes, logFormatBuffer, logLength);
+    uint8_t* bytes = malloc(limit + 1);
+    memcpy(bytes, severityStr, severityStrLen);
+    memcpy(bytes+severityStrLen, characters, charactersLen);
+    bytes[limit] = '\n';
     LogLine message = {
         .line = bytes,
-        .lineLength = logLength
+        .lineLength = limit + 1
     };
 
-    osMessageQueuePut(*logTaskContext.logsQueueHandle, &message, PRIORITY_0, 0);
+    if (osMessageQueuePut(*logTaskContext.logsQueueHandle, &message, PRIORITY_0, 0) != osOK)
+    {
+        Error_Handler();
+    }
 }
