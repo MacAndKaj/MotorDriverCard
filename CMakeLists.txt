@@ -3,11 +3,6 @@ set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_VERSION 1)
 cmake_minimum_required(VERSION 3.18)
 
-# project settings
-project(MotorDriverCard C CXX ASM)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_STANDARD 11)
-
 if (NOT DEFINED TESTS)
     # specify cross compilers and tools
     set(CMAKE_C_COMPILER arm-none-eabi-gcc)
@@ -18,7 +13,9 @@ if (NOT DEFINED TESTS)
     set(CMAKE_OBJDUMP arm-none-eabi-objdump)
     set(SIZE arm-none-eabi-size)
     set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
-
+    
+    project(MotorDriverCard C ASM)
+    set(CMAKE_C_STANDARD 11)
 
     #Uncomment for hardware floating point
     #add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
@@ -81,6 +78,9 @@ if (NOT DEFINED TESTS)
 else ()
     set(CMAKE_C_COMPILER gcc)
     set(CMAKE_CXX_COMPILER g++)
+    
+    project(MotorDriverCard C ASM)
+    set(CMAKE_C_STANDARD 11)
 
     message(STATUS "Building tests for MDC.")
 
