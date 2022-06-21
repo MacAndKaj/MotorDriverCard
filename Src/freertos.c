@@ -29,7 +29,7 @@
 #include <MDC/main/init.h>
 
 #include <msg/defs/Message.h>
-#include <MDC/log/interface.h>
+#include <log/interface.h>
 #include <MDC/rx/interface.h>
 #include "MDC/platform/platform.h"
 
@@ -69,22 +69,10 @@ const osThreadAttr_t rxTask_attributes = {
   .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for logTask */
-osThreadId_t logTaskHandle;
-const osThreadAttr_t logTask_attributes = {
-  .name = "logTask",
-  .stack_size = 200 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
 /* Definitions for messagesQueue */
 osMessageQueueId_t messagesQueueHandle;
 const osMessageQueueAttr_t messagesQueue_attributes = {
   .name = "messagesQueue"
-};
-/* Definitions for logsQueue */
-osMessageQueueId_t logsQueueHandle;
-const osMessageQueueAttr_t logsQueue_attributes = {
-  .name = "logsQueue"
 };
 /* Definitions for messageReceived */
 osEventFlagsId_t messageReceivedHandle;
@@ -99,7 +87,6 @@ const osEventFlagsAttr_t messageReceived_attributes = {
 
 void startMotorControlTask(void *argument);
 void startCommunicationTask(void *argument);
-void startLoggerTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -137,9 +124,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of messagesQueue */
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
 
-  /* creation of logsQueue */
-  logsQueueHandle = osMessageQueueNew (3, getLogMessageSize(), &logsQueue_attributes);
-
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -151,9 +135,6 @@ void MX_FREERTOS_Init(void) {
   /* creation of rxTask */
   rxTaskHandle = osThreadNew(startCommunicationTask, NULL, &rxTask_attributes);
 
-  /* creation of logTask */
-  logTaskHandle = osThreadNew(startLoggerTask, NULL, &logTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -164,7 +145,6 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
-    configureLog(&logsQueueHandle, &logTaskHandle);
     configureRx(&rxTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 
@@ -181,7 +161,7 @@ _Noreturn
 void startMotorControlTask(void *argument)
 {
   /* USER CODE BEGIN startMotorControlTask */
-    logInfo("Start motor control");
+    LOG_INFO("Start motor control\n");
   /* Infinite loop */
   for(;;)
   {
@@ -202,33 +182,13 @@ _Noreturn
 void startCommunicationTask(void *argument)
 {
   /* USER CODE BEGIN startCommunicationTask */
-    logInfo("Start Rx");
+    LOG_INFO("Start Rx\n");
   /* Infinite loop */
   for(;;)
   {
       workRx();
   }
   /* USER CODE END startCommunicationTask */
-}
-
-/* USER CODE BEGIN Header_startLoggerTask */
-/**
-* @brief Function implementing the logTask thread.
-* @param argument: Not used
-* @retval None
-*/
-_Noreturn
-/* USER CODE END Header_startLoggerTask */
-void startLoggerTask(void *argument)
-{
-  /* USER CODE BEGIN startLoggerTask */
-    logInfo("Start logger");
-  /* Infinite loop */
-  for(;;)
-  {
-      workLog();
-  }
-  /* USER CODE END startLoggerTask */
 }
 
 /* Private application code --------------------------------------------------*/

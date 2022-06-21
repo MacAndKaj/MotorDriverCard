@@ -9,7 +9,7 @@
 
 #include <MDC/rx/impl/rx.h>
 
-#include <MDC/log/interface.h>
+#include <log/interface.h>
 #include <MDC/rx/impl/receiver.h>
 #include <MDC/rx/impl/msg_processor.h>
 #include <MDC/rx/impl/msg_distributor.h>
@@ -49,13 +49,13 @@ void workRxImpl()
     {
         case FrameCtrlData:
         {
-            logInfo("Waiting for new message to be received");
+            LOG_INFO("workRxImpl: Waiting for new message to be received");
             processFrameCtrlData(rxBuffer.data);
             break;
         }
         case UserData:
         {
-            logInfo("__FUNCTION__|Received message");
+            LOG_INFO("workRxImpl: Received message");
             Message* msg = processUserData(rxBuffer.data);
             forwardMessage(msg);
             if (msg != NULL)
@@ -66,7 +66,7 @@ void workRxImpl()
         }
         default:
         {
-            logInfo("Incorrect data type");
+            LOG_INFO("workRxImpl: Incorrect data type");
         }
     }
 

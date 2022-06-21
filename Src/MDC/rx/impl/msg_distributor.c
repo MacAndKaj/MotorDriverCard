@@ -7,7 +7,7 @@
   ******************************************************************************
   */
 #include <MDC/rx/impl/msg_distributor.h>
-#include "MDC/log/interface.h"
+#include <log/interface.h>
 
 struct
 {
@@ -24,6 +24,6 @@ void forwardMessage(const Message* msg)
     osStatus_t status = osMessageQueuePut(*msgDistributorContext.messageQueueHandle, msg, 0, 0);
     if (status != osOK)
     {
-       logInfo("Error occurred when putting message to queue");
+        LOG_INFO("Error occurred when putting message to queue");
     }
 }

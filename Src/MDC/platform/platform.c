@@ -17,8 +17,7 @@
 #include <MDC/platform/motor_info.h>
 #include <MDC/platform/motor_control.h>
 #include <MDC/main/defs.h>
-#include <stdio.h>
-#include <MDC/log/interface.h>
+#include <log/interface.h>
 
 double speedUpdateTime = 1./SPEED_UPDATE_FREQ;
 
@@ -80,7 +79,7 @@ void workPlatform(osMessageQueueId_t* messageQueueHandle)
     static Message buffer;
     if (osMessageQueueGet(*messageQueueHandle, &buffer, 0, 0) == osOK)
     {
-        logInfo("New message to platform");
+        LOG_INFO("New message to platform");
         onMessageReceivedPlatform(&buffer);
     }
 }
@@ -149,25 +148,25 @@ void toggleSpeed(PlatformSetMotorSpeedReq* req)
     if (req->motor == 0)
     {
         platformContext->leftMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
-        logInfo("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
+        LOG_INFO_V("New left speed: %f\r\n", platformContext->leftMotorProperties.speed);
     }
     else
     {
         platformContext->rightMotorProperties.speed = transformSpeed(req->speedI, req->speedF);
-        logInfo("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
+        LOG_INFO_V("New right speed: %f\r\n", platformContext->rightMotorProperties.speed);
     }
 }
 
 void onMessageReceivedPlatform(struct Message* message)
 {
-    logInfo("[platform]Message with id=%d received.\r\n", message->messageId);
+    LOG_INFO_V("[platform]Message with id=%d received.\r\n", message->messageId);
     switch (message->messageId)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
             toggleSpeed(&message->msg.platformSetMotorSpeedReq);
             break;
         default:
-            logInfo("Unknown messageId, ignoring!\r\n");
+            LOG_INFO("Unknown messageId, ignoring!\r\n");
     }
 }
 

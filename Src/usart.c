@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2021 STMicroelectronics.
+  * <h2><center>&copy; Copyright (c) 2022 STMicroelectronics.
   * All rights reserved.</center></h2>
   *
   * This software component is licensed by ST under Ultimate Liberty license
@@ -27,7 +27,6 @@
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart4;
 DMA_HandleTypeDef hdma_usart2_rx;
-DMA_HandleTypeDef hdma_usart4_tx;
 
 /* USART2 init function */
 
@@ -81,7 +80,8 @@ void MX_USART4_UART_Init(void)
   huart4.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart4.Init.OverSampling = UART_OVERSAMPLING_16;
   huart4.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
-  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  huart4.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_RXOVERRUNDISABLE_INIT;
+  huart4.AdvancedInit.OverrunDisable = UART_ADVFEATURE_OVERRUN_DISABLE;
   if (HAL_UART_Init(&huart4) != HAL_OK)
   {
     Error_Handler();
@@ -160,23 +160,6 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF4_USART4;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-    /* USART4 DMA Init */
-    /* USART4_TX Init */
-    hdma_usart4_tx.Instance = DMA1_Channel7;
-    hdma_usart4_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_usart4_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_usart4_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_usart4_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_usart4_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_usart4_tx.Init.Mode = DMA_NORMAL;
-    hdma_usart4_tx.Init.Priority = DMA_PRIORITY_MEDIUM;
-    if (HAL_DMA_Init(&hdma_usart4_tx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart4_tx);
-
     /* USART4 interrupt Init */
     HAL_NVIC_SetPriority(USART3_4_IRQn, 3, 0);
     HAL_NVIC_EnableIRQ(USART3_4_IRQn);
@@ -225,9 +208,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     PA1     ------> USART4_RX
     */
     HAL_GPIO_DeInit(GPIOA, GPIO_PIN_0|GPIO_PIN_1);
-
-    /* USART4 DMA DeInit */
-    HAL_DMA_DeInit(uartHandle->hdmatx);
 
     /* USART4 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART3_4_IRQn);

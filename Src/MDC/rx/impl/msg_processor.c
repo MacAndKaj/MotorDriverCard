@@ -17,7 +17,7 @@
 
 #include <stddef.h>
 #include <malloc.h>
-#include "MDC/log/interface.h"
+#include <log/interface.h>
 
 
 struct
@@ -75,7 +75,7 @@ void processFrameCtrlData(const uint8_t* data)
     {
         msgControl.nextDataType = FrameCtrlData;
         msgControl.nextMessageSize = HEADER_SIZE;
-        logInfo("FrameCtrlData incorrect!");
+        LOG_INFO("FrameCtrlData incorrect!");
         return;
     }
     msgControl.nextDataType = UserData;
@@ -86,7 +86,7 @@ void processFrameCtrlData(const uint8_t* data)
     {
         msgControl.nextDataType = FrameCtrlData;
         msgControl.nextMessageSize = HEADER_SIZE;
-        logInfo("Unknown message!");
+        LOG_INFO("Unknown message!");
     }
 }
 
@@ -96,7 +96,7 @@ struct Message* processUserData(uint8_t* data)
 
     if (deserializedMsg == NULL)
     {
-        logInfo("Unknown message");
+        LOG_INFO("Unknown message");
     }
     msgControl.nextDataType = FrameCtrlData;
     msgControl.nextMessageSize = HEADER_SIZE;

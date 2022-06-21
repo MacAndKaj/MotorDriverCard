@@ -11,7 +11,6 @@
 #include <MDC/main/init.h>
 #include <MDC/platform/motor_control.h>
 #include <MDC/platform/platform.h>
-#include <MDC/log/interface.h>
 #include <MDC/rx/interface.h>
 #include <tim.h>
 
@@ -56,8 +55,6 @@ void onExtInterrupt(uint16_t GPIO_Pin)
             rightMotorEncoderCallback();
             break;
         case MasterInterrupt_Pin:
-            logInfo("Interrupt!");
-            break;
         default:
             break;
     }
@@ -77,13 +74,5 @@ void onRxCpltCallback(UART_HandleTypeDef *huart)
     if (huart->Instance == USART2)
     {
         onReceptionCompleted();
-    }
-}
-
-void onTxCpltCallback(UART_HandleTypeDef *huart)
-{
-    if (huart->Instance == USART4)
-    {
-        onTransmitCompleted();
     }
 }
