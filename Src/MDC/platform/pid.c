@@ -11,7 +11,8 @@
 
 #include <MDC/platform/pid.h>
 
-#include <assert.h>
+#include <float.h>
+#include <stdlib.h>
 
 double getKP(const PID* pidHandle);
 double getKI(const PID* pidHandle);
@@ -21,9 +22,25 @@ void setLastError(PID* pidHandle, double val);
 double getIntegral(const PID* pidHandle);
 void setIntegral(PID* pidHandle, double val);
 
+PID* createPid(double pP, double pI, double pD)
+{
+    PID* ret = malloc(sizeof(PID));
+    ret->kP = pP;
+    ret->kI = pI;
+    ret->kD = pD;
+
+    resetPid(ret);
+
+    return ret;
+}
+
 double evaluate(PID* pid, double error, double dt)
 {
-    assert(dt != 0.);
+    if(abs(dt - 0.) < DBL_EPSILON)
+    {
+        return error;
+    }
+
 
     double derivative = (error - getLastError(pid))/dt;
     double integral =  getIntegral(pid) + error*dt;
