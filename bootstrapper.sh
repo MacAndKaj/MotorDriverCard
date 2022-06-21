@@ -5,6 +5,7 @@ STARTING_DIR=$(pwd)
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 STM32CUBE_LOCATION="$SCRIPT_DIR"/build
 TARGET_NAME=MotorDriverCard.elf
+alias python='python3.9'
 
 . config/config.env
 
