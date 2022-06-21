@@ -21,7 +21,7 @@ function prepare_fun() {
 
     cd "$SCRIPT_DIR" || exit
 
-    python3 env_configuration.py -p "$STM32CUBE_LOCATION"
+    python env_configuration.py -p "$STM32CUBE_LOCATION"
     if [[ ! $? = 0 ]]
     then
       echo "Exit code of $?, failure"
