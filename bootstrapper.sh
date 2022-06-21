@@ -5,7 +5,6 @@ STARTING_DIR=$(pwd)
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 STM32CUBE_LOCATION="$SCRIPT_DIR"/build
 TARGET_NAME=MotorDriverCard.elf
-alias python='python3.9'
 
 . config/config.env
 
@@ -22,7 +21,7 @@ function prepare_fun() {
 
     cd "$SCRIPT_DIR" || exit
 
-    python env_configuration.py -p "$STM32CUBE_LOCATION"
+    python3.9 env_configuration.py -p "$STM32CUBE_LOCATION"
     if [[ ! $? = 0 ]]
     then
       echo "Exit code of $?, failure"
