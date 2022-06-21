@@ -23,6 +23,13 @@ struct PIDParameters
 };
  typedef struct PIDParameters PIDParameters; 
 
+///Constructor of PID structures
+/// \param kP: initial value of Proporiontal factor
+/// \param kI: initial value of integral factor
+/// \param kD: initial value of derivative factor
+/// \return pointer to new PID structure
+PID* createPid(double kP, double kI, double kD);
+
 ///Evaluate control value from PID handle, current error and timestamp.
 /// \param pidHandle: pointer to PID structure with factors etc
 /// \param error: current error = q_d - q_c

@@ -170,11 +170,6 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef* huart)
     onRxCpltCallback(huart);
 }
 
-void HAL_UART_TxCpltCallback (UART_HandleTypeDef* huart)
-{
-    onTxCpltCallback(huart);
-}
-
 /* USER CODE END 4 */
 
 /**

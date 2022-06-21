@@ -1,0 +1,21 @@
+:name: Motur
+:description: Motur application on STM32F072RBT6
+
+using sysbus
+$name?="STM32F0_Motur"
+mach create $name
+machine LoadPlatformDescription @test/sct/config/stm32f072.repl
+logLevel 0
+
+
+cpu PerformanceInMips 125
+
+$bin?=@build/MotorDriverCard.elf
+
+macro reset
+"""
+    sysbus LoadELF $bin
+"""
+
+runMacro $reset
+

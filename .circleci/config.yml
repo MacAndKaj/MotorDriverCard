@@ -12,6 +12,11 @@ jobs:
       - run:
           name: build-app
           command: ./bootstrapper.sh build;
+      - store_artifacts:
+          path: /root/project/build/MotorDriverCard.hex
+      - store_artifacts:
+          path: /root/project/build/MotorDriverCard.bin
+
 
 workflows:
   MDC-workflow:

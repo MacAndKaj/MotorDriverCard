@@ -43,4 +43,5 @@ Middlewares/
 
 # Compilation
 cmake-build*/
+cmake_build*/
 build/
