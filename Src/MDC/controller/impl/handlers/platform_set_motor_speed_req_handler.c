@@ -6,7 +6,7 @@
   * @brief          : <brief>
   ******************************************************************************
   */
-#include <MDC/motors/impl/handlers/platform_set_motor_speed_req_handler.h>
+#include <MDC/controller/impl/handlers/platform_set_motor_speed_req_handler.h>
 
 #include <stdint.h>
 

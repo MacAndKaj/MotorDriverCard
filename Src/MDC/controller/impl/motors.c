@@ -6,35 +6,20 @@
   * @brief          : <brief>
   ******************************************************************************
   */
-#include <MDC/motors/impl/pid.h>
-#include <MDC/motors/impl/motor_process.h>
-#include <MDC/motors/impl/feedback.h>
-#include <MDC/motors/impl/defs.h>
-#include <MDC/motors/impl/message_dispatch.h>
-#include <MDC/log/interface.h>
+#include <MDC/controller/impl/pid.h>
+#include <MDC/controller/impl/motor_process.h>
+#include <MDC/controller/impl/feedback.h>
+#include <MDC/controller/impl/defs.h>
+#include <MDC/controller/impl/message_dispatch.h>
 #include <MDC/main/defs.h>
+
+#include <log/interface.h>
 #include <msg/defs/Message.h>
 
 #include <gpio.h>
 
 #include <cmsis_os2.h>
-#include <MDC/motors/impl/handlers/platform_set_motor_speed_req_handler.h>
-
-/*
-
-          ***           +-------------+      +-------------+
-       + *    *   e(t)  |  Controller | u(t) |  Process    |  y(t)              
-r(t)--->*      *------- |   (PID)     |----->|  (Motors)   |--------+--------->
-         *    *         |             |      |             |        |
-          ***           +-------------+      +-------------+        |
-           ^ -                                                      |
-           |                                                        |
-           |                 +-------------+                        |
-           |                 |             |                        |
-           +-----------------|  Feedback   |<-----------------------+
-                             |             |
-                             +-------------+
-*/
+#include <MDC/controller/impl/handlers/platform_set_motor_speed_req_handler.h>
 
 typedef struct
 {
@@ -57,23 +42,23 @@ static struct
     osThreadId_t* threadIdHandle;
 } motorsContext;
 
-void periodicalCallbackImpl()
+void periodical_callback_controller_impl()
 {
-    feedback_handleFeedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, SPEED_UPDATE_PERIOD);
-    feedback_handleFeedback(&motorsContext.leftMotorConfiguration.feedbackConfiguration, SPEED_UPDATE_PERIOD);
+    handle_feedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, SPEED_UPDATE_PERIOD);
+    handle_feedback(&motorsContext.leftMotorConfiguration.feedbackConfiguration, SPEED_UPDATE_PERIOD);
     osThreadFlagsSet(*motorsContext.threadIdHandle, PROBING_TIMEOUT_CALLBACK);
 }
 
-void onExtInterruptMotorsImpl(uint16_t GPIO_Pin)
+void on_ext_interrupt_controller_impl(uint16_t GPIO_Pin)
 {
     bool left = true, right = false;
     switch (GPIO_Pin)
     {
         case LeftMotorEncoderB_Pin:
-            feedback_update(&motorsContext.rightMotorConfiguration.feedbackConfiguration, left);
+            update_feedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, left);
             break;
         case RightMotorEncoderB_Pin:
-            feedback_update(&motorsContext.rightMotorConfiguration.feedbackConfiguration, right);
+            update_feedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration, right);
             break;
         default:
             break;
@@ -82,20 +67,14 @@ void onExtInterruptMotorsImpl(uint16_t GPIO_Pin)
 
 void control();
 
-void configureMotorsImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
+void configure_motors_impl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
     motorsContext.messageQueueHandle = messageQueueHandle;
     motorsContext.threadIdHandle = threadIdHandle;
     motorsContext.rightMotorConfiguration.currentValues.refSpeed = 0;
     motorsContext.leftMotorConfiguration.currentValues.refSpeed = 0;
-
-    struct PIDParameters params = {
-        .kP = 4000.,
-        .kI = 150.,
-        .kD = 30.,
-    };
-    motorsContext.leftMotorConfiguration.controllerParameters = params;
-    motorsContext.rightMotorConfiguration.controllerParameters = params;
+    motorsContext.leftMotorConfiguration.controllerParameters = create_pid(4000., 150., 30.);
+    motorsContext.rightMotorConfiguration.controllerParameters = create_pid(4000., 150., 30.);
 
     struct FeedbackConfiguration leftFeedback = {
         .encoderAPort = LeftMotorEncoderA_GPIO_Port,
@@ -104,7 +83,7 @@ void configureMotorsImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messa
         .encoderBPin = LeftMotorEncoderB_Pin,
     };
     motorsContext.leftMotorConfiguration.feedbackConfiguration = leftFeedback;
-    feedback_configure(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
+    configure_feedback(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
 
     struct FeedbackConfiguration rightFeedback = {
         .encoderAPort = RightMotorEncoderA_GPIO_Port,
@@ -113,7 +92,7 @@ void configureMotorsImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messa
         .encoderBPin = RightMotorEncoderB_Pin,
     };
     motorsContext.rightMotorConfiguration.feedbackConfiguration = rightFeedback;
-    feedback_configure(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
+    configure_feedback(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
 
     struct OutputConfiguration leftMotorConfig = {
         .stopThreshold = STOP_THRESHOLD,
@@ -145,7 +124,7 @@ void configureMotorsImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messa
                                                    &motorsContext.rightMotorConfiguration.currentValues.refSpeed);
 }
 
-void workMotorsImpl()
+void work_motors_impl()
 {
     if (osThreadFlagsWait(PROBING_TIMEOUT_CALLBACK, osFlagsWaitAll, 0) == osOK)
     {
@@ -155,7 +134,7 @@ void workMotorsImpl()
     static Message buffer;
     if (osMessageQueueGet(*motorsContext.messageQueueHandle, &buffer, 0, 0) == osOK)
     {
-        logInfo("New message to motors");
+        LOG_INFO("New message to motors");
         message_dispatch_onMessageReceived(&buffer);
     }
     osThreadYield();
@@ -165,10 +144,10 @@ void control()
 {
     double leftControlError =
         motorsContext.leftMotorConfiguration.currentValues.refSpeed -
-        feedback_getSpeed(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
+            get_speed(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
     double rightControlError =
         motorsContext.rightMotorConfiguration.currentValues.refSpeed -
-        feedback_getSpeed(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
+            get_speed(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
 
     int64_t uLeft = pid_evaluate(&motorsContext.leftMotorConfiguration.controllerParameters,
                                  leftControlError,
@@ -178,6 +157,6 @@ void control()
                                   SPEED_UPDATE_PERIOD);
 
     bool left = true;
-    motor_process_updateU(&motorsContext.leftMotorConfiguration.controlConfiguration, uLeft, left);
-    motor_process_updateU(&motorsContext.rightMotorConfiguration.controlConfiguration, uRight, !left);
+    motor_process_update_u(&motorsContext.leftMotorConfiguration.controlConfiguration, uLeft, left);
+    motor_process_update_u(&motorsContext.rightMotorConfiguration.controlConfiguration, uRight, !left);
 }

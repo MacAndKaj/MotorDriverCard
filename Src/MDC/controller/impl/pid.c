@@ -9,7 +9,7 @@
   ******************************************************************************
   */
 
-#include <MDC/motors/impl/pid.h>
+#include <MDC/controller/impl/pid.h>
 
 #include <assert.h>
 
@@ -20,6 +20,12 @@ double getLastError(const struct PIDParameters* pidHandle);
 void setLastError(struct PIDParameters* pidHandle, double val);
 double getIntegral(const struct PIDParameters* pidHandle);
 void setIntegral(struct PIDParameters* pidHandle, double val);
+
+struct PIDParameters create_pid(double kP, double kI, double kD)
+{
+    struct PIDParameters tmp = {.kP=kP, .kI=kI, .kD=kD, .vI=0, .lastError=0};
+    return tmp;
+}
 
 double pid_evaluate(struct PIDParameters* pidHandle, double error, double dt)
 {
@@ -71,7 +77,7 @@ void setIntegral(struct PIDParameters* pidHandle, double val)
     pidHandle->vI = val;
 }
 
-void resetPid(struct PIDParameters* pidHandle)
+void reset_pid(struct PIDParameters* pidHandle)
 {
     pidHandle->vI = 0;
     pidHandle->lastError = 0;

@@ -5,8 +5,8 @@
   *                   This file contains the motor struct definition.
   ******************************************************************************
   */
-#ifndef MDC_MOTORS_IMPL_FEEDBACK_H
-#define MDC_MOTORS_IMPL_FEEDBACK_H
+#ifndef MDC_CONTROLLER_IMPL_FEEDBACK_H
+#define MDC_CONTROLLER_IMPL_FEEDBACK_H
 
 #include <gpio.h>
 
@@ -24,9 +24,9 @@ struct FeedbackConfiguration
 };
 
 // TODO: change to FeedbackHandle configureFeedback(struct FeedbackConfiguration* handle) to avoid passing later configuration for computing purposes
-void feedback_configure(struct FeedbackConfiguration* handle);
-void feedback_update(struct FeedbackConfiguration* handle, bool leftSide);
-void feedback_handleFeedback(struct FeedbackConfiguration *handle, double t);
-double feedback_getSpeed(const struct FeedbackConfiguration* handle);
+void configure_feedback(struct FeedbackConfiguration* handle);
+void update_feedback(struct FeedbackConfiguration* handle, bool leftSide);
+void handle_feedback(struct FeedbackConfiguration *handle, double t);
+double get_speed(const struct FeedbackConfiguration* handle);
 
-#endif //MDC_MOTORS_IMPL_FEEDBACK_H
+#endif //MDC_CONTROLLER_IMPL_FEEDBACK_H

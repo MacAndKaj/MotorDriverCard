@@ -2,16 +2,9 @@
   * Copyright (c) 2022 M. Kajdak. All rights reserved.
   *
   ******************************************************************************
-  * @file           : message_dispatch.h
+  * @file           : interface.c
   * @brief          : Header for <source file name> file.
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MDC_MOTORS_IMPL_MESSAGE_DISPATCH_H
-#define MDC_MOTORS_IMPL_MESSAGE_DISPATCH_H
-
-struct Message;
-
-void message_dispatch_onMessageReceived(const struct Message* msg);
-
-#endif //MDC_MOTORS_IMPL_MESSAGE_DISPATCH_H
+  

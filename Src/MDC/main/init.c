@@ -9,7 +9,7 @@
   */
 
 #include <MDC/main/init.h>
-#include <MDC/motors/interface.h>
+#include <MDC/controller/interface.h>
 #include <MDC/rx/interface.h>
 #include <tim.h>
 
@@ -19,7 +19,7 @@ void onExtInterrupt(uint16_t GPIO_Pin)
     {
         case LeftMotorEncoderB_Pin:
         case RightMotorEncoderB_Pin:
-            onExtInterruptMotors(GPIO_Pin);
+            on_ext_interrupt_controller(GPIO_Pin);
             break;
         case MasterInterrupt_Pin:
         default:
@@ -32,7 +32,7 @@ void onPeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim->Instance == TIM17)
     {
-        periodicalCallback();
+        periodical_callback_controller();
     }
 }
 

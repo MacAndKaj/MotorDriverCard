@@ -6,7 +6,7 @@
   * @brief          : Sources for motor.h file.
   ******************************************************************************
   */
-#include <MDC/motors/impl/feedback.h>
+#include <MDC/controller/impl/feedback.h>
 
 #include <MDC/main/defs.h>
 
@@ -60,12 +60,12 @@ void setSpeed(MotorFeedback *handle, double newSpeed)
     handle->speed = newSpeed;
 }
 
-double feedback_getSpeed(const struct FeedbackConfiguration* handle)
+double get_speed(const struct FeedbackConfiguration* handle)
 {
     return handle->feedback->speed;
 }
 
-void feedback_handleFeedback(struct FeedbackConfiguration *handle, double t)
+void handle_feedback(struct FeedbackConfiguration *handle, double t)
 {
     if (t == 0.) return;
 
@@ -76,7 +76,7 @@ void feedback_handleFeedback(struct FeedbackConfiguration *handle, double t)
     setSpeed(fb, 2.*M_PI*rounds / t);
 }
 
-void feedback_configure(struct FeedbackConfiguration* handle)
+void configure_feedback(struct FeedbackConfiguration* handle)
 {
     handle->feedback = malloc(sizeof(MotorFeedback));
     setForward(handle->feedback);
@@ -85,7 +85,7 @@ void feedback_configure(struct FeedbackConfiguration* handle)
     handle->feedback->lastPinAEncoderState = HAL_GPIO_ReadPin(handle->encoderAPort,handle->encoderAPin);
 }
 
-void feedback_update(struct FeedbackConfiguration* handle, bool leftSide)
+void update_feedback(struct FeedbackConfiguration* handle, bool leftSide)
 {
     GPIO_PinState state = HAL_GPIO_ReadPin(handle->encoderAPort, handle->encoderAPin);
     GPIO_PinState val = HAL_GPIO_ReadPin(handle->encoderBPort, handle->encoderBPin);

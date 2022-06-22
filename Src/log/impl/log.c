@@ -11,7 +11,7 @@
 #include <errno.h>
 #include <sys/unistd.h>
 
-#define TIMEOUT 1000
+#define TIMEOUT 10000
 
 int _write(int file, char *ptr, int len)
 {
@@ -22,7 +22,7 @@ int _write(int file, char *ptr, int len)
     }
 
     // arbitrary timeout 1000
-    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, TIMEOUT);
+    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart4, (uint8_t*)ptr, len, TIMEOUT);
 
     return (status == HAL_OK ? len : 0);
 }

@@ -31,7 +31,7 @@
 #include <msg/defs/Message.h>
 #include <log/interface.h>
 #include <MDC/rx/interface.h>
-#include <MDC/motors/interface.h>
+#include <MDC/controller/interface.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,10 +53,10 @@
 /* USER CODE BEGIN Variables */
 
 /* USER CODE END Variables */
-/* Definitions for motorsTask */
-osThreadId_t motorsTaskHandle;
-const osThreadAttr_t motorsTask_attributes = {
-  .name = "motorsTask",
+/* Definitions for controllerTask */
+osThreadId_t controllerTaskHandle;
+const osThreadAttr_t controllerTask_attributes = {
+  .name = "controllerTask",
   .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
@@ -66,6 +66,13 @@ const osThreadAttr_t rxTask_attributes = {
   .name = "rxTask",
   .stack_size = 200 * 4,
   .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for feedbackTask */
+osThreadId_t feedbackTaskHandle;
+const osThreadAttr_t feedbackTask_attributes = {
+  .name = "feedbackTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
 };
 /* Definitions for messagesQueue */
 osMessageQueueId_t messagesQueueHandle;
@@ -83,8 +90,9 @@ const osEventFlagsAttr_t messageReceived_attributes = {
 
 /* USER CODE END FunctionPrototypes */
 
-void startMotorControlTask(void *argument);
+void startControllerTask(void *argument);
 void startCommunicationTask(void *argument);
+void startFeedbackTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -123,11 +131,14 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */
-  /* creation of motorsTask */
-  motorsTaskHandle = osThreadNew(startMotorControlTask, NULL, &motorsTask_attributes);
+  /* creation of controllerTask */
+  controllerTaskHandle = osThreadNew(startControllerTask, NULL, &controllerTask_attributes);
 
   /* creation of rxTask */
   rxTaskHandle = osThreadNew(startCommunicationTask, NULL, &rxTask_attributes);
+
+  /* creation of feedbackTask */
+  feedbackTaskHandle = osThreadNew(startFeedbackTask, NULL, &feedbackTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -140,29 +151,28 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
     configureRx(&rxTaskHandle, &messagesQueueHandle);
-    configureMotors(&motorsTaskHandle, &messagesQueueHandle);
+    configure_controller(&controllerTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 
 }
 
-/* USER CODE BEGIN Header_startMotorControlTask */
+/* USER CODE BEGIN Header_startControllerTask */
 /**
-  * @brief  Function implementing the motorCtrlTask thread.
+  * @brief  Function implementing the controllerTask thread.
   * @param  argument: Not used
   * @retval None
   */
-_Noreturn
-/* USER CODE END Header_startMotorControlTask */
-void startMotorControlTask(void *argument)
+/* USER CODE END Header_startControllerTask */
+void startControllerTask(void *argument)
 {
-  /* USER CODE BEGIN startMotorControlTask */
-    LOG_INFO("Start motor control\n");
+  /* USER CODE BEGIN startControllerTask */
+    LOG_INFO("Start controller\n");
   /* Infinite loop */
   for(;;)
   {
-      workMotors();
+      work_controller();
   }
-  /* USER CODE END startMotorControlTask */
+  /* USER CODE END startControllerTask */
 }
 
 /* USER CODE BEGIN Header_startCommunicationTask */
@@ -183,6 +193,25 @@ void startCommunicationTask(void *argument)
       workRx();
   }
   /* USER CODE END startCommunicationTask */
+}
+
+/* USER CODE BEGIN Header_startFeedbackTask */
+/**
+* @brief Function implementing the feedbackTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_startFeedbackTask */
+void startFeedbackTask(void *argument)
+{
+  /* USER CODE BEGIN startFeedbackTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+      break;
+  }
+  /* USER CODE END startFeedbackTask */
 }
 
 /* Private application code --------------------------------------------------*/

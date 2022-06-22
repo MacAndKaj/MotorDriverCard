@@ -8,8 +8,8 @@
   *                   functions declarations.
   ******************************************************************************
   */
-#ifndef MOTORDRIVER_PLATFORM_PID_H
-#define MOTORDRIVER_PLATFORM_PID_H
+#ifndef MDC_CONTROLLER_IMPL_PID_H
+#define MDC_CONTROLLER_IMPL_PID_H
 
 struct PIDParameters
 {
@@ -17,27 +17,25 @@ struct PIDParameters
     double kI;      // I factor(integral)
     double kD;      // D factor(derivative)
 
-    // TODO: leave public only PID parameters(kP,kI,kD) and rest should be hidden
     double lastError;    // Last value of error used to compute new value of derivative.
     double vI;           // Variable to keep integral of error
 };
- typedef struct PIDParameters PIDParameters; 
 
 ///Constructor of PID structures
 /// \param kP: initial value of Proporiontal factor
 /// \param kI: initial value of integral factor
 /// \param kD: initial value of derivative factor
 /// \return pointer to new PID structure
-PID* createPid(double kP, double kI, double kD);
+struct PIDParameters create_pid(double kP, double kI, double kD);
 
 ///Evaluate control value from PID handle, current error and timestamp.
 /// \param pidHandle: pointer to PID structure with factors etc
 /// \param error: current error = q_d - q_c
 /// \return new control value
-double pid_evaluate(PIDParameters* pidHandle, double error, double dt);
+double pid_evaluate(struct PIDParameters* pidHandle, double error, double dt);
 
 ///
 /// \param pidHandle
-void resetPid(PIDParameters* pidHandle);
+void reset_pid(struct PIDParameters* pidHandle);
 
-#endif //MOTORDRIVER_PLATFORM_PID_H
+#endif //MDC_CONTROLLER_IMPL_PID_H

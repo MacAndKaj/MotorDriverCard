@@ -7,8 +7,8 @@
   *                   This file contains <what does the file contains>
   ******************************************************************************
   */
-#ifndef MDC_MOTORS_IMPL_MOTOR_PROVESS_H
-#define MDC_MOTORS_IMPL_MOTOR_PROVESS_H
+#ifndef MDC_CONTROLLER_IMPL_MOTOR_PROVESS_H
+#define MDC_CONTROLLER_IMPL_MOTOR_PROVESS_H
 
 #include <tim.h>
 
@@ -31,6 +31,6 @@ struct OutputConfiguration
 };
 
 void motor_process_configure(struct OutputConfiguration* config1, struct OutputConfiguration* config2);
-void motor_process_updateU(struct OutputConfiguration* config, int64_t u, bool leftMotor);
+void motor_process_update_u(struct OutputConfiguration* config, int64_t u, bool leftMotor);
 
-#endif //MDC_MOTORS_IMPL_MOTOR_PROVESS_H
+#endif //MDC_CONTROLLER_IMPL_MOTOR_PROVESS_H
