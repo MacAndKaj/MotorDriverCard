@@ -14,9 +14,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+void configure_log(osMutexId_t* logMutex)
+{
+    set_log_mutex(logMutex);
+}
+
 void logger(const char* logStr)
 {
-    printf(logStr);
+    printf("%s", logStr);
 }
 
 void logger_args(const char* logStr, ...)

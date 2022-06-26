@@ -30,11 +30,14 @@
 
 #include <msg/defs/Message.h>
 #include <log/interface.h>
-#include <MDC/rx/interface.h>
+#include <MDC/feedback//interface.h>
 #include <MDC/controller/interface.h>
+#include <MDC/rx/interface.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticQueue_t osStaticMessageQDef_t;
+typedef StaticSemaphore_t osStaticMutexDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -79,6 +82,25 @@ osMessageQueueId_t messagesQueueHandle;
 const osMessageQueueAttr_t messagesQueue_attributes = {
   .name = "messagesQueue"
 };
+/* Definitions for speedMeasQueue */
+osMessageQueueId_t speedMeasQueueHandle;
+uint8_t speedMeasQueueBuffer[ 1 * sizeof( double ) ];
+osStaticMessageQDef_t speedMeasQueueControlBlock;
+const osMessageQueueAttr_t speedMeasQueue_attributes = {
+  .name = "speedMeasQueue",
+  .cb_mem = &speedMeasQueueControlBlock,
+  .cb_size = sizeof(speedMeasQueueControlBlock),
+  .mq_mem = &speedMeasQueueBuffer,
+  .mq_size = sizeof(speedMeasQueueBuffer)
+};
+/* Definitions for logMutex */
+osMutexId_t logMutexHandle;
+osStaticMutexDef_t logMutexControlBlock;
+const osMutexAttr_t logMutex_attributes = {
+  .name = "logMutex",
+  .cb_mem = &logMutexControlBlock,
+  .cb_size = sizeof(logMutexControlBlock),
+};
 /* Definitions for messageReceived */
 osEventFlagsId_t messageReceivedHandle;
 const osEventFlagsAttr_t messageReceived_attributes = {
@@ -109,6 +131,9 @@ void MX_FREERTOS_Init(void) {
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
   /* USER CODE END Init */
+  /* Create the mutex(es) */
+  /* creation of logMutex */
+  logMutexHandle = osMutexNew(&logMutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
@@ -125,6 +150,9 @@ void MX_FREERTOS_Init(void) {
   /* Create the queue(s) */
   /* creation of messagesQueue */
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
+
+  /* creation of speedMeasQueue */
+  speedMeasQueueHandle = osMessageQueueNew (1, sizeof(double), &speedMeasQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -144,13 +172,14 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
-  /* Create the event(s) */
   /* creation of messageReceived */
   messageReceivedHandle = osEventFlagsNew(&messageReceived_attributes);
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
+    configure_log(&logMutexHandle);
     configureRx(&rxTaskHandle, &messagesQueueHandle);
+    configure_feedback();
     configure_controller(&controllerTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 

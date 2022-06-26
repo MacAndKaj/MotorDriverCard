@@ -12,6 +12,6 @@
 
 struct Message;
 
-void message_dispatch_onMessageReceived(const struct Message* msg);
+void dispatch_message(const struct Message* msg);
 
 #endif //MDC_CONTROLLER_IMPL_MESSAGE_DISPATCH_H

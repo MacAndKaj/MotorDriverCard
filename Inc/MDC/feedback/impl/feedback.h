@@ -5,8 +5,8 @@
   *                   This file contains the motor struct definition.
   ******************************************************************************
   */
-#ifndef MDC_CONTROLLER_IMPL_FEEDBACK_H
-#define MDC_CONTROLLER_IMPL_FEEDBACK_H
+#ifndef MDC_FEEDBACK_IMPL_FEEDBACK_H
+#define MDC_FEEDBACK_IMPL_FEEDBACK_H
 
 #include <gpio.h>
 
@@ -14,19 +14,16 @@
 
 struct MotorFeedback;
 
-struct FeedbackConfiguration
-{
-    GPIO_TypeDef* encoderAPort;
-    uint16_t encoderAPin;
-    GPIO_TypeDef* encoderBPort;
-    uint16_t encoderBPin;
-    struct MotorFeedback* feedback;
-};
+
+void configure_feedback_impl();
+void work_feedback_impl();
+void periodical_callback_controller_impl();
+void on_ext_interrupt_feedback_impl(uint16_t GPIO_Pin);
+
 
 // TODO: change to FeedbackHandle configureFeedback(struct FeedbackConfiguration* handle) to avoid passing later configuration for computing purposes
-void configure_feedback(struct FeedbackConfiguration* handle);
 void update_feedback(struct FeedbackConfiguration* handle, bool leftSide);
 void handle_feedback(struct FeedbackConfiguration *handle, double t);
 double get_speed(const struct FeedbackConfiguration* handle);
 
-#endif //MDC_CONTROLLER_IMPL_FEEDBACK_H
+#endif //MDC_FEEDBACK_IMPL_FEEDBACK_H

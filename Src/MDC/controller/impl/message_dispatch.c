@@ -14,7 +14,7 @@
 #include <msg/defs/Message.h>
 #include <msg/message_ids.h>
 
-void message_dispatch_onMessageReceived(const Message* msg)
+void dispatch_message(const Message* msg)
 {
     switch (msg->messageId)
     {

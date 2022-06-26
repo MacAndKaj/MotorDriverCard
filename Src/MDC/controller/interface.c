@@ -8,7 +8,7 @@
   */
 #include <MDC/controller/interface.h>
 
-#include <MDC/controller/impl/motors.h>
+#include <MDC/controller/impl/controller.h>
 
 #include <cmsis_os2.h>
 

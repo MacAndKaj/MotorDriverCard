@@ -50,4 +50,25 @@ r(t)--->*      *------- |  Controller |----->|  Process    |--------+--------->
                              +-------------+
 */
 
+/*
+
+LeftEncoder
+ +--------+                   -y
+ |        |                   ^     (Accelerator)
+ |        +--------------+    |
+ |                       |    o-----> -x
+ |        +--------------+   z
+ |        |
+ +--------+
+RightEncoder
+
+ */
+
+
+struct SpeedValues
+{
+    double leftMotorSpeed, rightMotorSpeed; // [ROUNDS/s]
+    double linearXSpeed; // [m/s]
+};
+
 #endif //MDC_MAIN_DEFS_H
