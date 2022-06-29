@@ -23,6 +23,6 @@ void update_encoder(struct EncoderData* handle, bool leftSide);
 
 void evaluate_speed(struct EncoderData *handle, double t);
 
-double get_speed(const struct EncoderData *handle);
+double get_speed(const struct EncoderData* handle);
 
 #endif //INC_MDC_FEEDBACK_IMPL_ENCODER_H

@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <MDC/main/init.h>
+#include <MDC/main/defs.h>
 
 #include <msg/defs/Message.h>
 #include <log/interface.h>
@@ -84,7 +85,7 @@ const osMessageQueueAttr_t messagesQueue_attributes = {
 };
 /* Definitions for speedMeasQueue */
 osMessageQueueId_t speedMeasQueueHandle;
-uint8_t speedMeasQueueBuffer[ 1 * sizeof( double ) ];
+uint8_t speedMeasQueueBuffer[ 1 * sizeof( SpeedValues ) ];
 osStaticMessageQDef_t speedMeasQueueControlBlock;
 const osMessageQueueAttr_t speedMeasQueue_attributes = {
   .name = "speedMeasQueue",
@@ -152,7 +153,7 @@ void MX_FREERTOS_Init(void) {
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
 
   /* creation of speedMeasQueue */
-  speedMeasQueueHandle = osMessageQueueNew (1, sizeof(double), &speedMeasQueue_attributes);
+  speedMeasQueueHandle = osMessageQueueNew (1, sizeof(SpeedValues), &speedMeasQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */

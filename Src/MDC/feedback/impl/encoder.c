@@ -138,7 +138,7 @@ void evaluate_speed(struct EncoderData *handle, double t)
     set_speed(handle, 2.*M_PI*rounds / t);
 }
 
-double get_speed(const struct EncoderData *handle)
+double get_speed(const struct EncoderData* handle)
 {
     return handle->speed;
 }

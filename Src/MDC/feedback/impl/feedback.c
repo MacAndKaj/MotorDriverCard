@@ -17,6 +17,8 @@ struct
     struct EncoderData* leftEncoder, * rightEncoder;
 } feedback;
 
+osMessageQueueId_t* speedMeasQueueHandlePtr;
+
 void configure_feedback_impl()
 {
     feedback.leftEncoder = create_encoder(LeftMotorEncoderA_GPIO_Port,
@@ -31,6 +33,13 @@ void configure_feedback_impl()
 
 void work_feedback_impl()
 {
+    struct SpeedValues values = {
+        .leftMotorSpeed=get_speed(feedback.leftEncoder),
+        .rightMotorSpeed=get_speed(feedback.rightEncoder),
+        .linearXSpeed=0
+    };
+
+    osMessageQueuePut(*speedMeasQueueHandlePtr, &values, 0, 0);
 }
 
 void periodical_callback_controller_impl()
