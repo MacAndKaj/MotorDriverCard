@@ -17,9 +17,4 @@ void configure_controller(osThreadId_t* threadIdHandle, osMessageQueueId_t* mess
 /// Runtime function of MotorsTask
 void work_controller();
 
-/// Function called from periodical callback with 1kHz freq
-void periodical_callback_controller();
-
-void on_ext_interrupt_controller(uint16_t GPIO_Pin);
-
 #endif //MDC_CONTROLLER_INTERFACE_H

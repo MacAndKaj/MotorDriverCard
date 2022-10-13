@@ -101,10 +101,10 @@ void control()
     double leftControlError, rightControlError;
     int64_t uLeft, uRight;
 
-    leftControlError = motorsContext.leftMotorConfiguration.currentValues.refSpeed -
-                       get_speed(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
-    rightControlError = motorsContext.rightMotorConfiguration.currentValues.refSpeed -
-                        get_speed(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
+//    leftControlError = motorsContext.leftMotorConfiguration.currentValues.refSpeed -
+//                       get_speed(&motorsContext.leftMotorConfiguration.feedbackConfiguration);
+//    rightControlError = motorsContext.rightMotorConfiguration.currentValues.refSpeed -
+//                        get_speed(&motorsContext.rightMotorConfiguration.feedbackConfiguration);
 
     uLeft = pid_evaluate(&motorsContext.leftMotorConfiguration.controllerParameters,
                          leftControlError,

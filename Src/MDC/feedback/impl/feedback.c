@@ -6,20 +6,20 @@
   * @brief          : Sources for motor.h file.
   ******************************************************************************
   */
-#include <MDC/feedback//impl/feedback.h>
+#include <MDC/feedback/impl/feedback.h>
 
 #include <MDC/main/defs.h>
 #include <MDC/feedback/impl/defs.h>
 #include <MDC/feedback/impl/encoder.h>
 
-struct
+static struct
 {
     struct EncoderData* leftEncoder, * rightEncoder;
+    osMessageQueueId_t* speedMeasQueueHandlePtr;
+    osThreadId_t* feedbackThreadId;
 } feedback;
 
-osMessageQueueId_t* speedMeasQueueHandlePtr;
-
-void configure_feedback_impl()
+void configure_feedback_impl(osMessageQueueId_t *speedMeasQueueHandle, osThreadId_t *feedbackThreadIdHandle)
 {
     feedback.leftEncoder = create_encoder(LeftMotorEncoderA_GPIO_Port,
                                           LeftMotorEncoderA_Pin,
@@ -29,27 +29,32 @@ void configure_feedback_impl()
                                            RightMotorEncoderA_Pin,
                                            RightMotorEncoderB_GPIO_Port,
                                            RightMotorEncoderB_Pin);
+
+    feedback.speedMeasQueueHandlePtr = speedMeasQueueHandle;
+    feedback.feedbackThreadId = feedbackThreadIdHandle;
 }
 
 void work_feedback_impl()
 {
-    struct SpeedValues values = {
-        .leftMotorSpeed=get_speed(feedback.leftEncoder),
-        .rightMotorSpeed=get_speed(feedback.rightEncoder),
-        .linearXSpeed=0
-    };
+    osThreadFlagsWait(PROBING_TIMEOUT_CALLBACK, osFlagsWaitAll, osWaitForever);
 
-    osMessageQueuePut(*speedMeasQueueHandlePtr, &values, 0, 0);
+    static struct SpeedValues values;
+    values.leftMotorSpeed = get_speed(feedback.leftEncoder);
+    values.rightMotorSpeed = get_speed(feedback.rightEncoder);
+    values.linearXSpeed = 0;
+
+    osMessageQueuePut(*feedback.speedMeasQueueHandlePtr, &values, 0, 0);
 }
 
-void periodical_callback_controller_impl()
+
+void periodical_callback_feedback_impl()
 {
     evaluate_speed(feedback.leftEncoder, SPEED_UPDATE_PERIOD);
     evaluate_speed(feedback.rightEncoder, SPEED_UPDATE_PERIOD);
-//    osThreadFlagsSet(*motorsContext.threadIdHandle, PROBING_TIMEOUT_CALLBACK);
+    osThreadFlagsSet(*feedback.feedbackThreadId, PROBING_TIMEOUT_CALLBACK);
 }
 
-void on_ext_interrupt_controller_impl(uint16_t GPIO_Pin)
+void on_ext_interrupt_feedback_impl(uint16_t GPIO_Pin)
 {
     bool left = true, right = false;
     switch (GPIO_Pin)

@@ -54,7 +54,7 @@ r(t)--->*      *------- |  Controller |----->|  Process    |--------+--------->
 
 LeftEncoder
  +--------+                   -y
- |        |                   ^     (Accelerator)
+ |        |                   ^     (Accelerometer)
  |        +--------------+    |
  |                       |    o-----> -x
  |        +--------------+   z

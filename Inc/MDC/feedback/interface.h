@@ -16,7 +16,7 @@ void configure_feedback();
 
 void work_feedback();
 
-void periodical_callback_controller();
+void periodical_callback_feedback();
 
 void on_ext_interrupt_feedback(uint16_t GPIO_Pin);
 

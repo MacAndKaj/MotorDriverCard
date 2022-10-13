@@ -12,8 +12,7 @@
 
 void configure_controller_impl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle);
 void work_controller_impl();
-void periodical_callback_controller_impl();
-void on_ext_interrupt_controller_impl(uint16_t GPIO_Pin);
+void on_ext_interrupt_feedback_impl(uint16_t GPIO_Pin);
 
 
 #endif //MDC_CONTROLLER_IMPL_MOTORS_H

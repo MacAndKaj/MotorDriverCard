@@ -85,7 +85,7 @@ const osMessageQueueAttr_t messagesQueue_attributes = {
 };
 /* Definitions for speedMeasQueue */
 osMessageQueueId_t speedMeasQueueHandle;
-uint8_t speedMeasQueueBuffer[ 1 * sizeof( SpeedValues ) ];
+uint8_t speedMeasQueueBuffer[ 1 * sizeof( struct SpeedValues ) ];
 osStaticMessageQDef_t speedMeasQueueControlBlock;
 const osMessageQueueAttr_t speedMeasQueue_attributes = {
   .name = "speedMeasQueue",
@@ -153,7 +153,7 @@ void MX_FREERTOS_Init(void) {
   messagesQueueHandle = osMessageQueueNew (3, sizeof(Message), &messagesQueue_attributes);
 
   /* creation of speedMeasQueue */
-  speedMeasQueueHandle = osMessageQueueNew (1, sizeof(SpeedValues), &speedMeasQueue_attributes);
+  speedMeasQueueHandle = osMessageQueueNew (1, sizeof(struct SpeedValues), &speedMeasQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -235,11 +235,12 @@ void startCommunicationTask(void *argument)
 void startFeedbackTask(void *argument)
 {
   /* USER CODE BEGIN startFeedbackTask */
+  LOG_INFO("Start feedback\n");
+
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
-      break;
+    work_feedback();
   }
   /* USER CODE END startFeedbackTask */
 }

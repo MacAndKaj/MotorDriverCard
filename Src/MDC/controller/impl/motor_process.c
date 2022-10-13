@@ -15,7 +15,8 @@
 
 #include <stdlib.h>
 
-typedef enum {
+typedef enum
+{
     Forward,
     Backward
 } Dir;
