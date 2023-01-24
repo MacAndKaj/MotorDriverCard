@@ -10,6 +10,8 @@
 #ifndef MDC_RX_INTERFACE_H
 #define MDC_RX_INTERFACE_H
 
+#include <cmsis_os2.h>
+
 /// Function to configure RxTask
 void configureRx(osThreadId_t *threadIdHandle, osMessageQueueId_t *messageQueueHandle);
 

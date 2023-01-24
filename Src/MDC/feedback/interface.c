@@ -11,9 +11,9 @@
 
 #include <MDC/feedback/impl/feedback.h>
 
-void configure_feedback()
+void configure_feedback(const struct FeedbackConfig* config)
 {
-    configure_feedback_impl(NULL, NULL);
+    configure_feedback_impl(config->speedMeasQueueHandle, config->feedbackThreadIdHandle);
 }
 
 void work_feedback()

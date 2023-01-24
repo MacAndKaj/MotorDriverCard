@@ -9,9 +9,10 @@
   */
 
 #include <MDC/main/init.h>
-#include <MDC/controller/interface.h>
 #include <MDC/rx/interface.h>
 #include <MDC/feedback/interface.h>
+
+#include <MDC/main/services/interrupt_service.h>
 
 void onExtInterrupt(uint16_t GPIO_Pin)
 {
@@ -25,6 +26,7 @@ void onExtInterrupt(uint16_t GPIO_Pin)
         default:
             break;
     }
+    dispatch_interrupt(GPIO_Pin);
 }
 
 // Callbacks with 1kHz frequency

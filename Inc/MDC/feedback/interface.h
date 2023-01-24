@@ -10,9 +10,17 @@
 #ifndef MDC_FEEDBACK_INTERFACE_H
 #define MDC_FEEDBACK_INTERFACE_H
 
+#include <cmsis_os2.h>
+
 #include <stdint.h>
 
-void configure_feedback();
+struct FeedbackConfig
+{
+    osMessageQueueId_t *speedMeasQueueHandle;
+    osThreadId_t *feedbackThreadIdHandle;
+};
+
+void configure_feedback(const struct FeedbackConfig* config);
 
 void work_feedback();
 

@@ -26,6 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <MDC/main/context.h>
 #include <MDC/main/init.h>
 #include <MDC/main/defs.h>
 
@@ -55,7 +56,7 @@ typedef StaticSemaphore_t osStaticMutexDef_t;
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+struct Context* context;
 /* USER CODE END Variables */
 /* Definitions for controllerTask */
 osThreadId_t controllerTaskHandle;
@@ -76,7 +77,7 @@ osThreadId_t feedbackTaskHandle;
 const osThreadAttr_t feedbackTask_attributes = {
   .name = "feedbackTask",
   .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityBelowNormal,
+  .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for messagesQueue */
 osMessageQueueId_t messagesQueueHandle;
@@ -130,6 +131,8 @@ void MX_FREERTOS_Init(void) {
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     HAL_Delay(300);
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+    context = new_context();
+
 
   /* USER CODE END Init */
   /* Create the mutex(es) */
@@ -137,6 +140,7 @@ void MX_FREERTOS_Init(void) {
   logMutexHandle = osMutexNew(&logMutex_attributes);
 
   /* USER CODE BEGIN RTOS_MUTEX */
+    configure_log(&logMutexHandle);
   /* add mutexes, ... */
   /* USER CODE END RTOS_MUTEX */
 
@@ -178,9 +182,14 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
-    configure_log(&logMutexHandle);
     configureRx(&rxTaskHandle, &messagesQueueHandle);
-    configure_feedback();
+
+    struct FeedbackConfig feedbackConfig = {
+        &speedMeasQueueHandle,
+        &feedbackTaskHandle
+    };
+    configure_feedback(&feedbackConfig);
+
     configure_controller(&controllerTaskHandle, &messagesQueueHandle);
   /* USER CODE END RTOS_EVENTS */
 
@@ -250,4 +259,3 @@ void startFeedbackTask(void *argument)
 
 /* USER CODE END Application */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -12,20 +12,12 @@
 
 #include <gpio.h>
 
-typedef enum ModuleName
-{
-    Com,
-    MotorControl
-} ModuleName;
-
 /// Function initializing MDC.
 /// \return [int]: 0 if not error, 1 - otherwise
-int mainInit();
 
 //TODO: HalEvents module - proxy module between HAL events and application with subscription mechanism instead of calling functions
 void onExtInterrupt(uint16_t GPIO_Pin);
 void onPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void onRxCpltCallback(UART_HandleTypeDef *huart);
-void onTxCpltCallback(UART_HandleTypeDef *huart);
 
 #endif //MOTORDRIVER_PLATFORM_INIT_H

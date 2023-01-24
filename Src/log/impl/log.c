@@ -21,18 +21,10 @@ void set_log_mutex(osMutexId_t* logMutex)
     logMutexPtr = logMutex;
 }
 
-int _write(int file, char *ptr, int len)
+void send_log(const char *ptr, int len)
 {
-    if ((file != STDOUT_FILENO) && (file != STDERR_FILENO))
-    {
-        errno = EBADF;
-        return -1;
-    }
-
     osMutexAcquire(*logMutexPtr, osWaitForever);
     // arbitrary timeout 1000
     HAL_StatusTypeDef status = HAL_UART_Transmit(&huart4, (uint8_t*)ptr, len, TIMEOUT);
     osMutexRelease(*logMutexPtr);
-
-    return (status == HAL_OK ? len : 0);
 }

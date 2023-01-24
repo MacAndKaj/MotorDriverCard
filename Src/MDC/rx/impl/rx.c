@@ -49,13 +49,13 @@ void workRxImpl()
     {
         case FrameCtrlData:
         {
-            LOG_INFO("workRxImpl: Waiting for new message to be received");
+            LOG_INFO("workRxImpl: Waiting for new message to be received\n");
             processFrameCtrlData(rxBuffer.data);
             break;
         }
         case UserData:
         {
-            LOG_INFO("workRxImpl: Received message");
+            LOG_INFO("workRxImpl: Received message\n");
             Message* msg = processUserData(rxBuffer.data);
             forwardMessage(msg);
             if (msg != NULL)
@@ -66,7 +66,7 @@ void workRxImpl()
         }
         default:
         {
-            LOG_INFO("workRxImpl: Incorrect data type");
+            LOG_INFO("workRxImpl: Incorrect data type\n");
         }
     }
 

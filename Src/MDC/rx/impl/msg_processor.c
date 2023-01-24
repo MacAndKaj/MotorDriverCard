@@ -75,7 +75,7 @@ void processFrameCtrlData(const uint8_t* data)
     {
         msgControl.nextDataType = FrameCtrlData;
         msgControl.nextMessageSize = HEADER_SIZE;
-        LOG_INFO("FrameCtrlData incorrect!");
+        LOG_INFO("FrameCtrlData incorrect!\n");
         return;
     }
     msgControl.nextDataType = UserData;
@@ -86,7 +86,7 @@ void processFrameCtrlData(const uint8_t* data)
     {
         msgControl.nextDataType = FrameCtrlData;
         msgControl.nextMessageSize = HEADER_SIZE;
-        LOG_INFO("Unknown message!");
+        LOG_INFO("Unknown message!\n");
     }
 }
 
@@ -96,7 +96,7 @@ struct Message* processUserData(uint8_t* data)
 
     if (deserializedMsg == NULL)
     {
-        LOG_INFO("Unknown message");
+        LOG_INFO("Unknown user data\n");
     }
     msgControl.nextDataType = FrameCtrlData;
     msgControl.nextMessageSize = HEADER_SIZE;

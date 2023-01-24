@@ -13,6 +13,6 @@
 
 void set_log_mutex(osMutexId_t* logMutex);
 
-int _write(int file, char *ptr, int len);
+void send_log(const char *ptr, int len);
 
 #endif // LOG_IMPL_LOG_H

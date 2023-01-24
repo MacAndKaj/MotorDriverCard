@@ -29,7 +29,7 @@ void startReception(uint8_t* dest, uint16_t N)
 
     if (status != HAL_OK)
     {
-        LOG_INFO("ERROR when receiving from UART2");
+        LOG_INFO("ERROR when receiving from UART2\n");
     }
 }
 

@@ -8,6 +8,7 @@
   */
 #include <MDC/feedback/impl/feedback.h>
 
+#include <log/interface.h>
 #include <MDC/main/defs.h>
 #include <MDC/feedback/impl/defs.h>
 #include <MDC/feedback/impl/encoder.h>
@@ -32,6 +33,7 @@ void configure_feedback_impl(osMessageQueueId_t *speedMeasQueueHandle, osThreadI
 
     feedback.speedMeasQueueHandlePtr = speedMeasQueueHandle;
     feedback.feedbackThreadId = feedbackThreadIdHandle;
+    LOG_INFO("Feedback configured correctly\n");
 }
 
 void work_feedback_impl()

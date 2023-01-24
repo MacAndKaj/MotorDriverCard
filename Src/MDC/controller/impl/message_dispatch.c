@@ -20,11 +20,11 @@ void dispatch_message(const Message* msg)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
             {
-                LOG_INFO("[motors] Message PLATFORM_SET_MOTOR_SPEED_REQ received.");
+                LOG_INFO("[motors] Message PLATFORM_SET_MOTOR_SPEED_REQ received.\n");
                 platform_set_motor_speed_req_handler_handle(&msg->msg.platformSetMotorSpeedReq);
                 break;
             }
         default:
-            LOG_INFO("Unknown messageId, ignoring!");
+            LOG_INFO("Unknown messageId, ignoring!\n");
     }
 }

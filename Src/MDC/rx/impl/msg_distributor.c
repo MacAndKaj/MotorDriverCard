@@ -24,6 +24,6 @@ void forwardMessage(const Message* msg)
     osStatus_t status = osMessageQueuePut(*msgDistributorContext.messageQueueHandle, msg, 0, 0);
     if (status != osOK)
     {
-        LOG_INFO("Error occurred when putting message to queue");
+        LOG_INFO("Error occurred when putting message to queue\n");
     }
 }

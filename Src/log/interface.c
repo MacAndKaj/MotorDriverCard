@@ -11,8 +11,7 @@
 
 #include <log/impl/log.h>
 
-#include <stdio.h>
-#include <stdarg.h>
+#include <memory.h>
 
 void configure_log(osMutexId_t* logMutex)
 {
@@ -21,13 +20,5 @@ void configure_log(osMutexId_t* logMutex)
 
 void logger(const char* logStr)
 {
-    printf("%s", logStr);
-}
-
-void logger_args(const char* logStr, ...)
-{
-    va_list args1;
-    va_start(args1, logStr);
-    vprintf(logStr, args1);
-    va_end(args1);
+    send_log(logStr, (int)strlen(logStr));
 }

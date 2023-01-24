@@ -87,7 +87,7 @@ void work_controller_impl()
     static Message buffer;
     if (osMessageQueueGet(*motorsContext.messageQueueHandle, &buffer, 0, 0) == osOK)
     {
-        LOG_INFO("New message to motors");
+        LOG_INFO("New message to motors\n");
         dispatch_message(&buffer);
     }
 

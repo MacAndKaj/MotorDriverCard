@@ -14,12 +14,8 @@
 #define LOG_INFO(MSG) \
     logger("[INFO]"MSG)
 
-#define LOG_INFO_V(MSG, ...) \
-    logger_args("[INFO]"MSG, __VA_ARGS__)
-
 void configure_log(osMutexId_t* logMutex);
 
 void logger(const char* logStr);
-void logger_args(const char* logStr, ...);
 
 #endif //LOG_INTERFACE_H
