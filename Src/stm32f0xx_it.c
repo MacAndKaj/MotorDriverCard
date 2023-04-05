@@ -59,8 +59,6 @@
 extern DMA_HandleTypeDef hdma_tim2_ch3;
 extern DMA_HandleTypeDef hdma_tim3_ch1_trig;
 extern TIM_HandleTypeDef htim17;
-extern DMA_HandleTypeDef hdma_usart2_rx;
-extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef huart4;
 extern TIM_HandleTypeDef htim6;
 
@@ -146,7 +144,6 @@ void DMA1_Channel4_5_6_7_IRQHandler(void)
   /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 0 */
 
   /* USER CODE END DMA1_Channel4_5_6_7_IRQn 0 */
-  HAL_DMA_IRQHandler(&hdma_usart2_rx);
   HAL_DMA_IRQHandler(&hdma_tim3_ch1_trig);
   /* USER CODE BEGIN DMA1_Channel4_5_6_7_IRQn 1 */
 
@@ -179,20 +176,6 @@ void TIM17_IRQHandler(void)
   /* USER CODE BEGIN TIM17_IRQn 1 */
 
   /* USER CODE END TIM17_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
-  */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
-
-  /* USER CODE END USART2_IRQn 1 */
 }
 
 /**

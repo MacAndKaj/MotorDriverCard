@@ -46,17 +46,54 @@ if (NOT DEFINED TESTS)
     endif ()
 
     include_directories(./Inc
-            ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Inc
-            ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Inc/Legacy
-            ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/include
-            ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
-            ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0
-            ${STM32_REPO_LOCATION}/Drivers/CMSIS/Device/ST/STM32F0xx/Include
-            ${STM32_REPO_LOCATION}/Drivers/CMSIS/Include)
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Inc
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Inc/Legacy
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/include
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0
+        ${STM32_REPO_LOCATION}/Drivers/CMSIS/Device/ST/STM32F0xx/Include
+        ${STM32_REPO_LOCATION}/Drivers/CMSIS/Include
+    )
 
     add_definitions(-DUSE_HAL_DRIVER -DSTM32F072xB -DDEBUG)
 
-    file(GLOB_RECURSE SOURCES "./startup/*.*" "./Middlewares/*.*" "./Drivers/*.*" "./Src/*.*")
+    file(GLOB_RECURSE PROJECT_SOURCES 
+        "./startup/*.*" 
+        "./Src/*.*"
+    )
+
+    file(GLOB HAL_SOURCES
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_cortex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_dma.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_exti.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_flash_ex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_gpio.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_i2c_ex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_pwr_ex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_rcc_ex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_tim_ex.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart.c;
+        ${STM32_REPO_LOCATION}/Drivers/STM32F0xx_HAL_Driver/Src/stm32f0xx_hal_uart_ex.c;
+    )
+
+    file(GLOB CMSIS_SOURCES
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/list.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/queue.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/timers.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c;
+        ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0/port.c;
+    )
 
     set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F072RBTx_FLASH.ld)
 
@@ -64,7 +101,7 @@ if (NOT DEFINED TESTS)
     add_link_options(-mcpu=cortex-m0 -mthumb -mthumb-interwork)
     add_link_options(-T ${LINKER_SCRIPT})
 
-    add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+    add_executable(${PROJECT_NAME}.elf ${PROJECT_SOURCES} ${HAL_SOURCES} ${CMSIS_SOURCES} ${LINKER_SCRIPT})
 
     set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
     set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

@@ -25,7 +25,7 @@ void configureReceiver(osThreadId_t* rxThreadId)
 
 void startReception(uint8_t* dest, uint16_t N)
 {
-    HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart2, dest, N);
+    HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart4, dest, N);
 
     if (status != HAL_OK)
     {
