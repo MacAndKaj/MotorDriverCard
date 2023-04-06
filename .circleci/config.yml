@@ -4,6 +4,10 @@ jobs:
   build:
     docker:
       - image: macandkaj/stm32f0_development
+        auth:
+          username: macandkaj
+          password: $DOCKERHUB_PASSWORD
+
     steps:
       - checkout
       - run:
