@@ -13,7 +13,8 @@ jobs:
           path: /root/project/build/MotorDriverCard.hex
       - store_artifacts:
           path: /root/project/build/MotorDriverCard.bin
-
+    # The resource_class feature allows configuring CPU and RAM resources for each job. Different resource classes are available for different executors. https://circleci.com/docs/2.0/configuration-reference/#resourceclass
+    resource_class: large
 
 workflows:
   MDC-workflow:
