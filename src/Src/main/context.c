@@ -33,7 +33,7 @@ struct Context* new_context()
 //TODO: update with service handling
 void handle_ext_interrupt(uint16_t GPIO_Pin)
 {
-  onExtInterrupt(uint16_t GPIO_Pin);
+  onExtInterrupt(GPIO_Pin);
 }
 
 void handle_rx_completed(UART_HandleTypeDef* huart)

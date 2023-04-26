@@ -1,0 +1,1 @@
+/usr/bin/openocd -c "tcl_port disabled" -c "gdb_port 3333" -c "telnet_port 4444" -s /usr/share/openocd/scripts -f board/st_nucleo_f0.cfg -c "program build/MotorDriverCard.elf" -c "init;reset init;" -c "echo (((READY)))"
