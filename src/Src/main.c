@@ -69,6 +69,7 @@ void MX_FREERTOS_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+    context = new_main_context();
 
   /* USER CODE END 1 */
 
@@ -97,9 +98,6 @@ int main(void)
   MX_USART4_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-
-    context = new_context();
-
 
   /* USER CODE END 2 */
 

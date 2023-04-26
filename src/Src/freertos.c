@@ -126,7 +126,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    HAL_Delay(300);
+    HAL_Delay(1000);
     HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
   /* USER CODE END Init */
@@ -196,7 +196,7 @@ void startControllerTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+      work_controller();
   }
   /* USER CODE END startControllerTask */
 }
@@ -217,7 +217,7 @@ void startCommunicationTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    workRx();
   }
   /* USER CODE END startCommunicationTask */
 }
@@ -244,7 +244,7 @@ void startFeedbackTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+    work_feedback();
   }
   /* USER CODE END startFeedbackTask */
 }

@@ -11,9 +11,11 @@
 #include <tasks/controller/impl/motor_process.h>
 #include <main/defs.h>
 
-#include <tim.h>
+#include <projdefs.h>
+#include <portable.h>
 
 #include <stdlib.h>
+#include <string.h>
 
 typedef enum
 {
@@ -58,13 +60,21 @@ void init_pwm(TIM_HandleTypeDef* timer, uint32_t channel, uint32_t* pwmSource)
     }
 }
 
+struct ControlParameters* new_control_parameters()
+{
+    struct ControlParameters* ret = pvPortMalloc(sizeof(struct ControlParameters));
+    memset(ret, 0, sizeof(struct ControlParameters));
+
+    return ret;
+}
+
 void motor_process_configure(struct OutputConfiguration* config1, struct OutputConfiguration* config2)
 {
-    config1->parameters = malloc(sizeof(struct ControlParameters));
+    config1->parameters = new_control_parameters();
     config1->parameters->pwmDuty = 0;
     set_left_direction(config1, Forward);
 
-    config2->parameters = malloc(sizeof(struct ControlParameters));
+    config2->parameters = new_control_parameters();
     config2->parameters->pwmDuty = 0;
     set_right_direction(config2, Forward);
 

@@ -50,29 +50,23 @@ void configure_controller_impl(osThreadId_t* threadIdHandle, osMessageQueueId_t*
     motorsContext.leftMotorConfiguration.controllerParameters = create_pid(4000., 150., 30.);
     motorsContext.rightMotorConfiguration.controllerParameters = create_pid(4000., 150., 30.);
 
-    struct OutputConfiguration leftMotorConfig = {
-        .stopThreshold = STOP_THRESHOLD,
-        .pwmPeriod = PWM_PERIOD,
-        .motorControl1Port = LeftMotorIn1_GPIO_Port,
-        .motorControl1Pin = LeftMotorIn1_Pin,
-        .motorControl2Port = LeftMotorIn2_GPIO_Port,
-        .motorControl2Pin = LeftMotorIn2_Pin,
-        .timer = &htim2,
-        .channel = TIM_CHANNEL_3,
-    };
-    motorsContext.leftMotorConfiguration.controlConfiguration = leftMotorConfig;
+    motorsContext.leftMotorConfiguration.controlConfiguration.stopThreshold = STOP_THRESHOLD;
+    motorsContext.leftMotorConfiguration.controlConfiguration.pwmPeriod = PWM_PERIOD;
+    motorsContext.leftMotorConfiguration.controlConfiguration.motorControl1Port = LeftMotorIn1_GPIO_Port;
+    motorsContext.leftMotorConfiguration.controlConfiguration.motorControl1Pin = LeftMotorIn1_Pin;
+    motorsContext.leftMotorConfiguration.controlConfiguration.motorControl2Port = LeftMotorIn2_GPIO_Port;
+    motorsContext.leftMotorConfiguration.controlConfiguration.motorControl2Pin = LeftMotorIn2_Pin;
+    motorsContext.leftMotorConfiguration.controlConfiguration.timer = &htim2;
+    motorsContext.leftMotorConfiguration.controlConfiguration.channel = TIM_CHANNEL_3;
 
-    struct OutputConfiguration rightMotorConfig = {
-        .stopThreshold = STOP_THRESHOLD,
-        .pwmPeriod = PWM_PERIOD,
-        .motorControl1Port = RightMotorIn1_GPIO_Port,
-        .motorControl1Pin = RightMotorIn1_Pin,
-        .motorControl2Port = RightMotorIn2_GPIO_Port,
-        .motorControl2Pin = RightMotorIn2_Pin,
-        .timer = &htim3,
-        .channel = TIM_CHANNEL_1,
-    };
-    motorsContext.rightMotorConfiguration.controlConfiguration = rightMotorConfig;
+    motorsContext.rightMotorConfiguration.controlConfiguration.stopThreshold = STOP_THRESHOLD;
+    motorsContext.rightMotorConfiguration.controlConfiguration.pwmPeriod = PWM_PERIOD;
+    motorsContext.rightMotorConfiguration.controlConfiguration.motorControl1Port = RightMotorIn1_GPIO_Port;
+    motorsContext.rightMotorConfiguration.controlConfiguration.motorControl1Pin = RightMotorIn1_Pin;
+    motorsContext.rightMotorConfiguration.controlConfiguration.motorControl2Port = RightMotorIn2_GPIO_Port;
+    motorsContext.rightMotorConfiguration.controlConfiguration.motorControl2Pin = RightMotorIn2_Pin;
+    motorsContext.rightMotorConfiguration.controlConfiguration.timer = &htim3;
+    motorsContext.rightMotorConfiguration.controlConfiguration.channel = TIM_CHANNEL_1;
 
     motor_process_configure(&motorsContext.leftMotorConfiguration.controlConfiguration,
                             &motorsContext.rightMotorConfiguration.controlConfiguration);
@@ -109,7 +103,7 @@ void control_motor(MotorConfiguration* m, const bool leftOrRight)
     int64_t u;
 
     controlError = m->m_refSpeed - m->m_currentSpeed;
-    u = pid_evaluate(&m->controllerParameters, controlError, SPEED_UPDATE_PERIOD);
+    u = (int64_t)pid_evaluate(&m->controllerParameters, controlError, SPEED_UPDATE_PERIOD);
     motor_process_update_u(&m->controlConfiguration, u, leftOrRight);
 }
 
@@ -118,4 +112,10 @@ void control()
     static bool left = true, right = false;
     control_motor(&motorsContext.leftMotorConfiguration, left);
     control_motor(&motorsContext.rightMotorConfiguration, right);
+}
+
+void handle_new_speed(double leftSpeed, double rightSpeed)
+{
+    motorsContext.leftMotorConfiguration.m_refSpeed = leftSpeed;
+    motorsContext.rightMotorConfiguration.m_refSpeed = rightSpeed;
 }

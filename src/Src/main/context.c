@@ -16,7 +16,9 @@ void handle_ext_interrupt(uint16_t GPIO_Pin);
 void handle_rx_completed(UART_HandleTypeDef* huart);
 void handle_period_elapsed(TIM_HandleTypeDef *htim);
 
-struct Context* new_context()
+struct Context* mainContext = NULL;
+
+struct Context* new_main_context()
 {
     struct Context* ret;
     ret = malloc(sizeof(struct Context));
@@ -26,8 +28,14 @@ struct Context* new_context()
     ret->rxCompletedCb = handle_rx_completed;
     ret->periodElapsedCb = handle_period_elapsed;
 
+    mainContext = ret;
     return ret;
 }
+
+//struct Context* get_main_context()
+//{
+//    return mainContext;
+//}
 
 //=====================================
 //TODO: update with service handling

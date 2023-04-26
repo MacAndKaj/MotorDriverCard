@@ -11,9 +11,12 @@
 
 #include <tasks/feedback/impl/feedback.h>
 
+bool feedbackInitialized = false;
+
 void configure_feedback(const struct FeedbackConfig* config)
 {
     configure_feedback_impl(config->speedMeasQueueHandle, config->feedbackThreadIdHandle);
+    feedbackInitialized = true;
 }
 
 void work_feedback()
@@ -23,10 +26,10 @@ void work_feedback()
 
 void periodical_callback_feedback()
 {
-    periodical_callback_feedback_impl();
+    if (feedbackInitialized) periodical_callback_feedback_impl();
 }
 
 void on_ext_interrupt_feedback(uint16_t GPIO_Pin)
 {
-    on_ext_interrupt_feedback_impl(GPIO_Pin);
+    if (feedbackInitialized) on_ext_interrupt_feedback_impl(GPIO_Pin);
 }

@@ -17,6 +17,12 @@ if (NOT DEFINED TESTS)
     project(MotorDriverCard C ASM)
     set(CMAKE_C_STANDARD 11)
 
+    set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/Startup/startup_stm32f072rbtx.s)
+    message(STATUS "Startup file used: ${STARTUP_FILE}")
+
+    set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F072RBTX_FLASH.ld)
+    message(STATUS "Linker script used: ${LINKER_SCRIPT}")
+
     #Uncomment for hardware floating point
     #add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
     #add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
@@ -58,7 +64,6 @@ if (NOT DEFINED TESTS)
     add_definitions(-DUSE_HAL_DRIVER -DSTM32F072xB -DDEBUG)
 
     file(GLOB_RECURSE PROJECT_SOURCES 
-        "./startup/*.*" 
         "./Src/*.*"
     )
 
@@ -95,13 +100,11 @@ if (NOT DEFINED TESTS)
         ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM0/port.c;
     )
 
-    set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F072RBTX_FLASH.ld)
-
     add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
     add_link_options(-mcpu=cortex-m0 -mthumb -mthumb-interwork)
     add_link_options(-T ${LINKER_SCRIPT})
 
-    add_executable(${PROJECT_NAME}.elf ${PROJECT_SOURCES} ${HAL_SOURCES} ${CMSIS_SOURCES} ${LINKER_SCRIPT})
+    add_executable(${PROJECT_NAME}.elf ${PROJECT_SOURCES} ${HAL_SOURCES} ${CMSIS_SOURCES} ${LINKER_SCRIPT} ${STARTUP_FILE})
 
     set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
     set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)

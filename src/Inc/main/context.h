@@ -27,6 +27,10 @@ struct Context
 
 /// Creates new context structure and initializes it.
 /// \return Ptr to new Context structure.
-struct Context* new_context();
+struct Context* new_main_context();
+
+///// Returns saved main context
+///// \return ptr to struct Context - main context
+//struct Context* get_main_context()
 
 #endif //MOTORDRIVERCARD_CONTEXT_H
