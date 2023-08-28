@@ -3,7 +3,7 @@
 # shellcheck disable=SC2034
 STARTING_DIR=$(pwd)
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-STM32CUBE_LOCATION="$STM32F0_PATH"
+STM32CUBE_LOCATION="$STM32_PATH"
 TARGET_NAME=MotorDriverCard.elf
 
 . config/config.env
@@ -22,7 +22,7 @@ function build_fun() {
     fi
 
     CMAKE_FLAGS=( -DSTM32_REPO_LOCATION="$STM32CUBE_LOCATION" )
-    cmake "${CMAKE_FLAGS[@]}" ..
+    cmake "${CMAKE_FLAGS[@]}" ../sources
     if [[ ! $? = 0 ]]
     then
       echo "cmake failure"
@@ -31,7 +31,7 @@ function build_fun() {
 
     echo "Building application"
 
-    make "$TARGET_NAME"
+    make -j`nproc`
     if [[ ! $? = 0 ]]
     then
       echo "make failure"

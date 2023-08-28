@@ -17,6 +17,8 @@ jobs:
           path: /root/project/build/MotorDriverCard.hex
       - store_artifacts:
           path: /root/project/build/MotorDriverCard.bin
+      - store_artifacts:
+          path: /root/project/build/MotorDriverCard.elf
 
 
 workflows:
