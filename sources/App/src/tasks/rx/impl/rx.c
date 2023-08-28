@@ -10,65 +10,59 @@
 #include "log/interface.h"
 #include "main/defs.h"
 #include "msg/consts.h"
+#include "msg/defs/Frame.h"
 #include "tasks/rx/impl/rx.h"
-#include "tasks/rx/impl/receiver.h"
 #include "tasks/rx/impl/msg_processor.h"
 #include "tasks/rx/impl/msg_distributor.h"
 
+#include "usart.h"
+
 #include <FreeRTOS.h>
+
+#include <string.h>
 
 struct
 {
-    uint8_t* data;
-} rxBuffer;
+    osThreadId_t* receiverThreadIdHandle;
+    uint8_t rxBuffer[FRAME_SIZE];
+} rxContext;
 
-void clearBuffer(uint16_t nextReadSize)
+void startReception()
 {
-    if (rxBuffer.data == NULL) return;
+    LOG_INFO("Waiting for message\n");
+    memset(rxContext.rxBuffer, 0, FRAME_SIZE);
+    HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart3, rxContext.rxBuffer, sizeof(Frame));
 
-    vPortFree(rxBuffer.data);
-    rxBuffer.data = (uint8_t *) pvPortMalloc(nextReadSize * sizeof(uint8_t));
+    if (status != HAL_OK)
+    {
+        LOG_INFO("ERROR when starting UART reception using DMA for UART3\n");
+    }
 }
 
-void configureRxImpl(osThreadId_t* threadIdHandle, osMessageQueueId_t* messageQueueHandle)
+void configureRxImpl(osThreadId_t* receiverThreadIdHandle, osMessageQueueId_t* messageQueueHandle)
 {
-    configureMsgProcessor();
-    configureMsgDistributor(messageQueueHandle);
-    configureReceiver(threadIdHandle);
+    rxContext.receiverThreadIdHandle = receiverThreadIdHandle;
 
-    rxBuffer.data = (uint8_t *) pvPortMalloc(getNextMessageSize() * sizeof(uint8_t));
-    startReception(rxBuffer.data, getNextMessageSize());
+    configureMsgDistributor(messageQueueHandle);
+    
+    startReception();
 }
 
 void workRxImpl()
 {
     osThreadFlagsWait(DATA_RECEIVED_THREAD_FLAG, osFlagsWaitAny, osWaitForever);
 
-    switch (getNextDataType())
+    LOG_INFO("[RX]Received message\n");
+    struct Message* msg = processData(rxContext.rxBuffer);
+    if (msg != NULL)
     {
-        case FrameCtrlData:
-        {
-            LOG_INFO("workRxImpl: Waiting for new message to be received\n");
-            processFrameCtrlData(rxBuffer.data);
-            break;
-        }
-        case UserData:
-        {
-            LOG_INFO("workRxImpl: Received message\n");
-            Message* msg = processUserData(rxBuffer.data);
-            forwardMessage(msg);
-            if (msg != NULL)
-            {
-                vPortFree(msg);
-            }
-            break;
-        }
-        default:
-        {
-            LOG_INFO("workRxImpl: Incorrect data type\n");
-        }
+        forwardMessage(msg);
     }
 
-    clearBuffer(getNextMessageSize());
-    startReception(rxBuffer.data, getNextMessageSize());
+    startReception();
+}
+
+void onReceptionCompletedImpl()
+{
+    osThreadFlagsSet(*rxContext.receiverThreadIdHandle, DATA_RECEIVED_THREAD_FLAG);
 }

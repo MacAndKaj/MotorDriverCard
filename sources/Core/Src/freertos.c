@@ -231,6 +231,11 @@ void startFeedbackTask(void *argument)
     for(;;)
     {
         work_feedback();
+        if (toggle() == 1)
+        {
+            togglePin();
+            LOG_INFO("Test\n");
+        }
     }
   /* USER CODE END startFeedbackTask */
 }

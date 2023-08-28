@@ -71,4 +71,6 @@ struct SpeedValues
     double linearXSpeed; // [m/s]
 };
 
+#define DATA_RECEIVED_THREAD_FLAG 0x00000001
+
 #endif //MDC_MAIN_DEFS_H

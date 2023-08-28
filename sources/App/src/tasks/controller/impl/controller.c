@@ -116,6 +116,7 @@ void control()
 
 void handle_new_speed(double leftSpeed, double rightSpeed)
 {
+    LOG_INFO("Updated motors speed\n");
     motorsContext.leftMotorConfiguration.m_refSpeed = leftSpeed;
     motorsContext.rightMotorConfiguration.m_refSpeed = rightSpeed;
 }

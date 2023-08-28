@@ -25,7 +25,7 @@ void send_log(const char *ptr, int len)
 {
     osMutexAcquire(*logMutexPtr, osWaitForever);
     // arbitrary timeout 1000
-    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart3, (uint8_t*)ptr, len, TIMEOUT);
+    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, TIMEOUT);
     if (status != HAL_OK)
     {
         Error_Handler();

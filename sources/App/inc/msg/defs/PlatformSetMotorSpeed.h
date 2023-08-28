@@ -15,8 +15,8 @@
 #include <stdint.h>
 
 /*
- * lSpeedF/rSpeedF - fraction part of speed values
- * lSpeedI/rSpeedI - integer part of speed values
+ * lSpeedF/rSpeedF - fraction part of speed values - 0.xxxx
+ * lSpeedI/rSpeedI - integer part of speed values - xxx.0
  */
 struct PlatformSetMotorSpeedReq
 {

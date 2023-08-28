@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <FreeRTOS.h>
+
 struct
 {
     void (*callback)(double, double); 
@@ -36,5 +38,11 @@ void platform_set_motor_speed_req_handler_handle(const PlatformSetMotorSpeedReq*
     {
         return;
     }
-    platformSetMotorSpeedReqHandler.callback(transformSpeed(msg->rSpeedI, msg->rSpeedF), transformSpeed(msg->lSpeedI, msg->lSpeedF));
+
+    int8_t lSpeedI = msg->lSpeedI;
+    uint8_t lSpeedF = msg->lSpeedF;
+    int8_t rSpeedI = msg->rSpeedI;
+    uint8_t rSpeedF = msg->rSpeedF;
+
+    platformSetMotorSpeedReqHandler.callback(transformSpeed(rSpeedI, rSpeedF), transformSpeed(lSpeedI, lSpeedF));
 }
