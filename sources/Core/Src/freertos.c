@@ -60,21 +60,21 @@ typedef StaticSemaphore_t osStaticMutexDef_t;
 osThreadId_t controllerTaskHandle;
 const osThreadAttr_t controllerTask_attributes = {
   .name = "controllerTask",
-  .stack_size = 256 * 4,
+  .stack_size = 320 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for feedbackTask */
 osThreadId_t feedbackTaskHandle;
 const osThreadAttr_t feedbackTask_attributes = {
   .name = "feedbackTask",
-  .stack_size = 256 * 4,
+  .stack_size = 320 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for rxTask */
 osThreadId_t rxTaskHandle;
 const osThreadAttr_t rxTask_attributes = {
   .name = "rxTask",
-  .stack_size = 256 * 4,
+  .stack_size = 320 * 4,
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for messagesQueue */
@@ -231,11 +231,6 @@ void startFeedbackTask(void *argument)
     for(;;)
     {
         work_feedback();
-        if (toggle() == 1)
-        {
-            togglePin();
-            LOG_INFO("Test\n");
-        }
     }
   /* USER CODE END startFeedbackTask */
 }

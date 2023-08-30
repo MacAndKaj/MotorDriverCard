@@ -11,6 +11,8 @@
 
 #include "log/impl/log.h"
 
+#include <FreeRTOS.h>
+
 #include <memory.h>
 
 void configure_log(osMutexId_t* logMutex)

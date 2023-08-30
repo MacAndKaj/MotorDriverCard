@@ -23,10 +23,6 @@ void onExtInterrupt(uint16_t GPIO_Pin)
         case RightMotorEncoderB_Pin:
             on_ext_interrupt_feedback(GPIO_Pin);
             break;
-        case Button_Pin:
-            togglePin();
-            HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-            break;
         default:
             break;
     }

@@ -32,3 +32,9 @@ void send_log(const char *ptr, int len)
     }
     osMutexRelease(*logMutexPtr);
 }
+
+int _write(int file, char *ptr, int len)
+{
+    send_log(ptr, len);
+	return len;
+}

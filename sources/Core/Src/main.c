@@ -58,16 +58,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-volatile int pin;
-void togglePin()
-{
-  if (pin == 0) pin = 1;
-  else pin = 0;
-}
-int toggle()
-{
-  return pin;
-}
 /* USER CODE END 0 */
 
 /**
@@ -78,7 +68,6 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
     context = new_main_context();
-  pin=0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -185,7 +174,6 @@ void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
 
 void HAL_UART_RxCpltCallback (UART_HandleTypeDef* huart)
 {
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
     if (context->rxCompletedCb != NULL) context->rxCompletedCb(huart);
 }
 /* USER CODE END 4 */

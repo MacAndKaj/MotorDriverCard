@@ -1,4 +1,4 @@
-/usr/bin/openocd -c "tcl_port disabled" -c "gdb_port 3333" -c "telnet_port 4444" -s /usr/share/openocd/scripts -f board/st_nucleo_f3.cfg -c "program MotorDriver.elf" -c "init;reset init;" -c "echo (((READY)))"
+/usr/bin/openocd -c "bindto 0.0.0.0" -c "tcl_port disabled" -c "gdb_port 3333" -c "telnet_port 4444" -s /usr/share/openocd/scripts -f board/st_nucleo_f3.cfg -c "program MotorDriver.elf" -c "init;reset init;" -c "echo (((READY)))"
 
 arm-none-eabi-gdb MotorDriver.elf
 start

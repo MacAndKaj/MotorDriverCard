@@ -11,8 +11,12 @@
 
 #include <cmsis_os2.h>
 
+#include <stdio.h>
+
 #define LOG_INFO(MSG) \
     logger("[INFO]"MSG)
+
+#define LOG_INFO_ARGS(MSG, ARGS...) printf("[INFO]"MSG, ARGS)
 
 void configure_log(osMutexId_t* logMutex);
 

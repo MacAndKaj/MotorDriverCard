@@ -15,7 +15,7 @@
 
 struct
 {
-    void (*callback)(double, double); 
+    void (*callback)(double rs, double ls); 
 } platformSetMotorSpeedReqHandler;
 
 void platform_set_motor_speed_req_handler_configure(void (*cb)(double, double))
@@ -44,5 +44,5 @@ void platform_set_motor_speed_req_handler_handle(const PlatformSetMotorSpeedReq*
     int8_t rSpeedI = msg->rSpeedI;
     uint8_t rSpeedF = msg->rSpeedF;
 
-    platformSetMotorSpeedReqHandler.callback(transformSpeed(rSpeedI, rSpeedF), transformSpeed(lSpeedI, lSpeedF));
+    platformSetMotorSpeedReqHandler.callback(transformSpeed(lSpeedI, lSpeedF), transformSpeed(rSpeedI, rSpeedF));
 }

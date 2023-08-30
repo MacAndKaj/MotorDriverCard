@@ -53,8 +53,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-int toggle();
-void togglePin();
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -64,9 +63,6 @@ void togglePin();
 #define TIM3_PERIOD (10000 - 1)
 #define TIM17_PRESCALER 0
 #define TIM17_PERIOD (8000-1)
-#define Button_Pin GPIO_PIN_13
-#define Button_GPIO_Port GPIOC
-#define Button_EXTI_IRQn EXTI15_10_IRQn
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
