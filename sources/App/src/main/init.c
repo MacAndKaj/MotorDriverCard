@@ -44,3 +44,11 @@ void onRxCpltCallback(UART_HandleTypeDef *huart)
         onReceptionCompleted();
     }
 }
+
+void onSpiRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if (hspi->Instance == SPI2)
+    {
+        onReceptionCompleted();
+    }
+}

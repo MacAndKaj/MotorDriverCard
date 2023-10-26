@@ -87,6 +87,9 @@ file(GLOB HAL_SOURCES
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c;
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c;
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c;
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c;
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi.c;
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi_ex.c;
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c;
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c;
     ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart.c;

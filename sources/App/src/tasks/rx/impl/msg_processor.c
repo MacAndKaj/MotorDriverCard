@@ -59,14 +59,14 @@ struct Message* processFrame(const Frame* f)
 {
     if (f->header != HEADER_BYTE)
     {
-        LOG_INFO("Frame Header incorrect!\n");
+        LOG_INFO_ARGS("Frame Header incorrect! Value: %d\n", f->header);
         return NULL;
     }
 
     uint8_t messageId = f->id;
     if (messageId == 0)
     {
-        LOG_INFO("Incorrect message ID!\n");
+        LOG_INFO_ARGS("Incorrect message ID! Value: %d\n", f->id);
         return NULL;
     }
 

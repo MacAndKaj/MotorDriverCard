@@ -73,6 +73,12 @@ void Error_Handler(void);
 #define SpeedUpdatePin_GPIO_Port GPIOA
 #define LeftMotorPWM_Pin GPIO_PIN_10
 #define LeftMotorPWM_GPIO_Port GPIOB
+#define SYSCOM_SPI_NSS_Pin GPIO_PIN_12
+#define SYSCOM_SPI_NSS_GPIO_Port GPIOB
+#define SYSCOM_SPI_SCK_Pin GPIO_PIN_13
+#define SYSCOM_SPI_SCK_GPIO_Port GPIOB
+#define SYSCOM_SPI_MISO_Pin GPIO_PIN_14
+#define SYSCOM_SPI_MISO_GPIO_Port GPIOB
 #define RightMotorEncoderA_Pin GPIO_PIN_6
 #define RightMotorEncoderA_GPIO_Port GPIOC
 #define LeftMotorIn1_Pin GPIO_PIN_7

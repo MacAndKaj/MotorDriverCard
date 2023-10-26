@@ -16,6 +16,7 @@
 #include "tasks/rx/impl/msg_distributor.h"
 
 #include "usart.h"
+#include "spi.h"
 
 #include <FreeRTOS.h>
 
@@ -25,17 +26,33 @@ struct
 {
     osThreadId_t* receiverThreadIdHandle;
     uint8_t rxBuffer[FRAME_SIZE];
+    uint8_t syscomRxBuffer[FRAME_SIZE];
 } rxContext;
 
 void startReception()
 {
     LOG_INFO("Waiting for message\n");
     memset(rxContext.rxBuffer, 0, FRAME_SIZE);
-    HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart3, rxContext.rxBuffer, sizeof(Frame));
+    memset(rxContext.syscomRxBuffer, 0, FRAME_SIZE);
 
-    if (status != HAL_OK)
+    if (HAL_UART_GetState(&huart3) == 32)
     {
-        LOG_INFO("ERROR when starting UART reception using DMA for UART3\n");
+        HAL_StatusTypeDef status = HAL_UART_Receive_DMA(&huart3, rxContext.rxBuffer, sizeof(Frame));
+        if (status != HAL_OK)
+        {
+            LOG_INFO("ERROR when starting UART reception using DMA\n");
+        }
+         LOG_INFO("UART receiving\n");
+    }
+
+    if (HAL_SPI_GetState(&hspi2) == HAL_SPI_STATE_READY)
+    {
+        HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi2, rxContext.syscomRxBuffer, FRAME_SIZE);
+        if (status != HAL_OK)
+        {
+            LOG_INFO("ERROR when starting SPI reception using DMA\n");
+        }
+        LOG_INFO("SPI receiving\n");
     }
 }
 
@@ -53,7 +70,17 @@ void workRxImpl()
     osThreadFlagsWait(DATA_RECEIVED_THREAD_FLAG, osFlagsWaitAny, osWaitForever);
 
     LOG_INFO("[RX]Received message\n");
-    struct Message* msg = processData(rxContext.rxBuffer);
+
+    struct Message* msg;
+    if (rxContext.rxBuffer[0] == HEADER_BYTE)
+    {
+        msg = processData(rxContext.rxBuffer);
+    }
+    else
+    {
+        msg = processData(rxContext.syscomRxBuffer);
+    }
+    
     if (msg != NULL)
     {
         forwardMessage(msg);

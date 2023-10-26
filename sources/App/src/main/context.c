@@ -14,6 +14,7 @@
 
 void handle_ext_interrupt(uint16_t GPIO_Pin);
 void handle_rx_completed(UART_HandleTypeDef* huart);
+void handle_spi_rx_completed(SPI_HandleTypeDef *hspi);
 void handle_period_elapsed(TIM_HandleTypeDef *htim);
 
 struct Context mainContext;
@@ -23,31 +24,32 @@ struct Context* new_main_context()
 {
     mainContext.extInterruptCb = handle_ext_interrupt;
     mainContext.rxCompletedCb = handle_rx_completed;
+    mainContext.spiRxCompletedCb = handle_spi_rx_completed;
     mainContext.periodElapsedCb = handle_period_elapsed;
     contextInitialized = true;
 
     return &mainContext;
 }
 
-//struct Context* get_main_context()
-//{
-//    return mainContext;
-//}
-
 //=====================================
 //TODO: update with service handling
 void handle_ext_interrupt(uint16_t GPIO_Pin)
 {
-  onExtInterrupt(GPIO_Pin);
+    onExtInterrupt(GPIO_Pin);
 }
 
 void handle_rx_completed(UART_HandleTypeDef* huart)
 {
-  onRxCpltCallback(huart);
+    onRxCpltCallback(huart);
 }
 
 void handle_period_elapsed(TIM_HandleTypeDef *htim)
 {
-  onPeriodElapsedCallback(htim);
+    onPeriodElapsedCallback(htim);
+}
+
+void handle_spi_rx_completed(SPI_HandleTypeDef *hspi)
+{
+    onSpiRxCpltCallback(hspi);
 }
 //=====================================

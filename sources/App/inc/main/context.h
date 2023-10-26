@@ -12,6 +12,7 @@
 
 #include "tim.h"
 #include "usart.h"
+#include "spi.h"
 
 #include <stdint.h>
 
@@ -19,6 +20,7 @@ struct Context
 {
     void (*extInterruptCb)(uint16_t GPIO_Pin);
     void (*rxCompletedCb)(UART_HandleTypeDef* huart);
+    void (*spiRxCompletedCb)(SPI_HandleTypeDef *hspi);
     void (*periodElapsedCb)(TIM_HandleTypeDef *htim);
 };
 

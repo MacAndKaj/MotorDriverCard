@@ -20,6 +20,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "dma.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -94,6 +95,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM17_Init();
   MX_USART3_UART_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -176,6 +178,12 @@ void HAL_UART_RxCpltCallback (UART_HandleTypeDef* huart)
 {
     if (context->rxCompletedCb != NULL) context->rxCompletedCb(huart);
 }
+
+void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if (context->spiRxCompletedCb != NULL) context->spiRxCompletedCb(hspi);
+}
+
 /* USER CODE END 4 */
 
 /**

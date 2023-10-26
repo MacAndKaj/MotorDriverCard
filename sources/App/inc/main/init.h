@@ -19,5 +19,6 @@
 void onExtInterrupt(uint16_t GPIO_Pin);
 void onPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 void onRxCpltCallback(UART_HandleTypeDef *huart);
+void onSpiRxCpltCallback(SPI_HandleTypeDef *hspi);
 
 #endif //MOTORDRIVER_PLATFORM_INIT_H

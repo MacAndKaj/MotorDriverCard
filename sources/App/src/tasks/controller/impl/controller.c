@@ -16,9 +16,11 @@
 #include "msg/defs/Message.h"
 
 #include "gpio.h"
-#include <string.h>
 
-#include <cmsis_os2.h>
+#include "cmsis_os2.h"
+
+#include <math.h>
+#include <string.h>
 
 typedef struct
 {
@@ -101,6 +103,12 @@ void control_motor(MotorConfiguration* m, const bool leftOrRight)
 {
     double controlError;
     int64_t u;
+
+    if (fabs(m->m_refSpeed) < 0.02)
+    {
+        motor_process_update_u(&m->controlConfiguration, 0, leftOrRight);
+        return;
+    }
 
     controlError = m->m_refSpeed - m->m_currentSpeed;
     u = (int64_t)pid_evaluate(&m->controllerParameters, controlError, SPEED_UPDATE_PERIOD);
