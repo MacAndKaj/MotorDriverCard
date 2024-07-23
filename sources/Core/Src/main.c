@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <main/context.h>
+#include <main/module.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,13 +47,15 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-struct Context* context;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
+void spi_event(uint8_t spi_instance, uint8_t event_type);
+void tim_event(uint8_t tim_instance, uint8_t event_type);
+void exti_event(uint8_t gpio_instance, uint8_t event_type);
 
 /* USER CODE END PFP */
 
@@ -68,7 +70,6 @@ void MX_FREERTOS_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-    context = new_main_context();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -93,9 +94,10 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_TIM17_Init();
   MX_USART3_UART_Init();
   MX_SPI2_Init();
+  MX_TIM16_Init();
+  MX_TIM17_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -155,10 +157,11 @@ void SystemClock_Config(void)
     Error_Handler();
   }
   PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_USART3
-                              |RCC_PERIPHCLK_TIM17|RCC_PERIPHCLK_TIM2
-                              |RCC_PERIPHCLK_TIM34;
+                              |RCC_PERIPHCLK_TIM16|RCC_PERIPHCLK_TIM17
+                              |RCC_PERIPHCLK_TIM2|RCC_PERIPHCLK_TIM34;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
   PeriphClkInit.Usart3ClockSelection = RCC_USART3CLKSOURCE_PCLK1;
+  PeriphClkInit.Tim16ClockSelection = RCC_TIM16CLK_HCLK;
   PeriphClkInit.Tim17ClockSelection = RCC_TIM17CLK_HCLK;
   PeriphClkInit.Tim2ClockSelection = RCC_TIM2CLK_HCLK;
   PeriphClkInit.Tim34ClockSelection = RCC_TIM34CLK_HCLK;
@@ -169,19 +172,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback (uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-    if (context->extInterruptCb != NULL) context->extInterruptCb(GPIO_Pin);
-}
-
-void HAL_UART_RxCpltCallback (UART_HandleTypeDef* huart)
-{
-    if (context->rxCompletedCb != NULL) context->rxCompletedCb(huart);
+    if (GPIO_Pin == LeftMotorEncoderB_Pin) exti_event(LEFT_MOTOR_ENCODER_PIN_B, EXTI_EVENT_IT);
+    else if (GPIO_Pin == RightMotorEncoderB_Pin) exti_event(RIGHT_MOTOR_ENODER_PIN_B, EXTI_EVENT_IT);
 }
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    if (context->spiRxCompletedCb != NULL) context->spiRxCompletedCb(hspi);
+    // if (context->spiRxCompletedCb != NULL) context->spiRxCompletedCb(hspi);
+    if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_RX_CPLT);
 }
 
 /* USER CODE END 4 */
@@ -203,7 +203,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-    if (context->periodElapsedCb != NULL) context->periodElapsedCb(htim);
+  else if (htim->Instance == TIM2) tim_event(TIM_INSTANCE_2, TIM_EVENT_IT);
+  else if (htim->Instance == TIM3) tim_event(TIM_INSTANCE_3, TIM_EVENT_IT);
+  else if (htim->Instance == TIM16) tim_event(TIM_INSTANCE_16, TIM_EVENT_IT);
+  else if (htim->Instance == TIM17) tim_event(TIM_INSTANCE_17, TIM_EVENT_IT);
   /* USER CODE END Callback 1 */
 }
 
@@ -218,6 +221,8 @@ void Error_Handler(void)
   __disable_irq();
   while (1)
   {
+      HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+      HAL_Delay(1000);
   }
   /* USER CODE END Error_Handler_Debug */
 }

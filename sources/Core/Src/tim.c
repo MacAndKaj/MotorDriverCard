@@ -21,11 +21,12 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+#define TIM_DMA_ONE_WORD 1
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim16;
 TIM_HandleTypeDef htim17;
 DMA_HandleTypeDef hdma_tim2_ch3;
 DMA_HandleTypeDef hdma_tim3_ch1_trig;
@@ -116,6 +117,47 @@ void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 2 */
   HAL_TIM_MspPostInit(&htim3);
+
+}
+/* TIM16 init function */
+void MX_TIM16_Init(void)
+{
+
+  /* USER CODE BEGIN TIM16_Init 0 */
+
+  /* USER CODE END TIM16_Init 0 */
+
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM16_Init 1 */
+
+  /* USER CODE END TIM16_Init 1 */
+  htim16.Instance = TIM16;
+  htim16.Init.Prescaler = TIM16_PRESCALER;
+  htim16.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim16.Init.Period = TIM16_PERIOD;
+  htim16.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim16.Init.RepetitionCounter = 0;
+  htim16.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim16) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim16, &sConfigIC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM16_Init 2 */
+
+  /* USER CODE END TIM16_Init 2 */
 
 }
 /* TIM17 init function */
@@ -230,7 +272,33 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 {
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(tim_baseHandle->Instance==TIM17)
+  if(tim_baseHandle->Instance==TIM16)
+  {
+  /* USER CODE BEGIN TIM16_MspInit 0 */
+
+  /* USER CODE END TIM16_MspInit 0 */
+    /* TIM16 clock enable */
+    __HAL_RCC_TIM16_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**TIM16 GPIO Configuration
+    PA6     ------> TIM16_CH1
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+    GPIO_InitStruct.Alternate = GPIO_AF1_TIM16;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+    /* TIM16 interrupt Init */
+    HAL_NVIC_SetPriority(TIM1_UP_TIM16_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(TIM1_UP_TIM16_IRQn);
+  /* USER CODE BEGIN TIM16_MspInit 1 */
+
+  /* USER CODE END TIM16_MspInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM17)
   {
   /* USER CODE BEGIN TIM17_MspInit 0 */
 
@@ -242,12 +310,12 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
     /**TIM17 GPIO Configuration
     PA7     ------> TIM17_CH1
     */
-    GPIO_InitStruct.Pin = SpeedUpdatePin_Pin;
+    GPIO_InitStruct.Pin = GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM17;
-    HAL_GPIO_Init(SpeedUpdatePin_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* TIM17 interrupt Init */
     HAL_NVIC_SetPriority(TIM1_TRG_COM_TIM17_IRQn, 5, 0);
@@ -342,7 +410,26 @@ void HAL_TIM_PWM_MspDeInit(TIM_HandleTypeDef* tim_pwmHandle)
 void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 {
 
-  if(tim_baseHandle->Instance==TIM17)
+  if(tim_baseHandle->Instance==TIM16)
+  {
+  /* USER CODE BEGIN TIM16_MspDeInit 0 */
+
+  /* USER CODE END TIM16_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM16_CLK_DISABLE();
+
+    /**TIM16 GPIO Configuration
+    PA6     ------> TIM16_CH1
+    */
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
+
+    /* TIM16 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(TIM1_UP_TIM16_IRQn);
+  /* USER CODE BEGIN TIM16_MspDeInit 1 */
+
+  /* USER CODE END TIM16_MspDeInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM17)
   {
   /* USER CODE BEGIN TIM17_MspDeInit 0 */
 
@@ -353,7 +440,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
     /**TIM17 GPIO Configuration
     PA7     ------> TIM17_CH1
     */
-    HAL_GPIO_DeInit(SpeedUpdatePin_GPIO_Port, SpeedUpdatePin_Pin);
+    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7);
 
     /* TIM17 interrupt Deinit */
     HAL_NVIC_DisableIRQ(TIM1_TRG_COM_TIM17_IRQn);
@@ -364,5 +451,31 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 }
 
 /* USER CODE BEGIN 1 */
+void start_tim_17_it()
+{
+    HAL_StatusTypeDef state = HAL_TIM_Base_Start_IT(&htim17);
+    if (state != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+void start_tim_2_pwm_dma(uint32_t* pwm_source)
+{
+    HAL_StatusTypeDef state = HAL_TIM_PWM_Start_DMA(&htim2, TIM_CHANNEL_3, pwm_source, TIM_DMA_ONE_WORD);
+    if (state != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
+
+void start_tim_3_pwm_dma(uint32_t* pwm_source)
+{
+    HAL_StatusTypeDef state = HAL_TIM_PWM_Start_DMA(&htim3, TIM_CHANNEL_1, pwm_source, TIM_DMA_ONE_WORD);
+    if (state != HAL_OK)
+    {
+        Error_Handler();
+    }
+}
 
 /* USER CODE END 1 */

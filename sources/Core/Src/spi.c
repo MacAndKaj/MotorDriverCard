@@ -41,7 +41,7 @@ void MX_SPI2_Init(void)
   /* USER CODE END SPI2_Init 1 */
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_SLAVE;
-  hspi2.Init.Direction = SPI_DIRECTION_1LINE;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
   hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
@@ -79,8 +79,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     PB12     ------> SPI2_NSS
     PB13     ------> SPI2_SCK
     PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI
     */
-    GPIO_InitStruct.Pin = SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin;
+    GPIO_InitStruct.Pin = SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin|SYSCOM_SPI_MOSI_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -141,8 +142,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     PB12     ------> SPI2_NSS
     PB13     ------> SPI2_SCK
     PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI
     */
-    HAL_GPIO_DeInit(GPIOB, SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin);
+    HAL_GPIO_DeInit(GPIOB, SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin|SYSCOM_SPI_MOSI_Pin);
 
     /* SPI2 DMA DeInit */
     HAL_DMA_DeInit(spiHandle->hdmatx);
@@ -154,5 +156,18 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+int start_spi_2_dma_reception(uint8_t* buffer, uint16_t buffer_size)
+{
+    if (HAL_SPI_GetState(&hspi2) == HAL_SPI_STATE_READY)
+    {
+        HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi2, buffer, buffer_size);
+        if (status == HAL_OK)
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
 
 /* USER CODE END 1 */
