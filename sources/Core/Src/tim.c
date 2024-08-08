@@ -453,7 +453,7 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 /* USER CODE BEGIN 1 */
 void start_tim_17_it()
 {
-    HAL_StatusTypeDef state = HAL_TIM_Base_Start_IT(&htim17);
+    HAL_StatusTypeDef state = HAL_TIM_IC_Start(&htim17, TIM_CHANNEL_1);
     if (state != HAL_OK)
     {
         Error_Handler();

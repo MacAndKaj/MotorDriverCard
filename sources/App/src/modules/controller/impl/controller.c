@@ -30,11 +30,13 @@ void controller_init(struct controller_data *data)
     handle->left_motor_control_info.pwm_period = PWM_PERIOD;
     handle->left_motor_control_info.stop_threshold = STOP_THRESHOLD;
     handle->left_motor_control_info.current_values.ref_speed = 0;
+    handle->left_motor_control_info.motor_info_handle = data->left_motor_info;
 
     handle->right_motor_control_info.pid_data = create_pid(4000., 150., 30.);
     handle->right_motor_control_info.pwm_period = PWM_PERIOD;
     handle->right_motor_control_info.stop_threshold = STOP_THRESHOLD;
     handle->right_motor_control_info.current_values.ref_speed = 0;
+    handle->right_motor_control_info.motor_info_handle = data->right_motor_info;
 
     motor_process_init(&handle->left_motor_control_info, &handle->right_motor_control_info);
 

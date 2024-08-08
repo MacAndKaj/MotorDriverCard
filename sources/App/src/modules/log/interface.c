@@ -16,9 +16,11 @@
 #include <memory.h>
 #include <stdarg.h>
 
-void configure_log(osMutexId_t* logMutex)
+void configure_log(osMutexId_t* logMutex, transmit_func f)
 {
     set_log_mutex(logMutex);
+    set_transmit_function(f);
+    LOG_INFO("[log] Logger is working\n");
 }
 
 void logger(const char* logStr)

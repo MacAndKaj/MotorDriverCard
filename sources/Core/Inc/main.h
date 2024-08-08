@@ -92,10 +92,6 @@ void Error_Handler(void);
 #define RightMotorIn1_GPIO_Port GPIOA
 #define RightMotorIn2_Pin GPIO_PIN_9
 #define RightMotorIn2_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
 #define LeftMotorEncoderB_Pin GPIO_PIN_10
 #define LeftMotorEncoderB_GPIO_Port GPIOC
 #define LeftMotorEncoderB_EXTI_IRQn EXTI15_10_IRQn

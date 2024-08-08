@@ -9,9 +9,13 @@
 #ifndef LOG_IMPL_LOG_H
 #define LOG_IMPL_LOG_H
 
+#include <modules/log/interface.h>
+
 #include <cmsis_os2.h>
 
 void set_log_mutex(osMutexId_t* logMutex);
+
+void set_transmit_function(transmit_func f);
 
 void send_log(const char *ptr, int len);
 

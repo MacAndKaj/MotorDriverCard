@@ -3,8 +3,6 @@
 ####################################################
 set(LIBRARY_NAME library_mdc_bootstrap)
 
-
-
 target_include_directories(${LIBRARY_NAME}
     PUBLIC ${CORE_HEADERS_DIR}
 )

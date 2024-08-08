@@ -175,9 +175,6 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-    HAL_Delay(300);
-    HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 
   /* USER CODE END Init */
   /* Create the mutex(es) */
@@ -186,7 +183,7 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
-    configure_log(&logMutexHandle);
+    configure_log(&logMutexHandle, transmit_uart2);
 
   /* USER CODE END RTOS_MUTEX */
 
@@ -234,7 +231,7 @@ void MX_FREERTOS_Init(void) {
 
 /* USER CODE BEGIN Header_startController */
 
-struct motor_info left_motor_info = {
+static struct motor_info left_motor_info = {
     .pinout={
         .motorControl1Port=LeftMotorIn1_GPIO_Port,
         .motorControl1Pin=LeftMotorIn1_Pin,
@@ -244,7 +241,7 @@ struct motor_info left_motor_info = {
     .start_pwm=start_tim_2_pwm_dma,
 };
 
-struct motor_info right_motor_info = {
+static struct motor_info right_motor_info = {
     .pinout={
         .motorControl1Port=RightMotorIn1_GPIO_Port,
         .motorControl1Pin=RightMotorIn1_Pin,
@@ -280,9 +277,9 @@ void startController(void *argument)
     controller_module_handle = &controller_module;
     
     module_set_data(controller_module_handle, &controller_module_data);
-    feedback_module_init(controller_module_handle);
+    controller_module_init(controller_module_handle);
     
-    LOG_INFO("[controller] Start controller task\n");
+    // LOG_INFO("[controller] Start controller task\n");
     /* Infinite loop */
     for(;;)
     {
@@ -341,7 +338,7 @@ void startFeedbackTask(void *argument)
     
     module_set_data(feedback_module_handle, &feedback_internal_data);
     feedback_module_init(feedback_module_handle);
-    LOG_INFO("[Feedback] Start task\n");
+    LOG_INFO("[feedback] Start task\n");
 
     /* Infinite loop */
     for(;;)
@@ -382,13 +379,13 @@ void startSyscomTask(void *argument)
     module_set_data(syscom_module_handle, &syscom_task_data);
     syscom_module_init(syscom_module_handle);
 
-    LOG_INFO("[Syscom] Start task\n");
+    LOG_INFO("[syscom] Start task\n");
     /* Infinite loop */
     for(;;)
     {
         MODULE_WORK(syscom_module_handle);
     }
-    /* USER CODE END startSyscomTask */
+  /* USER CODE END startSyscomTask */
 }
 
 /* Private application code --------------------------------------------------*/

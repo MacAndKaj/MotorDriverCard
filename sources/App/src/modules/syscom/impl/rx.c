@@ -23,7 +23,7 @@ void rx_start(struct module *this_mod, struct rx_context *context)
     LOG_INFO("[syscom][rx] Waiting for message\n");
     memset(context->buffer, 0, FRAME_SIZE);
 
-    int status = rx_comm_ops->write_non_blocking(context->buffer, FRAME_SIZE);
+    int status = rx_comm_ops->read_non_blocking(context->buffer, FRAME_SIZE);
     if (status != 0)
     {
         LOG_INFO("[syscom][rx] ERROR when starting SPI reception using DMA\n");

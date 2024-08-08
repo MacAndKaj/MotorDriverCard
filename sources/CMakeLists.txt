@@ -17,7 +17,7 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 project(MotorDriver C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
-add_compile_options(-Wall -Wextra)
+add_compile_options(-Wall -Wextra -Wpedantic)
 
 set(STARTUP_FILE ${CMAKE_SOURCE_DIR}/Core/Startup/startup_stm32f303retx.s)
 message(STATUS "Startup file used: ${STARTUP_FILE}")

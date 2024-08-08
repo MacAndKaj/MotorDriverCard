@@ -13,13 +13,15 @@
 
 #include <stdio.h>
 
+typedef void (*transmit_func)(const char *ptr, int len);
+
 #define LOG_INFO(MSG) \
     logger("[INFO]"MSG)
 
 // #define LOG_INFO_ARGS(MSG, ARGS...) printf("[INFO]"MSG, ARGS)
 #define LOG_INFO_ARGS(MSG, ARGS...) logger_args("[INFO]"MSG, ARGS)
 
-void configure_log(osMutexId_t* logMutex);
+void configure_log(osMutexId_t* logMutex, transmit_func f);
 
 void logger(const char* logStr);
 
