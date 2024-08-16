@@ -21,4 +21,6 @@ void send_log(const char *ptr, int len);
 
 void send_log_variadic(const char *ptr, ...);
 
+void unlock_mutex(void);
+
 #endif // LOG_IMPL_LOG_H

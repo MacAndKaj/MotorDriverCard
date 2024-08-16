@@ -101,6 +101,7 @@ void Error_Handler(void);
 #define RightMotorPWM_GPIO_Port GPIOB
 #define LeftMotorIn2_Pin GPIO_PIN_6
 #define LeftMotorIn2_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 // GPIO instances

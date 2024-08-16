@@ -21,7 +21,11 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+//#include "modules/log/interface.h"
+
 #define TIMEOUT 1000
+
+//void uart2_tx_transmit_handler(UART_HandleTypeDef *huart);
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
@@ -54,6 +58,7 @@ void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
+//    HAL_UART_RegisterCallback(&huart2, HAL_UART_TX_COMPLETE_CB_ID, uart2_tx_transmit_handler);
 
   /* USER CODE END USART2_Init 2 */
 
@@ -118,6 +123,11 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+//void uart2_tx_transmit_handler(UART_HandleTypeDef *huart)
+//{
+//    if (huart->Instance == USART2) logger_transfer_complete_callback();
+//}
 
 void transmit_uart2(const char *ptr, int len)
 {

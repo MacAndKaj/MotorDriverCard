@@ -36,6 +36,7 @@
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
+typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticSemaphore_t osStaticMutexDef_t;
 /* USER CODE BEGIN PTD */
@@ -73,14 +74,17 @@ struct event_subscription
     } callback;
 };
 
-#define CALL_DIRECTLY(subscription_ptr)                                       \
-    subscription_ptr->callback.direct_call_callback_info.cb(                  \
-        *(subscription_ptr->callback.direct_call_callback_info.module_handle))
+#define CALL_DIRECTLY(subscription_ptr)                                                 \
+    if (*(subscription_ptr->callback.direct_call_callback_info.module_handle) != NULL)  \
+    {                                                                                   \
+        subscription_ptr->callback.direct_call_callback_info.cb(                        \
+            *(subscription_ptr->callback.direct_call_callback_info.module_handle));     \
+    }
 
 #define SET_FLAG(subscription_ptr)                                            \
     osThreadFlagsSet(                                                         \
         *(subscription_ptr->callback.thread_flag_callback_info.thread_id),    \
-          subscription_ptr->callback.thread_flag_callback_info.thread_flag)
+          subscription_ptr->callback.thread_flag_callback_info.thread_flag);
     
 
 /* USER CODE END PTD */
@@ -103,23 +107,38 @@ struct event_subscription
 /* USER CODE END Variables */
 /* Definitions for controllerTask */
 osThreadId_t controllerTaskHandle;
+uint32_t controllerTaskBuffer[ 320 ];
+osStaticThreadDef_t controllerTaskControlBlock;
 const osThreadAttr_t controllerTask_attributes = {
   .name = "controllerTask",
-  .stack_size = 320 * 4,
+  .cb_mem = &controllerTaskControlBlock,
+  .cb_size = sizeof(controllerTaskControlBlock),
+  .stack_mem = &controllerTaskBuffer[0],
+  .stack_size = sizeof(controllerTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for feedbackTask */
 osThreadId_t feedbackTaskHandle;
+uint32_t feedbackTaskBuffer[ 320 ];
+osStaticThreadDef_t feedbackTaskControlBlock;
 const osThreadAttr_t feedbackTask_attributes = {
   .name = "feedbackTask",
-  .stack_size = 320 * 4,
+  .cb_mem = &feedbackTaskControlBlock,
+  .cb_size = sizeof(feedbackTaskControlBlock),
+  .stack_mem = &feedbackTaskBuffer[0],
+  .stack_size = sizeof(feedbackTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for syscomTask */
 osThreadId_t syscomTaskHandle;
+uint32_t syscomTaskBuffer[ 320 ];
+osStaticThreadDef_t syscomTaskControlBlock;
 const osThreadAttr_t syscomTask_attributes = {
   .name = "syscomTask",
-  .stack_size = 320 * 4,
+  .cb_mem = &syscomTaskControlBlock,
+  .cb_size = sizeof(syscomTaskControlBlock),
+  .stack_mem = &syscomTaskBuffer[0],
+  .stack_size = sizeof(syscomTaskBuffer),
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
 /* Definitions for syscomMessageQueue */
@@ -160,6 +179,7 @@ const osEventFlagsAttr_t messageReceived_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
+void log_uart_handler(UART_HandleTypeDef *huart);
 /* USER CODE END FunctionPrototypes */
 
 void startController(void *argument);
@@ -184,7 +204,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
     configure_log(&logMutexHandle, transmit_uart2);
-
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -279,7 +298,7 @@ void startController(void *argument)
     module_set_data(controller_module_handle, &controller_module_data);
     controller_module_init(controller_module_handle);
     
-    // LOG_INFO("[controller] Start controller task\n");
+     LOG_INFO("[controller] Start controller task\n");
     /* Infinite loop */
     for(;;)
     {
@@ -338,7 +357,7 @@ void startFeedbackTask(void *argument)
     
     module_set_data(feedback_module_handle, &feedback_internal_data);
     feedback_module_init(feedback_module_handle);
-    LOG_INFO("[feedback] Start task\n");
+    LOG_INFO("[feedback] Start feedback task\n");
 
     /* Infinite loop */
     for(;;)
@@ -412,8 +431,14 @@ void spi_event(uint8_t instance, uint8_t event)
         ptr = spi_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event))
         {
-            if (ptr->callback_type == DIRECT_CALL) CALL_DIRECTLY(ptr);
-            else if (ptr->callback_type == THREAD_FLAG) SET_FLAG(ptr);
+            if (ptr->callback_type == DIRECT_CALL)
+            {
+                CALL_DIRECTLY(ptr);
+            }
+            else if (ptr->callback_type == THREAD_FLAG)
+            {
+                SET_FLAG(ptr)
+            }
         }
     }
 
@@ -440,8 +465,14 @@ void tim_event(uint8_t instance, uint8_t event_type)
         ptr = tim_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL) CALL_DIRECTLY(ptr);
-            else if (ptr->callback_type == THREAD_FLAG) SET_FLAG(ptr);
+            if (ptr->callback_type == DIRECT_CALL)
+            {
+                CALL_DIRECTLY(ptr)
+            }
+            else if (ptr->callback_type == THREAD_FLAG)
+            {
+                SET_FLAG(ptr)
+            }
         }
     }
 }
@@ -476,8 +507,14 @@ void exti_event(uint8_t instance, uint8_t event_type)
         ptr = exti_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL) CALL_DIRECTLY(ptr);
-            else if (ptr->callback_type == THREAD_FLAG) SET_FLAG(ptr);
+            if (ptr->callback_type == DIRECT_CALL)
+            {
+                CALL_DIRECTLY(ptr)
+            }
+            else if (ptr->callback_type == THREAD_FLAG)
+            {
+                SET_FLAG(ptr)
+            }
         }
     }
 }

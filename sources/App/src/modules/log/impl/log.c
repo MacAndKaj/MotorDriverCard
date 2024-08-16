@@ -35,24 +35,23 @@ void send_log(const char *ptr, int len)
 {
     osMutexAcquire(*logMutexPtr, osWaitForever);
     memcpy(log_buffer, ptr, len);
-    // arbitrary timeout 1000
     if (write_log != NULL)
     {
-        write_log(ptr, len);
+        write_log(log_buffer, len);
     }
-
     osMutexRelease(*logMutexPtr);
 }
 
-int _write(int /*file*/, char *ptr, int len)
+int _write(int file, char *ptr, int len)
 {
+    (void)file;
     send_log(ptr, len);
 	return len;
 }
 
 void send_log_variadic(const char *ptr, ...)
 {
-    static char buffer[BUFFER_SIZE] = {};
+    static char buffer[BUFFER_SIZE] = {0};
     va_list arguments;
     va_start(arguments, ptr);
 

@@ -27,4 +27,6 @@ void logger(const char* logStr);
 
 void logger_args(const char* message, ...);
 
+void logger_transfer_complete_callback(void);
+
 #endif //LOG_INTERFACE_H

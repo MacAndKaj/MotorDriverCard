@@ -11,8 +11,6 @@
 
 #include "modules/log/impl/log.h"
 
-#include <FreeRTOS.h>
-
 #include <memory.h>
 #include <stdarg.h>
 
@@ -32,4 +30,9 @@ void logger_args(const char* message, ...)
 {
     va_list args;
     send_log_variadic(message, args);
+}
+
+void logger_transfer_complete_callback(void)
+{
+    unlock_mutex();
 }

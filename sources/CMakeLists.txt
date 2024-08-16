@@ -153,9 +153,9 @@ file(GLOB SOURCES
     ${CORE_SOURCE_DIR}/gpio.c
     ${CORE_SOURCE_DIR}/main.c
     ${CORE_SOURCE_DIR}/spi.c
-    ${CORE_SOURCE_DIR}/stm32fxx_hal_msp.c
-    ${CORE_SOURCE_DIR}/stm32fxx_hal_timebase_tim.c
-    ${CORE_SOURCE_DIR}/stm32fxx_it.c
+    ${CORE_SOURCE_DIR}/stm32f3xx_hal_msp.c
+    ${CORE_SOURCE_DIR}/stm32f3xx_hal_timebase_tim.c
+    ${CORE_SOURCE_DIR}/stm32f3xx_it.c
     ${CORE_SOURCE_DIR}/syscalls.c
     ${CORE_SOURCE_DIR}/sysmem.c
     ${CORE_SOURCE_DIR}/system_stm32f3xx.c

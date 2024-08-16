@@ -56,7 +56,6 @@ void MX_FREERTOS_Init(void);
 void spi_event(uint8_t spi_instance, uint8_t event_type);
 void tim_event(uint8_t tim_instance, uint8_t event_type);
 void exti_event(uint8_t gpio_instance, uint8_t event_type);
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -69,6 +68,7 @@ void exti_event(uint8_t gpio_instance, uint8_t event_type);
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
   /* USER CODE END 1 */
 
@@ -102,13 +102,16 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Init scheduler */
-  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  osKernelInitialize();
+
+  /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
   /* Start scheduler */
   osKernelStart();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
