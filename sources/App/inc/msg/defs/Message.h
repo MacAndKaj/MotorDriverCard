@@ -11,6 +11,7 @@
 #define MOTORDRIVER_COM_INTERFACE_DEFS_MESSAGE_H
 
 #include "msg/defs/PlatformSetMotorSpeed.h"
+#include "msg/defs/PlatformSetMotorPwmValue.h"
 
 struct Message
 {
@@ -19,6 +20,8 @@ struct Message
     {
         PlatformSetMotorSpeedReq platformSetMotorSpeedReq;
         PlatformSetMotorSpeedResp platformSetMotorSpeedResp;
+        PlatformSetMotorPwmValueReq platformSetMotorPwmValueReq;
+        PlatformSetMotorPwmValueResp platformSetMotorPwmValueResp;
     } msg;
 };
 typedef struct Message Message;

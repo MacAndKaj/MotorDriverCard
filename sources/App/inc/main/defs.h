@@ -53,10 +53,10 @@ r(t)--->*      *------- |  Controller |----->|  Process    |--------+--------->
 /*
 
 LeftEncoder
- +--------+                   -y
+ +--------+                   y
  |        |                   ^     (Accelerometer)
  |        +--------------+    |
- |                       |    o-----> -x
+ |                       |    o-----> x
  |        +--------------+   z
  |        |
  +--------+
@@ -68,9 +68,18 @@ RightEncoder
 struct SpeedValues
 {
     double leftMotorSpeed, rightMotorSpeed; // [ROUNDS/s]
-    double linearXSpeed; // [m/s]
 };
 
-#define DATA_RECEIVED_THREAD_FLAG 0x00000001
+struct PlatformStatus
+{
+    struct SpeedValues speed;
+};
+
+// **************************************************************
+// SYSCOM DEFS
+// **************************************************************
+#define DATA_RECEIVED_THREAD_FLAG 0x01
+#define NEW_STATUS_INFO_THREAD_FLAG 0x02
+// **************************************************************
 
 #endif //MDC_MAIN_DEFS_H

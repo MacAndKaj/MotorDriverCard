@@ -34,8 +34,11 @@
 # Generators files
 .mxproject
 .cproject
+.project
 .idea/
+.vscode/
 CMakeLists_template.txt
+CMakeLists.txt.user
 
 # Drivers
 Drivers/
