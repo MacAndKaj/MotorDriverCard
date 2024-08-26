@@ -17,11 +17,10 @@ struct controller_internal_data
 {
     struct motor_control_info right_motor_control_info;
     struct motor_control_info left_motor_control_info;
+    bool disable_pid;
 };
 
 void controller_init(struct controller_data *handle);
 void controller_work(struct controller_data *handle);
-void on_ext_interrupt_feedback_impl(uint16_t GPIO_Pin);
-
 
 #endif //MDC_CONTROLLER_IMPL_MOTORS_H

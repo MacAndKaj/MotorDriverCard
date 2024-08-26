@@ -272,7 +272,7 @@ static struct motor_info right_motor_info = {
 
 static struct controller_data controller_module_data = {
     .controller_thread_handle=&controllerTaskHandle,
-    .message_queue_handle=&messageReceivedHandle,
+    .message_queue_handle=&syscomMessageQueueHandle,
     .speed_values_queue_handle=&feedbackSpeedQueueHandle,
     .left_motor_info=&left_motor_info,
     .right_motor_info=&right_motor_info,

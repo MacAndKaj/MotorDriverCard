@@ -121,6 +121,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 
     __HAL_LINKDMA(spiHandle,hdmarx,hdma_spi2_rx);
 
+    /* SPI2 interrupt Init */
+    HAL_NVIC_SetPriority(SPI2_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspInit 1 */
 
   /* USER CODE END SPI2_MspInit 1 */
@@ -149,6 +152,9 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     /* SPI2 DMA DeInit */
     HAL_DMA_DeInit(spiHandle->hdmatx);
     HAL_DMA_DeInit(spiHandle->hdmarx);
+
+    /* SPI2 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspDeInit 1 */
 
   /* USER CODE END SPI2_MspDeInit 1 */
@@ -159,15 +165,25 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 
 int start_spi_2_dma_reception(uint8_t* buffer, uint16_t buffer_size)
 {
-    if (HAL_SPI_GetState(&hspi2) == HAL_SPI_STATE_READY)
+    HAL_SPI_StateTypeDef state = HAL_SPI_GetState(&hspi2);
+    if (state != HAL_SPI_STATE_READY)
     {
-        HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi2, buffer, buffer_size);
-        if (status == HAL_OK)
-        {
-            return 0;
-        }
+        return state;
     }
-    return 1;
+
+    uint32_t err = HAL_SPI_GetError(&hspi2);
+    if (err != HAL_SPI_ERROR_NONE)
+    {
+        return -(int)err;
+    }
+
+    HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi2, buffer, buffer_size);
+    if (status != HAL_OK)
+    {
+        return status;
+    }
+
+    return 0;
 }
 
 /* USER CODE END 1 */

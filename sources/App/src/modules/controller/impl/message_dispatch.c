@@ -11,6 +11,7 @@
 
 #include <modules/log/interface.h>
 #include <modules/controller/impl/handlers/platform_set_motor_speed_req_handler.h>
+#include <modules/controller/impl/handlers/platform_set_motor_pwm_value_req_handler.h>
 #include <msg/defs/Message.h>
 #include <msg/message_ids.h>
 
@@ -27,6 +28,7 @@ void dispatch_message(const Message* msg)
         case PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID:
             {
                 LOG_INFO("[controller] Message PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID received.\n");
+                platform_set_motor_pwm_value_req_handler_handle(&msg->msg.platformSetMotorPwmValueReq);
                 break;
             }
         default:

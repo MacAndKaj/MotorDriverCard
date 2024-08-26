@@ -49,15 +49,11 @@ int _write(int file, char *ptr, int len)
 	return len;
 }
 
-void send_log_variadic(const char *ptr, ...)
+void send_log_variadic(const char *ptr, va_list arguments)
 {
     static char buffer[BUFFER_SIZE] = {0};
-    va_list arguments;
-    va_start(arguments, ptr);
 
     int32_t len = vsnprintf(buffer, BUFFER_SIZE, ptr, arguments);
 
     send_log(buffer, len);
-
-    va_end(arguments);
 }

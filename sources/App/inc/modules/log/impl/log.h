@@ -19,7 +19,7 @@ void set_transmit_function(transmit_func f);
 
 void send_log(const char *ptr, int len);
 
-void send_log_variadic(const char *ptr, ...);
+void send_log_variadic(const char *ptr, va_list arguments);
 
 void unlock_mutex(void);
 

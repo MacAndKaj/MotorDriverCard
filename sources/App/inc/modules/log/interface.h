@@ -19,7 +19,7 @@ typedef void (*transmit_func)(const char *ptr, int len);
     logger("[INFO]"MSG)
 
 // #define LOG_INFO_ARGS(MSG, ARGS...) printf("[INFO]"MSG, ARGS)
-#define LOG_INFO_ARGS(MSG, ARGS...) logger_args("[INFO]"MSG, ARGS)
+#define LOG_INFO_ARGS(MSG, ...) logger_args("[INFO]"MSG, __VA_ARGS__)
 
 void configure_log(osMutexId_t* logMutex, transmit_func f);
 

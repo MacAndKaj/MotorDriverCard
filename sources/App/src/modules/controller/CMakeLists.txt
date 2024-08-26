@@ -12,7 +12,8 @@ file(GLOB SOURCES
     ${APP_HEADERS_DIR}/modules/controller/impl/message_dispatch.h
     ${APP_HEADERS_DIR}/modules/controller/impl/motor_process.h
     ${APP_HEADERS_DIR}/modules/controller/impl/pid.h
-    ${APP_HEADERS_DIR}/modules/controller/impl/handlers/platform_set_motor_speed_req_handler.c
+    ${APP_HEADERS_DIR}/modules/controller/impl/handlers/platform_set_motor_speed_req_handler.h
+    ${APP_HEADERS_DIR}/modules/controller/impl/handlers/platform_set_motor_pwm_value_req_handler.h
 
     ${CMAKE_CURRENT_SOURCE_DIR}/interface.c
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/controller.c
@@ -21,6 +22,7 @@ file(GLOB SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/motor_process.c
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/pid.c
     ${CMAKE_CURRENT_SOURCE_DIR}/impl/handlers/platform_set_motor_speed_req_handler.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/handlers/platform_set_motor_pwm_value_req_handler.c
 )
 
 add_library(${LIBRARY_NAME} ${SOURCES})

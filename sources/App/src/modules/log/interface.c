@@ -29,7 +29,9 @@ void logger(const char* logStr)
 void logger_args(const char* message, ...)
 {
     va_list args;
+    va_start(args, message);
     send_log_variadic(message, args);
+    va_end(args);
 }
 
 void logger_transfer_complete_callback(void)

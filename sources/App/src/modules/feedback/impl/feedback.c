@@ -26,7 +26,10 @@ void feedback_work(struct feedback_data *handle)
     values.leftMotorSpeed = -get_speed(handle->left_encoder_data);
     values.rightMotorSpeed = get_speed(handle->right_encoder_data);
 
-    osMessageQueuePut(*handle->speed_meas_queue_handle, &values, 0, 0);
+    if (osMessageQueuePut(*handle->speed_meas_queue_handle, &values, 0, 0) != osOK)
+    {
+        LOG_INFO("Failed to put speed values to queue\n");
+    }
 }
 
 void feedback_update(struct feedback_data *handle)

@@ -98,7 +98,7 @@ void update_encoder(struct encoder_data* handle)
     }
     else
     {
-        if ((pin_a_state ==  pin_b_state))
+        if (pin_a_state ==  pin_b_state)
         {
             change = -1;
         }
