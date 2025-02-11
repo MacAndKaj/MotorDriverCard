@@ -17,6 +17,7 @@
 #include "msg/deserializers/PlatformPollStatus.h"
 #include "msg/deserializers/PlatformSetMotorSpeed.h"
 #include "msg/deserializers/PlatformSetMotorPwmValue.h"
+#include "msg/serializers/PlatformPollStatus.h"
 #include "msg/serializers/PlatformSetMotorSpeed.h"
 
 #include <stddef.h>
@@ -28,6 +29,8 @@ char* serialize(void* resp, uint8_t id)
     {
         case PLATFORM_SET_MOTOR_SPEED_RESP_ID:
             return serialize_PlatformSetMotorSpeedResp((PlatformSetMotorSpeedResp*) resp);
+        // case PLATFORM_POLL_STATUS_RESP_ID:
+        //     return serialize_PlatformPollStatus((PlatformPollStatusResp*) resp);
     }
     return NULL;
 }
