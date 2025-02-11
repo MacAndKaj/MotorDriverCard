@@ -16,23 +16,17 @@
 #define FEEDBACK_TIMER_INDEX 0
 
 struct module;
-
-struct encoder_pinout
-{
-    GPIO_TypeDef* encoderAPort;
-    uint16_t encoderAPin;
-    GPIO_TypeDef* encoderBPort;
-    uint16_t encoderBPin;
-};
+typedef void (*start_tim_encoder_start_func_t)(void);
+typedef int16_t (*get_tim_encoder_count_func_t)(void);
 
 struct encoder_data
 {
-    double speed;                       /// Speed of motor in radians per second.
-    int32_t pulses;                     /// Actual number of pulses read from encoder.
-    int32_t previous_pulses;            /// Actual number of pulses read from encoder.
-    uint8_t direction;                  /// Actual currentDirection of motor.
-    GPIO_PinState lastPinAEncoderState; /// Last state of encoder A pin
-    struct encoder_pinout pinout;        /// Pinout configuration
+    double speed;                                       /// Speed of motor in radians per second.
+    int32_t pulses;                                     /// Actual number of pulses read from encoder.
+    uint8_t direction;                                  /// Actual currentDirection of motor.
+    GPIO_PinState lastPinAEncoderState;                 /// Last state of encoder A pin
+    start_tim_encoder_start_func_t start_encoder;       /// Function to start encoder counting
+    get_tim_encoder_count_func_t get_encoder_pulses;    /// Function to retrieve encoder pulses
 };
 
 struct feedback_data
@@ -46,7 +40,5 @@ struct feedback_data
 void feedback_module_init(struct module *this_module);
 void feedback_module_work(struct module *this_module);
 void feedback_timer_callback(struct module *this_module);
-void feedback_exti_left_callback(struct module *this_module);
-void feedback_exti_right_callback(struct module *this_module);
 
 #endif // MDC_MODULES_FEEDBACK_INTERFACE_H

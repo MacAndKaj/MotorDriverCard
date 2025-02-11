@@ -42,5 +42,6 @@ struct motor_control_info
 
 void motor_process_init(struct motor_control_info* left_motor_info, struct motor_control_info* right_motor_info);
 void motor_process_update_u(struct motor_control_info *ctrl_info, int64_t u, bool leftMotor);
+uint32_t get_pwm_duty(const struct motor_control_info *handle);
 
 #endif //MDC_CONTROLLER_IMPL_MOTOR_PROCESS_H

@@ -9,17 +9,22 @@ file(GLOB SOURCES
     # HEADERS
     ${APP_HEADERS_DIR}/msg/defs/Frame.h
     ${APP_HEADERS_DIR}/msg/defs/Message.h
+    ${APP_HEADERS_DIR}/msg/defs/PlatformPollStatus.h
     ${APP_HEADERS_DIR}/msg/defs/PlatformSetMotorPwmValue.h
     ${APP_HEADERS_DIR}/msg/defs/PlatformSetMotorSpeed.h
+    ${APP_HEADERS_DIR}/msg/deserializers/PlatformPollStatus.h
     ${APP_HEADERS_DIR}/msg/deserializers/PlatformSetMotorPwmValue.h
     ${APP_HEADERS_DIR}/msg/deserializers/PlatformSetMotorSpeed.h
+    ${APP_HEADERS_DIR}/msg/serializers/PlatformPollStatus.h
     ${APP_HEADERS_DIR}/msg/serializers/PlatformSetMotorSpeed.h
     ${APP_HEADERS_DIR}/msg/consts.h
     ${APP_HEADERS_DIR}/msg/message_ids.h
 
     # SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/deserializers/PlatformPollStatus.c
     ${CMAKE_CURRENT_SOURCE_DIR}/deserializers/PlatformSetMotorPwmValue.c
     ${CMAKE_CURRENT_SOURCE_DIR}/deserializers/PlatformSetMotorSpeed.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/serializers/PlatformPollStatus.c
     ${CMAKE_CURRENT_SOURCE_DIR}/serializers/PlatformSetMotorSpeed.c
 )
 

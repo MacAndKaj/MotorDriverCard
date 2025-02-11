@@ -313,21 +313,13 @@ static struct tim_ops feedback_timers_ops[] = {
 };
 
 static struct encoder_data left_encoder_info = {
-    .pinout = {
-        .encoderAPort=LeftMotorEncoderA_GPIO_Port,
-        .encoderAPin=LeftMotorEncoderA_Pin,
-        .encoderBPort=LeftMotorEncoderB_GPIO_Port,
-        .encoderBPin=LeftMotorEncoderB_Pin
-    }
+    .start_encoder=start_tim_8_encoder,
+    .get_encoder_pulses=get_tim_8_encoder_count
 };
 
 static struct encoder_data right_encoder_info = {
-    .pinout = {
-        .encoderAPort=RightMotorEncoderA_GPIO_Port,
-        .encoderAPin=RightMotorEncoderA_Pin,
-        .encoderBPort=RightMotorEncoderB_GPIO_Port,
-        .encoderBPin=RightMotorEncoderB_Pin
-    }
+    .start_encoder=start_tim_4_encoder,
+    .get_encoder_pulses=get_tim_4_encoder_count
 };
 
 static struct feedback_data feedback_internal_data = {
@@ -354,7 +346,7 @@ void startFeedbackTask(void *argument)
         .ops.timers_ops=feedback_timers_ops
     };
     feedback_module_handle = &feedback_module;
-    
+
     module_set_data(feedback_module_handle, &feedback_internal_data);
     feedback_module_init(feedback_module_handle);
     LOG_INFO("[feedback] Start feedback task\n");
@@ -480,19 +472,10 @@ void tim_event(uint8_t instance, uint8_t event_type)
 static struct event_subscription exti_subscriptions[] = {
     {
         .event_type=EXTI_EVENT_IT,
-        .source=LEFT_MOTOR_ENCODER_PIN_B,
+        .source=0,
         .callback_type=DIRECT_CALL,
         .callback.direct_call_callback_info={
-            .cb=feedback_exti_left_callback,
-            .module_handle=&feedback_module_handle
-        }
-    },
-    {
-        .event_type=EXTI_EVENT_IT,
-        .source=RIGHT_MOTOR_ENODER_PIN_B,
-        .callback_type=DIRECT_CALL,
-        .callback.direct_call_callback_info={
-            .cb=feedback_exti_right_callback,
+            .cb=NULL,
             .module_handle=&feedback_module_handle
         }
     },

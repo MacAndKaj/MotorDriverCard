@@ -12,15 +12,15 @@
 
 #include <modules/feedback/interface.h>
 
-void encoder_init(struct encoder_data *handle);
-
-void update_encoder(struct encoder_data* handle);
-
 void evaluate_speed(struct encoder_data *handle, double t);
 
 double get_speed(const struct encoder_data* handle);
 
 int32_t get_pulses(const struct encoder_data *handle);
+
+void encoder_init_new(struct encoder_data *handle);
+
+void encoder_update(struct encoder_data *handle, double t);
 
 void print_pulses(const struct encoder_data *handle);
 

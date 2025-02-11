@@ -61,9 +61,9 @@ void Error_Handler(void);
 #define TIM2_PERIOD (10000-1)
 #define TIM16_PERIOD (8000-1)
 #define TIM3_PERIOD (10000 - 1)
-#define TIM17_PRESCALER (200-1)
+#define TIM17_PRESCALER (16-1)
 #define TIM2_PRESCALER 0
-#define TIM17_PERIOD (4000-1)
+#define TIM17_PERIOD (50000-1)
 #define TIM16_PRESCALER (2000-1)
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
@@ -81,22 +81,12 @@ void Error_Handler(void);
 #define SYSCOM_SPI_MISO_GPIO_Port GPIOB
 #define SYSCOM_SPI_MOSI_Pin GPIO_PIN_15
 #define SYSCOM_SPI_MOSI_GPIO_Port GPIOB
-#define RightMotorEncoderA_Pin GPIO_PIN_6
-#define RightMotorEncoderA_GPIO_Port GPIOC
 #define LeftMotorIn1_Pin GPIO_PIN_7
 #define LeftMotorIn1_GPIO_Port GPIOC
-#define RightMotorEncoderB_Pin GPIO_PIN_8
-#define RightMotorEncoderB_GPIO_Port GPIOC
-#define RightMotorEncoderB_EXTI_IRQn EXTI9_5_IRQn
 #define RightMotorIn1_Pin GPIO_PIN_8
 #define RightMotorIn1_GPIO_Port GPIOA
 #define RightMotorIn2_Pin GPIO_PIN_9
 #define RightMotorIn2_GPIO_Port GPIOA
-#define LeftMotorEncoderB_Pin GPIO_PIN_10
-#define LeftMotorEncoderB_GPIO_Port GPIOC
-#define LeftMotorEncoderB_EXTI_IRQn EXTI15_10_IRQn
-#define LeftMotorEncoderA_Pin GPIO_PIN_12
-#define LeftMotorEncoderA_GPIO_Port GPIOC
 #define RightMotorPWM_Pin GPIO_PIN_4
 #define RightMotorPWM_GPIO_Port GPIOB
 #define LeftMotorIn2_Pin GPIO_PIN_6
@@ -105,8 +95,8 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 // GPIO instances
-#define LEFT_MOTOR_ENCODER_PIN_B  0x1
-#define RIGHT_MOTOR_ENODER_PIN_B  0x2
+// deprecated #define LEFT_MOTOR_ENCODER_PIN_B  0x1
+// deprecated #define RIGHT_MOTOR_ENODER_PIN_B  0x2
 // SPI instances
 #define SPI_INSTANCE_2            2
 // TIM instances

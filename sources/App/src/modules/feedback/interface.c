@@ -34,15 +34,3 @@ void feedback_timer_callback(struct module *this_module)
     struct feedback_data *data = (struct feedback_data *)module_get_data(this_module);
     feedback_update(data);
 }
-
-void feedback_exti_left_callback(struct module *this_module)
-{
-    struct feedback_data *data = (struct feedback_data *)module_get_data(this_module);
-    feedback_update_left_encoder(data);
-}
-
-void feedback_exti_right_callback(struct module *this_module)
-{
-    struct feedback_data *data = (struct feedback_data *)module_get_data(this_module);
-    feedback_update_right_encoder(data);
-}

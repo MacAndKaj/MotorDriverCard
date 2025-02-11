@@ -95,8 +95,9 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_SPI2_Init();
-  MX_TIM16_Init();
   MX_TIM17_Init();
+  MX_TIM8_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -158,12 +159,12 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_TIM16
-                              |RCC_PERIPHCLK_TIM17|RCC_PERIPHCLK_TIM2
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_TIM17
+                              |RCC_PERIPHCLK_TIM8|RCC_PERIPHCLK_TIM2
                               |RCC_PERIPHCLK_TIM34;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
-  PeriphClkInit.Tim16ClockSelection = RCC_TIM16CLK_HCLK;
   PeriphClkInit.Tim17ClockSelection = RCC_TIM17CLK_HCLK;
+  PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
   PeriphClkInit.Tim2ClockSelection = RCC_TIM2CLK_HCLK;
   PeriphClkInit.Tim34ClockSelection = RCC_TIM34CLK_HCLK;
   if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
@@ -173,11 +174,10 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-    if (GPIO_Pin == LeftMotorEncoderB_Pin) exti_event(LEFT_MOTOR_ENCODER_PIN_B, EXTI_EVENT_IT);
-    else if (GPIO_Pin == RightMotorEncoderB_Pin) exti_event(RIGHT_MOTOR_ENODER_PIN_B, EXTI_EVENT_IT);
-}
+//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+//{
+//    if (GPIO_Pin == RightMotorEncoderB_Pin) exti_event(RIGHT_MOTOR_ENODER_PIN_B, EXTI_EVENT_IT);
+//}
 
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
 {

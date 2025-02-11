@@ -16,14 +16,15 @@
 
 void feedback_start(struct feedback_data *handle)
 {
-    encoder_init(handle->left_encoder_data);
-    encoder_init(handle->right_encoder_data);
+    encoder_init_new(handle->left_encoder_data);
+    encoder_init_new(handle->right_encoder_data);
+    LOG_INFO("Encoders started\n");
 }
 
 void feedback_work(struct feedback_data *handle)
 {
     static struct SpeedValues values;
-    values.leftMotorSpeed = -get_speed(handle->left_encoder_data);
+    values.leftMotorSpeed = get_speed(handle->left_encoder_data);
     values.rightMotorSpeed = get_speed(handle->right_encoder_data);
 
     if (osMessageQueuePut(*handle->speed_meas_queue_handle, &values, 0, 0) != osOK)
@@ -34,17 +35,7 @@ void feedback_work(struct feedback_data *handle)
 
 void feedback_update(struct feedback_data *handle)
 {
-    evaluate_speed(handle->left_encoder_data, SPEED_UPDATE_PERIOD);
-    evaluate_speed(handle->right_encoder_data, SPEED_UPDATE_PERIOD);
+    encoder_update(handle->left_encoder_data, SPEED_UPDATE_PERIOD);
+    encoder_update(handle->right_encoder_data, SPEED_UPDATE_PERIOD);
     osThreadFlagsSet(*handle->feedback_thread_handle, PROBING_TIMEOUT_CALLBACK);
-}
-
-void feedback_update_left_encoder(struct feedback_data *handle)
-{
-    update_encoder(handle->left_encoder_data);
-}
-
-void feedback_update_right_encoder(struct feedback_data *handle)
-{
-    update_encoder(handle->right_encoder_data);
 }

@@ -14,6 +14,7 @@
 #include "msg/message_ids.h"
 #include "msg/defs/Message.h"
 #include "msg/defs/Frame.h"
+#include "msg/deserializers/PlatformPollStatus.h"
 #include "msg/deserializers/PlatformSetMotorSpeed.h"
 #include "msg/deserializers/PlatformSetMotorPwmValue.h"
 #include "msg/serializers/PlatformSetMotorSpeed.h"
@@ -39,12 +40,16 @@ Message* deserialize(char* data, uint8_t id)
     switch (id)
     {
         case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
-            LOG_INFO("[rx] PLATFORM_SET_MOTOR_SPEED_REQ received\n");
+            LOG_INFO("[rx] PLATFORM_SET_MOTOR_SPEED_REQ\n");
             message.msg.platformSetMotorSpeedReq = *deserialize_PlatformSetMotorSpeedReq(data);
             return &message;
         case PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID:
-            LOG_INFO("[rx] PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID received\n");
+            LOG_INFO("[rx] PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID\n");
             message.msg.platformSetMotorPwmValueReq = *deserialize_PlatformSetMotorPwmValueReq(data);
+            return &message;
+        case PLATFORM_POLL_STATUS_REQ_ID:
+            LOG_INFO("[rx] PLATFORM_POLL_STATUS_REQ_ID\n");
+            message.msg.platformPollStatusReq = *deserialize_PlatformPollStatusReq(data);
             return &message;
         default:
             LOG_INFO("[rx] Unknown message\n");

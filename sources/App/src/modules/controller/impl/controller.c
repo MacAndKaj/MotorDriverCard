@@ -31,13 +31,13 @@ void controller_init(struct controller_data *data)
 
     handle->disable_pid = false;
 
-    handle->left_motor_control_info.pid_data = create_pid(1000., 150., 30.);
+    handle->left_motor_control_info.pid_data = create_pid(200., 100., 50.);
     handle->left_motor_control_info.pwm_period = PWM_PERIOD;
     handle->left_motor_control_info.stop_threshold = STOP_THRESHOLD;
     handle->left_motor_control_info.current_values.ref_speed = 0;
     handle->left_motor_control_info.motor_info_handle = data->left_motor_info;
 
-    handle->right_motor_control_info.pid_data = create_pid(2000., 100., 50.);
+    handle->right_motor_control_info.pid_data = create_pid(200., 100., 50.);
     handle->right_motor_control_info.pwm_period = PWM_PERIOD;
     handle->right_motor_control_info.stop_threshold = STOP_THRESHOLD;
     handle->right_motor_control_info.current_values.ref_speed = 0;
@@ -63,9 +63,11 @@ void controller_work(struct controller_data *data)
         if (fabs(handle->left_motor_control_info.current_values.current_speed - speed_values_buffer.leftMotorSpeed) > 0.001 ||
             fabs(handle->right_motor_control_info.current_values.current_speed - speed_values_buffer.rightMotorSpeed) > 0.001)
         {
-            LOG_INFO_ARGS("l-%0.3f, r-%0.3f\n",
+            LOG_INFO_ARGS("l-(s:%0.3f,pwm:%d), r-(s:%0.3f,pwm:%d)\n",
                           handle->left_motor_control_info.current_values.current_speed,
-                          handle->right_motor_control_info.current_values.current_speed);
+                          get_pwm_duty(&handle->left_motor_control_info),
+                          handle->right_motor_control_info.current_values.current_speed,
+                          get_pwm_duty(&handle->right_motor_control_info));
         }
         handle->left_motor_control_info.current_values.current_speed = speed_values_buffer.leftMotorSpeed;
         handle->right_motor_control_info.current_values.current_speed = speed_values_buffer.rightMotorSpeed;
@@ -100,12 +102,17 @@ void closed_loop_control(struct motor_control_info *handle, const bool leftOrRig
     }
 
     e = handle->current_values.ref_speed - handle->current_values.current_speed;
+
+    if (fabs(e) < 0.01) return;
+
     u = (int64_t)pid_evaluate(&handle->pid_data, e, SPEED_UPDATE_PERIOD);
+    if (handle->current_values.ref_speed < 0) u = -u;
     motor_process_update_u(handle, u, leftOrRight);
 }
 
 void handle_new_speed(struct controller_internal_data *handle, double leftSpeed, double rightSpeed)
 {
+    handle->disable_pid = false;
     LOG_INFO_ARGS("Current speed: l-%0.3f, r-%0.3f\n", 
         handle->left_motor_control_info.current_values.current_speed,
         handle->right_motor_control_info.current_values.current_speed);

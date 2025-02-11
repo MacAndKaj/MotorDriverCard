@@ -32,7 +32,7 @@ double pid_evaluate(struct pid* handle, double error, double dt)
     assert(dt != 0.);
 
     double derivative = (error - get_last_error(handle)) / dt;
-    double integral = get_integral(handle) + error * dt;
+    double integral = get_integral(handle) + ((get_last_error(handle) + error)*dt)/2;
 
     double output = (get_k_p(handle) * error) + (get_k_i(handle) * integral) + (get_k_d(handle) * derivative);
 
