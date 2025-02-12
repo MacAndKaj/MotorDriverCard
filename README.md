@@ -4,4 +4,4 @@
 
 # MotorDriverCard
 
-FreeRTOS based software for STM32F072RBTX uC used in project "Motor".
+FreeRTOS based software for STM32F303RETX uC used in project "Motor".

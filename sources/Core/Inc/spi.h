@@ -41,7 +41,7 @@ extern SPI_HandleTypeDef hspi2;
 void MX_SPI2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+int start_spi_2_dma_reception(uint8_t* buffer, uint16_t buffer_size);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

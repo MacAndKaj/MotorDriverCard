@@ -25,7 +25,6 @@
 /* USER CODE END 0 */
 
 SPI_HandleTypeDef hspi2;
-DMA_HandleTypeDef hdma_spi2_tx;
 DMA_HandleTypeDef hdma_spi2_rx;
 
 /* SPI2 init function */
@@ -41,7 +40,7 @@ void MX_SPI2_Init(void)
   /* USER CODE END SPI2_Init 1 */
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_SLAVE;
-  hspi2.Init.Direction = SPI_DIRECTION_1LINE;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
   hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
@@ -79,8 +78,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     PB12     ------> SPI2_NSS
     PB13     ------> SPI2_SCK
     PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI
     */
-    GPIO_InitStruct.Pin = SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin;
+    GPIO_InitStruct.Pin = SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin|SYSCOM_SPI_MOSI_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -88,22 +88,6 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
     /* SPI2 DMA Init */
-    /* SPI2_TX Init */
-    hdma_spi2_tx.Instance = DMA1_Channel5;
-    hdma_spi2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
-    hdma_spi2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
-    hdma_spi2_tx.Init.MemInc = DMA_MINC_ENABLE;
-    hdma_spi2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
-    hdma_spi2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
-    hdma_spi2_tx.Init.Mode = DMA_NORMAL;
-    hdma_spi2_tx.Init.Priority = DMA_PRIORITY_MEDIUM;
-    if (HAL_DMA_Init(&hdma_spi2_tx) != HAL_OK)
-    {
-      Error_Handler();
-    }
-
-    __HAL_LINKDMA(spiHandle,hdmatx,hdma_spi2_tx);
-
     /* SPI2_RX Init */
     hdma_spi2_rx.Instance = DMA1_Channel4;
     hdma_spi2_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
@@ -120,6 +104,9 @@ void HAL_SPI_MspInit(SPI_HandleTypeDef* spiHandle)
 
     __HAL_LINKDMA(spiHandle,hdmarx,hdma_spi2_rx);
 
+    /* SPI2 interrupt Init */
+    HAL_NVIC_SetPriority(SPI2_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspInit 1 */
 
   /* USER CODE END SPI2_MspInit 1 */
@@ -141,12 +128,15 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
     PB12     ------> SPI2_NSS
     PB13     ------> SPI2_SCK
     PB14     ------> SPI2_MISO
+    PB15     ------> SPI2_MOSI
     */
-    HAL_GPIO_DeInit(GPIOB, SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin);
+    HAL_GPIO_DeInit(GPIOB, SYSCOM_SPI_NSS_Pin|SYSCOM_SPI_SCK_Pin|SYSCOM_SPI_MISO_Pin|SYSCOM_SPI_MOSI_Pin);
 
     /* SPI2 DMA DeInit */
-    HAL_DMA_DeInit(spiHandle->hdmatx);
     HAL_DMA_DeInit(spiHandle->hdmarx);
+
+    /* SPI2 interrupt Deinit */
+    HAL_NVIC_DisableIRQ(SPI2_IRQn);
   /* USER CODE BEGIN SPI2_MspDeInit 1 */
 
   /* USER CODE END SPI2_MspDeInit 1 */
@@ -154,5 +144,28 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
+
+int start_spi_2_dma_reception(uint8_t* buffer, uint16_t buffer_size)
+{
+    HAL_SPI_StateTypeDef state = HAL_SPI_GetState(&hspi2);
+    if (state != HAL_SPI_STATE_READY)
+    {
+        return state;
+    }
+
+    uint32_t err = HAL_SPI_GetError(&hspi2);
+    if (err != HAL_SPI_ERROR_NONE)
+    {
+        return -(int)err;
+    }
+
+    HAL_StatusTypeDef status = HAL_SPI_Receive_DMA(&hspi2, buffer, buffer_size);
+    if (status != HAL_OK)
+    {
+        return status;
+    }
+
+    return 0;
+}
 
 /* USER CODE END 1 */

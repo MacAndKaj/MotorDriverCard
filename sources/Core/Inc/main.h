@@ -57,20 +57,20 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define TIM2_PRESCALER 0
-#define TIM2_PERIOD (10000-1)
 #define TIM3_PRESCALER 0
+#define TIM2_PERIOD (10000-1)
+#define TIM16_PERIOD (8000-1)
 #define TIM3_PERIOD (10000 - 1)
-#define TIM17_PRESCALER 0
-#define TIM17_PERIOD (8000-1)
+#define TIM17_PRESCALER (16-1)
+#define TIM2_PRESCALER 0
+#define TIM17_PERIOD (50000-1)
+#define TIM16_PRESCALER (2000-1)
 #define USART_TX_Pin GPIO_PIN_2
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
 #define LED_Pin GPIO_PIN_5
 #define LED_GPIO_Port GPIOA
-#define SpeedUpdatePin_Pin GPIO_PIN_7
-#define SpeedUpdatePin_GPIO_Port GPIOA
 #define LeftMotorPWM_Pin GPIO_PIN_10
 #define LeftMotorPWM_GPIO_Port GPIOB
 #define SYSCOM_SPI_NSS_Pin GPIO_PIN_12
@@ -79,31 +79,43 @@ void Error_Handler(void);
 #define SYSCOM_SPI_SCK_GPIO_Port GPIOB
 #define SYSCOM_SPI_MISO_Pin GPIO_PIN_14
 #define SYSCOM_SPI_MISO_GPIO_Port GPIOB
-#define RightMotorEncoderA_Pin GPIO_PIN_6
-#define RightMotorEncoderA_GPIO_Port GPIOC
+#define SYSCOM_SPI_MOSI_Pin GPIO_PIN_15
+#define SYSCOM_SPI_MOSI_GPIO_Port GPIOB
 #define LeftMotorIn1_Pin GPIO_PIN_7
 #define LeftMotorIn1_GPIO_Port GPIOC
-#define RightMotorEncoderB_Pin GPIO_PIN_8
-#define RightMotorEncoderB_GPIO_Port GPIOC
-#define RightMotorEncoderB_EXTI_IRQn EXTI9_5_IRQn
 #define RightMotorIn1_Pin GPIO_PIN_8
 #define RightMotorIn1_GPIO_Port GPIOA
 #define RightMotorIn2_Pin GPIO_PIN_9
 #define RightMotorIn2_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
-#define TCK_Pin GPIO_PIN_14
-#define TCK_GPIO_Port GPIOA
-#define LeftMotorEncoderB_Pin GPIO_PIN_10
-#define LeftMotorEncoderB_GPIO_Port GPIOC
-#define LeftMotorEncoderB_EXTI_IRQn EXTI15_10_IRQn
-#define LeftMotorEncoderA_Pin GPIO_PIN_12
-#define LeftMotorEncoderA_GPIO_Port GPIOC
 #define RightMotorPWM_Pin GPIO_PIN_4
 #define RightMotorPWM_GPIO_Port GPIOB
 #define LeftMotorIn2_Pin GPIO_PIN_6
 #define LeftMotorIn2_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
+
+// GPIO instances
+// deprecated #define LEFT_MOTOR_ENCODER_PIN_B  0x1
+// deprecated #define RIGHT_MOTOR_ENODER_PIN_B  0x2
+// SPI instances
+#define SPI_INSTANCE_2            2
+// TIM instances
+#define TIM_INSTANCE_2            2
+#define TIM_INSTANCE_3            3
+#define TIM_INSTANCE_16           16
+#define TIM_INSTANCE_17           17
+
+// GPIO events
+#define EXTI_EVENT_IT             0x01
+// TIM events
+#define TIM_EVENT_IT              0x11
+// SPI events
+#define SPI_EVENT_TX_CPLT         0x21
+#define SPI_EVENT_RX_CPLT         0x22
+#define SPI_EVENT_TX_RX_CPLT      0x23
+#define SPI_EVENT_TX_HALF_CPLT    0x24
+#define SPI_EVENT_RX_HALF_CPLT    0x25
+#define SPI_EVENT_TX_RX_HALF_CPLT 0x26
 
 /* USER CODE END Private defines */
 
