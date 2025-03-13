@@ -18,18 +18,28 @@ void feedback_start(struct feedback_data *handle)
 {
     encoder_init_new(handle->left_encoder_data);
     encoder_init_new(handle->right_encoder_data);
-    LOG_INFO("Encoders started\n");
+    LOG_INFO("[feedback]Encoders started\n");
 }
 
 void feedback_work(struct feedback_data *handle)
 {
-    static struct SpeedValues values;
-    values.leftMotorSpeed = get_speed(handle->left_encoder_data);
-    values.rightMotorSpeed = get_speed(handle->right_encoder_data);
+    struct InternalMessage values;
+    values.msg_id = SPEED_VALUES_MSG_ID;
+    values.speed_values.leftMotorSpeed = get_speed(handle->left_encoder_data);
+    values.speed_values.rightMotorSpeed = get_speed(handle->right_encoder_data);
 
-    if (osMessageQueuePut(*handle->speed_meas_queue_handle, &values, 0, 0) != osOK)
+    struct message_subscription *subscription = handle->subs;
+    for (int i = 0; i < handle->subs_len; i++)
     {
-        LOG_INFO("Failed to put speed values to queue\n");
+        if (subscription->msg_id == SPEED_VALUES_MSG_ID)
+        {
+            osStatus_t status = osMessageQueuePut(*subscription->subscription_queue, &values, 0, 0);
+            if (status != osOK)
+            {
+                LOG_INFO_ARGS("[feedback]Failed to send:%d\n", status);
+            }
+        }
+        ++subscription;
     }
 }
 

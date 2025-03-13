@@ -11,7 +11,6 @@
 
 #include "msg/defs/PlatformSetMotorSpeed.h"
 
-char* serialize_PlatformSetMotorSpeedReq(PlatformSetMotorSpeedReq* req);
-char* serialize_PlatformSetMotorSpeedResp(PlatformSetMotorSpeedResp* resp);
+void serialize_PlatformSetMotorSpeedResp(const PlatformSetMotorSpeedResp* resp, uint8_t *out_buf);
 
 #endif //MOTORDRIVER_COM_INTERFACE_SER_DES_SERIALIZERS_PLATFORMSETMOTORSPEED_H

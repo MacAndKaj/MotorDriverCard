@@ -10,6 +10,9 @@
 #include "msg/deserializers/PlatformPollStatus.h"
 
 #include "main/defs.h"
+
+#include "FreeRTOS.h" // for pvPortMalloc
+
 #include <memory.h>
 
 PlatformPollStatusReq* deserialize_PlatformPollStatusReq(char* data)

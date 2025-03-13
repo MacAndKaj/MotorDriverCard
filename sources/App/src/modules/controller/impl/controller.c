@@ -54,29 +54,33 @@ void controller_work(struct controller_data *data)
     struct controller_internal_data* handle = data->internal_data;
     Message message_buffer;
     memset(&message_buffer, 0, sizeof(Message));
-    struct SpeedValues speed_values_buffer;
-    memset(&speed_values_buffer, 0, sizeof(struct SpeedValues));
+    struct InternalMessage internal_message;
+    memset(&internal_message, 0, sizeof(struct InternalMessage));
     static const bool left = true, right = false;
 
-    if (osMessageQueueGet(*data->speed_values_queue_handle, &speed_values_buffer, 0, 0) == osOK)
+    if (osMessageQueueGet(*data->internal_message_queue_handle, &internal_message, 0, 0) == osOK)
     {
-        if (fabs(handle->left_motor_control_info.current_values.current_speed - speed_values_buffer.leftMotorSpeed) > 0.001 ||
-            fabs(handle->right_motor_control_info.current_values.current_speed - speed_values_buffer.rightMotorSpeed) > 0.001)
+        if (internal_message.msg_id == SPEED_VALUES_MSG_ID)
         {
-            LOG_INFO_ARGS("l-(s:%0.3f,pwm:%d), r-(s:%0.3f,pwm:%d)\n",
-                          handle->left_motor_control_info.current_values.current_speed,
-                          get_pwm_duty(&handle->left_motor_control_info),
-                          handle->right_motor_control_info.current_values.current_speed,
-                          get_pwm_duty(&handle->right_motor_control_info));
-        }
-        handle->left_motor_control_info.current_values.current_speed = speed_values_buffer.leftMotorSpeed;
-        handle->right_motor_control_info.current_values.current_speed = speed_values_buffer.rightMotorSpeed;
+            struct SpeedValues *speed_values = &internal_message.speed_values;
+            if (fabs(handle->left_motor_control_info.current_values.current_speed - speed_values->leftMotorSpeed) > 0.001 ||
+                fabs(handle->right_motor_control_info.current_values.current_speed - speed_values->rightMotorSpeed) > 0.001)
+            {
+                LOG_INFO_ARGS("l-(s:%0.3f,pwm:%d), r-(s:%0.3f,pwm:%d)\n",
+                            handle->left_motor_control_info.current_values.current_speed,
+                            get_pwm_duty(&handle->left_motor_control_info),
+                            handle->right_motor_control_info.current_values.current_speed,
+                            get_pwm_duty(&handle->right_motor_control_info));
+            }
+            handle->left_motor_control_info.current_values.current_speed = speed_values->leftMotorSpeed;
+            handle->right_motor_control_info.current_values.current_speed = speed_values->rightMotorSpeed;
 
 
-        if (!handle->disable_pid)
-        {
-            closed_loop_control(&handle->left_motor_control_info, left);
-            closed_loop_control(&handle->right_motor_control_info, right);
+            if (!handle->disable_pid)
+            {
+                closed_loop_control(&handle->left_motor_control_info, left);
+                closed_loop_control(&handle->right_motor_control_info, right);
+            }
         }
     }
 

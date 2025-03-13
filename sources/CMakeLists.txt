@@ -123,6 +123,10 @@ target_include_directories(library_hal_drivers
     PUBLIC ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Inc
 )
 
+get_target_property(target_options library_hal_drivers COMPILE_OPTIONS)
+list(REMOVE_ITEM target_options "-Wall")
+set_property(TARGET library_hal_drivers PROPERTY COMPILE_OPTIONS ${target_options})
+
 add_library(library_os ${OS_SOURCES})
 target_include_directories(library_os
     PUBLIC ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/include
@@ -173,6 +177,7 @@ target_link_libraries(${PROJECT_NAME}.elf
     PUBLIC library_mdc_app_modules_controller
     PUBLIC library_mdc_app_modules_feedback
     PUBLIC library_mdc_app_modules_log
+    PUBLIC library_mdc_app_modules_monitoring
     PUBLIC library_mdc_app_modules_syscom
 )
 

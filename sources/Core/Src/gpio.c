@@ -45,7 +45,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, LED_Pin|RightMotorIn1_Pin|RightMotorIn2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_Pin|RightMotorIn1_Pin|RightMotorIn2_Pin|SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LeftMotorIn1_GPIO_Port, LeftMotorIn1_Pin, GPIO_PIN_RESET);
@@ -53,12 +53,12 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LeftMotorIn2_GPIO_Port, LeftMotorIn2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = LED_Pin;
+  /*Configure GPIO pins : PAPin PAPin */
+  GPIO_InitStruct.Pin = LED_Pin|SYSCOM_MASTER_TRIGGER_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = LeftMotorIn1_Pin;
@@ -84,5 +84,15 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
+
+void spi_master_trigger_up(void)
+{
+    HAL_GPIO_WritePin(SYSCOM_MASTER_TRIGGER_GPIO_Port, SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_SET);
+}
+
+void spi_master_trigger_down(void)
+{
+    HAL_GPIO_WritePin(SYSCOM_MASTER_TRIGGER_GPIO_Port, SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_RESET);
+}
 
 /* USER CODE END 2 */

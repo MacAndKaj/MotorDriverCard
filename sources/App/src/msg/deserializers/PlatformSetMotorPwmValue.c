@@ -10,6 +10,9 @@
 #include "msg/deserializers/PlatformSetMotorPwmValue.h"
 
 #include "main/defs.h"
+
+#include "FreeRTOS.h" // for pvPortMalloc
+
 #include <memory.h>
 
 PlatformSetMotorPwmValueReq* deserialize_PlatformSetMotorPwmValueReq(char* data)

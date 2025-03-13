@@ -10,6 +10,9 @@
 #include "msg/deserializers/PlatformSetMotorSpeed.h"
 
 #include "main/defs.h"
+
+#include "FreeRTOS.h" // for pvPortMalloc
+
 #include <memory.h>
 
 PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(char* data)

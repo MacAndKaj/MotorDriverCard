@@ -11,7 +11,7 @@
 
 #include <stm32f3xx_hal.h>
 
-#include <cmsis_os.h>
+#include <cmsis_os2.h>
 
 struct module;
 struct controller_internal_data;
@@ -36,14 +36,13 @@ struct controller_data
 {
     osThreadId_t        *controller_thread_handle;
     osMessageQueueId_t  *message_queue_handle;
-    osMessageQueueId_t  *speed_values_queue_handle;
+    osMessageQueueId_t  *internal_message_queue_handle;
     struct motor_info   *left_motor_info;
     struct motor_info   *right_motor_info;
     struct controller_internal_data *internal_data;
 };
 
 void controller_module_init(struct module *this_module);
-void controller_module_work(struct module *this_module);
 // TODO EXT callback
 
 #endif //MDC_MODULES_CONTROLLER_INTERFACE_H
