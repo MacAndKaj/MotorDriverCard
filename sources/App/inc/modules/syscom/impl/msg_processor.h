@@ -6,19 +6,15 @@
   * @brief          : <brief>
   ******************************************************************************
   */
-
-#include <stdint.h>
-
 #ifndef MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H
 #define MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H
 
+#include <stdint.h>
 
-/// Function to serialize message(Response) to byte form to be sent.
-/// \param resp
-/// \param id
-/// \return
-char* serialize(void* resp, uint8_t id);
+#include "msg/defs/Frame.h"
 
-struct Message* processData(const uint8_t* frame_data);
+struct Message* process_data(const uint8_t* frame_data);
+
+void process_message(const struct Message* message, uint8_t buffer[FRAME_SIZE]);
 
 #endif // MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H

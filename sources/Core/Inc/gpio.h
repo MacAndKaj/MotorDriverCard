@@ -39,7 +39,8 @@ extern "C" {
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void spi_master_trigger_up(void);
+void spi_master_trigger_down(void);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

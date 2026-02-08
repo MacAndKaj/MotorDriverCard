@@ -185,6 +185,11 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_RX_CPLT);
 }
 
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_TX_CPLT);
+}
+
 /* USER CODE END 4 */
 
 /**

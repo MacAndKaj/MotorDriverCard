@@ -87,6 +87,8 @@ void Error_Handler(void);
 #define RightMotorIn1_GPIO_Port GPIOA
 #define RightMotorIn2_Pin GPIO_PIN_9
 #define RightMotorIn2_GPIO_Port GPIOA
+#define SYSCOM_MASTER_TRIGGER_Pin GPIO_PIN_10
+#define SYSCOM_MASTER_TRIGGER_GPIO_Port GPIOA
 #define RightMotorPWM_Pin GPIO_PIN_4
 #define RightMotorPWM_GPIO_Port GPIOB
 #define LeftMotorIn2_Pin GPIO_PIN_6

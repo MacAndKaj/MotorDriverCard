@@ -16,9 +16,10 @@
 
 /*
  * statusSet - bitset to request specific statuses
+ *      statusSet values 0x00 is incorrect
  *      bits:
- *           0 - speed
- *           1 - modules status
+ *           0 - speed (0x01)
+ *           1 - modules status(0x02)
  */
 struct PlatformPollStatusReq
 {

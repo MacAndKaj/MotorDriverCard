@@ -23,16 +23,22 @@
 #include <stddef.h>
 #include <string.h>
 
-char* serialize(void* resp, uint8_t id)
+typedef union {
+    uint8_t serializedFrame[FRAME_SIZE];
+    Frame deserializedFrame;
+} ConvertingBuffer;
+
+void serialize(const struct Message* msg, uint8_t *out_buf)
 {
-    switch (id)
+    switch (msg->messageId)
     {
         case PLATFORM_SET_MOTOR_SPEED_RESP_ID:
-            return serialize_PlatformSetMotorSpeedResp((PlatformSetMotorSpeedResp*) resp);
-        // case PLATFORM_POLL_STATUS_RESP_ID:
-        //     return serialize_PlatformPollStatus((PlatformPollStatusResp*) resp);
+            memcpy(out_buf, &msg->msg, sizeof(struct PlatformSetMotorSpeedResp));
+            break;
+        case PLATFORM_POLL_STATUS_RESP_ID:
+            memcpy(out_buf, &msg->msg, sizeof(struct PlatformPollStatusResp));
+            break;
     }
-    return NULL;
 }
 
 Message* deserialize(char* data, uint8_t id)
@@ -86,12 +92,20 @@ struct Message* processFrame(const Frame* f)
     return deserializedMsg;
 }
 
-struct Message* processData(const uint8_t* frame_data)
+struct Message* process_data(const uint8_t* frame_data)
 {
-    union {
-        uint8_t serializedFrame[FRAME_SIZE];
-        Frame deserializedFrame;
-    } buf;
+    ConvertingBuffer buf;
     memcpy(buf.serializedFrame, frame_data, FRAME_SIZE);
     return processFrame(&buf.deserializedFrame);
+}
+
+void process_message(const struct Message *message, uint8_t buffer[FRAME_SIZE])
+{
+    ConvertingBuffer buf;
+    buf.deserializedFrame.header = HEADER_BYTE;
+    buf.deserializedFrame.id = message->messageId;
+    serialize(message, buf.deserializedFrame.data);
+    buf.deserializedFrame.crc = 0;
+
+    memcpy(buffer, buf.serializedFrame, FRAME_SIZE);
 }

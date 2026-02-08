@@ -10,7 +10,7 @@
 #ifndef MDC_MODULES_FEEDBACK_INTERFACE_H
 #define MDC_MODULES_FEEDBACK_INTERFACE_H
 
-#include <cmsis_os.h>
+#include <cmsis_os2.h>
 #include "stm32f3xx_hal.h"
 
 #define FEEDBACK_TIMER_INDEX 0
@@ -32,13 +32,13 @@ struct encoder_data
 struct feedback_data
 {
     osThreadId_t* feedback_thread_handle;
-    osMessageQueueId_t* speed_meas_queue_handle;
+    struct message_subscription *subs;
+    int subs_len;
     struct encoder_data *left_encoder_data;
     struct encoder_data *right_encoder_data;
 };
 
 void feedback_module_init(struct module *this_module);
-void feedback_module_work(struct module *this_module);
 void feedback_timer_callback(struct module *this_module);
 
 #endif // MDC_MODULES_FEEDBACK_INTERFACE_H

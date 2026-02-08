@@ -10,7 +10,7 @@
 #ifndef MDC_MAIN_DEFS_H
 #define MDC_MAIN_DEFS_H
 
-#include <FreeRTOS.h>
+#include <cmsis_os2.h>
 
 // Max value of counters for timers used in PWM generation.
 #define PWM_PERIOD (10000-1)
@@ -70,16 +70,39 @@ struct SpeedValues
     double leftMotorSpeed, rightMotorSpeed; // [ROUNDS/s]
 };
 
-struct PlatformStatus
+struct InternalMessage
 {
-    struct SpeedValues speed;
+    union 
+    {
+        struct SpeedValues speed_values;
+    };
+    int msg_id;
 };
 
 // **************************************************************
 // SYSCOM DEFS
 // **************************************************************
 #define DATA_RECEIVED_THREAD_FLAG 0x01
-#define NEW_STATUS_INFO_THREAD_FLAG 0x02
+#define DATA_TX_BUFFERED_THREAD_FLAG 0x02
 // **************************************************************
+
+// **************************************************************
+// INTERNAL COMMUNICATIONS DEFS
+// **************************************************************
+#define UNKNOWN_MSG_ID 0x00
+#define SPEED_VALUES_MSG_ID 0x01
+// **************************************************************
+
+struct message_subscription
+{
+    uint8_t msg_id;
+    osMessageQueueId_t *subscription_queue;
+};
+
+#define ARRAY_LEN(SUBSCRIPTIONS) sizeof(SUBSCRIPTIONS)/sizeof(struct message_subscription)
+
+struct Message;
+
+typedef void (*send_syscom_message_func_t)(const struct Message*);
 
 #endif //MDC_MAIN_DEFS_H

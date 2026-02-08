@@ -29,8 +29,10 @@
 #include <main/defs.h>
 #include <main/module.h>
 #include <msg/defs/Message.h> // Change to lowercase
+#include <msg/message_ids.h> // Change to lowercase
 #include <modules/controller/interface.h>
 #include <modules/feedback/interface.h>
+#include <modules/monitoring/interface.h>
 #include <modules/syscom/interface.h>
 
 /* USER CODE END Includes */
@@ -38,13 +40,15 @@
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
 typedef StaticQueue_t osStaticMessageQDef_t;
+typedef StaticTimer_t osStaticTimerDef_t;
 typedef StaticSemaphore_t osStaticMutexDef_t;
 /* USER CODE BEGIN PTD */
 
 enum event_callback_type
 {
-    DIRECT_CALL,
-    THREAD_FLAG
+    MODULE_CALL,
+    THREAD_FLAG,
+    RAW_CALLBACK
 };
 
 typedef void (*direct_call_callback_t)(struct module *);
@@ -61,6 +65,7 @@ struct thread_flag_callback_info
     uint32_t thread_flag;
 };
 
+typedef void (*raw_callback_t)();
 
 struct event_subscription
 {
@@ -71,6 +76,7 @@ struct event_subscription
     {
         struct direct_call_callback_info direct_call_callback_info;
         struct thread_flag_callback_info thread_flag_callback_info;
+        raw_callback_t raw_callback;
     } callback;
 };
 
@@ -141,27 +147,80 @@ const osThreadAttr_t syscomTask_attributes = {
   .stack_size = sizeof(syscomTaskBuffer),
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
-/* Definitions for syscomMessageQueue */
-osMessageQueueId_t syscomMessageQueueHandle;
-uint8_t messagesQueueBuffer[ 2 * sizeof( struct Message ) ];
-osStaticMessageQDef_t messagesQueueControlBlock;
-const osMessageQueueAttr_t syscomMessageQueue_attributes = {
-  .name = "syscomMessageQueue",
-  .cb_mem = &messagesQueueControlBlock,
-  .cb_size = sizeof(messagesQueueControlBlock),
-  .mq_mem = &messagesQueueBuffer,
-  .mq_size = sizeof(messagesQueueBuffer)
+/* Definitions for monitoringTask */
+osThreadId_t monitoringTaskHandle;
+uint32_t monitoringTaskBuffer[ 320 ];
+osStaticThreadDef_t monitoringTaskControlBlock;
+const osThreadAttr_t monitoringTask_attributes = {
+  .name = "monitoringTask",
+  .cb_mem = &monitoringTaskControlBlock,
+  .cb_size = sizeof(monitoringTaskControlBlock),
+  .stack_mem = &monitoringTaskBuffer[0],
+  .stack_size = sizeof(monitoringTaskBuffer),
+  .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for feedbackSpeedQueue */
-osMessageQueueId_t feedbackSpeedQueueHandle;
-uint8_t feedbackSpeedQueueBuffer[ 2 * sizeof( struct SpeedValues ) ];
-osStaticMessageQDef_t feedbackSpeedQueueControlBlock;
-const osMessageQueueAttr_t feedbackSpeedQueue_attributes = {
-  .name = "feedbackSpeedQueue",
-  .cb_mem = &feedbackSpeedQueueControlBlock,
-  .cb_size = sizeof(feedbackSpeedQueueControlBlock),
-  .mq_mem = &feedbackSpeedQueueBuffer,
-  .mq_size = sizeof(feedbackSpeedQueueBuffer)
+/* Definitions for controllerMessageQueue */
+osMessageQueueId_t controllerMessageQueueHandle;
+uint8_t controllerMessageQueueBuffer[ 1 * sizeof( struct Message ) ];
+osStaticMessageQDef_t controllerMessageQueueControlBlock;
+const osMessageQueueAttr_t controllerMessageQueue_attributes = {
+  .name = "controllerMessageQueue",
+  .cb_mem = &controllerMessageQueueControlBlock,
+  .cb_size = sizeof(controllerMessageQueueControlBlock),
+  .mq_mem = &controllerMessageQueueBuffer,
+  .mq_size = sizeof(controllerMessageQueueBuffer)
+};
+/* Definitions for controllerInternalMessageQueue */
+osMessageQueueId_t controllerInternalMessageQueueHandle;
+uint8_t controllerInternalMessageQueueBuffer[ 2 * sizeof( struct InternalMessage ) ];
+osStaticMessageQDef_t controllerInternalMessageQueueControlBlock;
+const osMessageQueueAttr_t controllerInternalMessageQueue_attributes = {
+  .name = "controllerInternalMessageQueue",
+  .cb_mem = &controllerInternalMessageQueueControlBlock,
+  .cb_size = sizeof(controllerInternalMessageQueueControlBlock),
+  .mq_mem = &controllerInternalMessageQueueBuffer,
+  .mq_size = sizeof(controllerInternalMessageQueueBuffer)
+};
+/* Definitions for syscomTxMessageQueue */
+osMessageQueueId_t syscomTxMessageQueueHandle;
+uint8_t syscomTxMessageQueueBuffer[ 3 * sizeof( struct Message ) ];
+osStaticMessageQDef_t syscomTxMessageQueueControlBlock;
+const osMessageQueueAttr_t syscomTxMessageQueue_attributes = {
+  .name = "syscomTxMessageQueue",
+  .cb_mem = &syscomTxMessageQueueControlBlock,
+  .cb_size = sizeof(syscomTxMessageQueueControlBlock),
+  .mq_mem = &syscomTxMessageQueueBuffer,
+  .mq_size = sizeof(syscomTxMessageQueueBuffer)
+};
+/* Definitions for monitoringMessageQueue */
+osMessageQueueId_t monitoringMessageQueueHandle;
+uint8_t monitoringMessageQueueBuffer[ 1 * sizeof( struct Message ) ];
+osStaticMessageQDef_t monitoringMessageQueueControlBlock;
+const osMessageQueueAttr_t monitoringMessageQueue_attributes = {
+  .name = "monitoringMessageQueue",
+  .cb_mem = &monitoringMessageQueueControlBlock,
+  .cb_size = sizeof(monitoringMessageQueueControlBlock),
+  .mq_mem = &monitoringMessageQueueBuffer,
+  .mq_size = sizeof(monitoringMessageQueueBuffer)
+};
+/* Definitions for monitoringInternalMessageQueue */
+osMessageQueueId_t monitoringInternalMessageQueueHandle;
+uint8_t monitoringInternalMessageQueueBuffer[ 2 * sizeof( struct InternalMessage ) ];
+osStaticMessageQDef_t monitoringInternalMessageQueueControlBlock;
+const osMessageQueueAttr_t monitoringInternalMessageQueue_attributes = {
+  .name = "monitoringInternalMessageQueue",
+  .cb_mem = &monitoringInternalMessageQueueControlBlock,
+  .cb_size = sizeof(monitoringInternalMessageQueueControlBlock),
+  .mq_mem = &monitoringInternalMessageQueueBuffer,
+  .mq_size = sizeof(monitoringInternalMessageQueueBuffer)
+};
+/* Definitions for syscomMasterTriggerTimer */
+osTimerId_t syscomMasterTriggerTimerHandle;
+osStaticTimerDef_t syscomMasterTriggerTimerControlBlock;
+const osTimerAttr_t syscomMasterTriggerTimer_attributes = {
+  .name = "syscomMasterTriggerTimer",
+  .cb_mem = &syscomMasterTriggerTimerControlBlock,
+  .cb_size = sizeof(syscomMasterTriggerTimerControlBlock),
 };
 /* Definitions for logMutex */
 osMutexId_t logMutexHandle;
@@ -180,11 +239,14 @@ const osEventFlagsAttr_t messageReceived_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 void log_uart_handler(UART_HandleTypeDef *huart);
+void send_syscom_message_handler(const struct Message *msg);
 /* USER CODE END FunctionPrototypes */
 
 void startController(void *argument);
 void startFeedbackTask(void *argument);
 void startSyscomTask(void *argument);
+void startMonitoringTask(void *argument);
+void syscomMasterTriggerTimerCallback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -210,16 +272,29 @@ void MX_FREERTOS_Init(void) {
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* creation of syscomMasterTriggerTimer */
+  syscomMasterTriggerTimerHandle = osTimerNew(syscomMasterTriggerTimerCallback, osTimerOnce, NULL, &syscomMasterTriggerTimer_attributes);
+
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
-  /* creation of syscomMessageQueue */
-  syscomMessageQueueHandle = osMessageQueueNew (2, sizeof(struct Message), &syscomMessageQueue_attributes);
+  /* creation of controllerMessageQueue */
+  controllerMessageQueueHandle = osMessageQueueNew (1, sizeof(struct Message), &controllerMessageQueue_attributes);
 
-  /* creation of feedbackSpeedQueue */
-  feedbackSpeedQueueHandle = osMessageQueueNew (2, sizeof(struct SpeedValues), &feedbackSpeedQueue_attributes);
+  /* creation of controllerInternalMessageQueue */
+  controllerInternalMessageQueueHandle = osMessageQueueNew (2, sizeof(struct InternalMessage), &controllerInternalMessageQueue_attributes);
+
+  /* creation of syscomTxMessageQueue */
+  syscomTxMessageQueueHandle = osMessageQueueNew (3, sizeof(struct Message), &syscomTxMessageQueue_attributes);
+
+  /* creation of monitoringMessageQueue */
+  monitoringMessageQueueHandle = osMessageQueueNew (1, sizeof(struct Message), &monitoringMessageQueue_attributes);
+
+  /* creation of monitoringInternalMessageQueue */
+  monitoringInternalMessageQueueHandle = osMessageQueueNew (2, sizeof(struct InternalMessage), &monitoringInternalMessageQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -234,6 +309,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of syscomTask */
   syscomTaskHandle = osThreadNew(startSyscomTask, NULL, &syscomTask_attributes);
+
+  /* creation of monitoringTask */
+  monitoringTaskHandle = osThreadNew(startMonitoringTask, NULL, &monitoringTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -272,8 +350,8 @@ static struct motor_info right_motor_info = {
 
 static struct controller_data controller_module_data = {
     .controller_thread_handle=&controllerTaskHandle,
-    .message_queue_handle=&syscomMessageQueueHandle,
-    .speed_values_queue_handle=&feedbackSpeedQueueHandle,
+    .message_queue_handle=&controllerMessageQueueHandle,
+    .internal_message_queue_handle=&controllerInternalMessageQueueHandle,
     .left_motor_info=&left_motor_info,
     .right_motor_info=&right_motor_info,
 };
@@ -298,7 +376,7 @@ void startController(void *argument)
     module_set_data(controller_module_handle, &controller_module_data);
     controller_module_init(controller_module_handle);
     
-     LOG_INFO("[controller] Start controller task\n");
+     LOG_INFO("[controller] Start\n");
     /* Infinite loop */
     for(;;)
     {
@@ -308,6 +386,11 @@ void startController(void *argument)
 }
 
 /* USER CODE BEGIN Header_startFeedbackTask */
+static struct message_subscription feedback_subscribers[] = {
+    {.msg_id=SPEED_VALUES_MSG_ID, .subscription_queue=&controllerInternalMessageQueueHandle},
+    {.msg_id=SPEED_VALUES_MSG_ID, .subscription_queue=&monitoringInternalMessageQueueHandle}
+};
+
 static struct tim_ops feedback_timers_ops[] = {
     [FEEDBACK_TIMER_INDEX] = {.start_tim=start_tim_17_it}
 };
@@ -324,7 +407,6 @@ static struct encoder_data right_encoder_info = {
 
 static struct feedback_data feedback_internal_data = {
     .feedback_thread_handle=&feedbackTaskHandle,
-    .speed_meas_queue_handle=&feedbackSpeedQueueHandle,
     .left_encoder_data=&left_encoder_info,
     .right_encoder_data=&right_encoder_info,
 };
@@ -342,6 +424,9 @@ void startFeedbackTask(void *argument)
   /* USER CODE BEGIN startFeedbackTask */
     (void)argument;
 
+    feedback_internal_data.subs = feedback_subscribers;
+    feedback_internal_data.subs_len = ARRAY_LEN(feedback_subscribers);
+
     struct module feedback_module = {
         .ops.timers_ops=feedback_timers_ops
     };
@@ -349,7 +434,7 @@ void startFeedbackTask(void *argument)
 
     module_set_data(feedback_module_handle, &feedback_internal_data);
     feedback_module_init(feedback_module_handle);
-    LOG_INFO("[feedback] Start feedback task\n");
+    LOG_INFO("[feedback] Start\n");
 
     /* Infinite loop */
     for(;;)
@@ -360,16 +445,38 @@ void startFeedbackTask(void *argument)
 }
 
 /* USER CODE BEGIN Header_startSyscomTask */
+static struct message_subscription syscom_subscriptions[] = {
+    {.msg_id=PLATFORM_SET_MOTOR_SPEED_REQ_ID, .subscription_queue=&controllerMessageQueueHandle},
+    {.msg_id=PLATFORM_POLL_STATUS_REQ_ID, .subscription_queue=&monitoringMessageQueueHandle}
+};
+
 static struct comm_ops syscom_comm_ops[] = {
-    [SYSCOM_SPI_COMM_INDEX] = {.read_non_blocking=start_spi_2_dma_reception}
+    [SYSCOM_SPI_COMM_INDEX] = {
+        .read_non_blocking=start_spi_2_dma_reception,
+        .write_non_blocking=start_spi_2_dma_transfer
+    }
 };
 
 static struct syscom_data syscom_task_data = {
     .syscom_thread_handle=&syscomTaskHandle,
-    .received_messages_queue_handle=&syscomMessageQueueHandle,
+    .transferred_messages_queue_handle=&syscomTxMessageQueueHandle,
+    .comm_master_trigger_up=spi_master_trigger_up,
+    .comm_master_trigger_down=spi_master_trigger_down
 };
 
 static struct module *syscom_module_handle;
+typedef void (*module_os_timer_callback)(struct module*);
+static module_os_timer_callback syscom_os_timer_callback = NULL;
+
+// TODO: move it somewhere else - it's not a part of global setup
+void send_syscom_message_handler(const struct Message *msg)
+{
+    if (osMessageQueuePut(syscomTxMessageQueueHandle, msg, 0, 0) != osOK)
+    {
+        LOG_INFO("[syscom] Fail sending message\n");
+    }
+    osThreadFlagsSet(syscomTaskHandle, DATA_TX_BUFFERED_THREAD_FLAG);
+}
 
 /**
 * @brief Function implementing the syscomTask thread.
@@ -381,6 +488,9 @@ void startSyscomTask(void *argument)
 {
   /* USER CODE BEGIN startSyscomTask */
     (void)argument;
+
+    syscom_task_data.subs = syscom_subscriptions;
+    syscom_task_data.subs_len = ARRAY_LEN(syscom_subscriptions);
     
     struct module syscom_module = {
         .ops.communication_ops = syscom_comm_ops
@@ -389,8 +499,9 @@ void startSyscomTask(void *argument)
     
     module_set_data(syscom_module_handle, &syscom_task_data);
     syscom_module_init(syscom_module_handle);
+    syscom_os_timer_callback = syscom_module_timer_callback;
 
-    LOG_INFO("[syscom] Start task\n");
+    LOG_INFO("[syscom] Start\n");
     /* Infinite loop */
     for(;;)
     {
@@ -399,10 +510,56 @@ void startSyscomTask(void *argument)
   /* USER CODE END startSyscomTask */
 }
 
+/* USER CODE BEGIN Header_startMonitoringTask */
+
+
+static struct module *monitoring_module_handle;
+
+/**
+* @brief Function implementing the monitorTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_startMonitoringTask */
+void startMonitoringTask(void *argument)
+{
+  /* USER CODE BEGIN startMonitoringTask */
+  (void)argument;
+
+  struct monitoring_data monitoring_task_data = {
+    .syscom_message_queue_handle=&monitoringMessageQueueHandle,
+    .internal_message_queue_handle=&monitoringInternalMessageQueueHandle,
+    .send_syscom_message=send_syscom_message_handler
+  };
+  struct module monitoring_module;
+
+  monitoring_module_handle = &monitoring_module;
+  module_set_data(monitoring_module_handle, &monitoring_task_data);
+  monitoring_module_init(monitoring_module_handle);
+  LOG_INFO("[monitoring] Start\n");
+
+  /* Infinite loop */
+  for(;;)
+  {
+      MODULE_WORK(monitoring_module_handle);
+  }
+  /* USER CODE END startMonitoringTask */
+}
+
+/* syscomMasterTriggerTimerCallback function */
+__weak void syscomMasterTriggerTimerCallback(void *argument)
+{
+  /* USER CODE BEGIN syscomMasterTriggerTimerCallback */
+  (void)argument;
+  (*syscom_os_timer_callback)(syscom_module_handle);
+  /* USER CODE END syscomMasterTriggerTimerCallback */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
-static struct event_subscription spi_subscriptions[] = {
+#define SUBSCRIPTIONS_LEN 3
+static struct event_subscription spi_subscriptions[SUBSCRIPTIONS_LEN] = {
     {
         .event_type=SPI_EVENT_RX_CPLT,
         .source=SPI_INSTANCE_2,
@@ -412,18 +569,35 @@ static struct event_subscription spi_subscriptions[] = {
             .thread_flag=DATA_RECEIVED_THREAD_FLAG,
         }
     },
+    {
+        .event_type=SPI_EVENT_TX_CPLT,
+        .source=SPI_INSTANCE_2,
+        .callback_type=MODULE_CALL,
+        .callback.direct_call_callback_info={
+            .cb=syscom_transfer_finished_callback,
+            .module_handle=&syscom_module_handle
+        }
+    },
+    {
+        .event_type=SPI_EVENT_TX_CPLT,
+        .source=SPI_INSTANCE_2,
+        .callback_type=RAW_CALLBACK,
+        .callback.raw_callback=spi_2_dma_transfer_cplt_callback
+    }
 };
 
 void spi_event(uint8_t instance, uint8_t event)
 {
-    static int length = sizeof(spi_subscriptions) / sizeof(struct event_subscription);
-    struct event_subscription *ptr;
-    for (int i = 0; i < length; ++i)
+    struct event_subscription *ptr = spi_subscriptions;
+    for (int i = 0; i < SUBSCRIPTIONS_LEN; ++i)
     {
-        ptr = spi_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == RAW_CALLBACK)
+            {
+                ptr->callback.raw_callback();
+            }
+            else if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr);
             }
@@ -432,15 +606,15 @@ void spi_event(uint8_t instance, uint8_t event)
                 SET_FLAG(ptr)
             }
         }
+        ++ptr;
     }
-
 }
 
 static struct event_subscription tim_subscriptions[] = {
     {
         .event_type=TIM_EVENT_IT,
         .source=TIM_INSTANCE_17,
-        .callback_type=DIRECT_CALL,
+        .callback_type=MODULE_CALL,
         .callback.direct_call_callback_info={
             .cb=feedback_timer_callback,
             .module_handle=&feedback_module_handle
@@ -457,7 +631,7 @@ void tim_event(uint8_t instance, uint8_t event_type)
         ptr = tim_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr)
             }
@@ -473,7 +647,7 @@ static struct event_subscription exti_subscriptions[] = {
     {
         .event_type=EXTI_EVENT_IT,
         .source=0,
-        .callback_type=DIRECT_CALL,
+        .callback_type=MODULE_CALL,
         .callback.direct_call_callback_info={
             .cb=NULL,
             .module_handle=&feedback_module_handle
@@ -490,7 +664,7 @@ void exti_event(uint8_t instance, uint8_t event_type)
         ptr = exti_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr)
             }

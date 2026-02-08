@@ -16,13 +16,13 @@
 void feedback_module_work(struct module *this_mod)
 {
     osThreadFlagsWait(PROBING_TIMEOUT_CALLBACK, osFlagsWaitAny, osWaitForever);
-    struct feedback_data *data = (struct feedback_data *)module_get_data(this_mod);
+    struct feedback_data *data = module_get_data(this_mod);
     feedback_work(data);
 }
 
 void feedback_module_init(struct module *this_module)
 {
-    struct feedback_data *data = (struct feedback_data *)module_get_data(this_module);
+    struct feedback_data *data = module_get_data(this_module);
 
     this_module->ops.work_ops = feedback_module_work;
     feedback_start(data);
@@ -31,6 +31,6 @@ void feedback_module_init(struct module *this_module)
 
 void feedback_timer_callback(struct module *this_module)
 {
-    struct feedback_data *data = (struct feedback_data *)module_get_data(this_module);
+    struct feedback_data *data = module_get_data(this_module);
     feedback_update(data);
 }

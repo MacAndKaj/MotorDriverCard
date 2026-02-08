@@ -8,6 +8,7 @@
   */
 #include <modules/syscom/impl/rx.h>
 
+#include <main/defs.h>
 #include <main/module.h>
 #include <modules/syscom/interface.h>
 #include <modules/syscom/impl/msg_processor.h>
@@ -40,17 +41,22 @@ void rx_work(struct module *this_mod, struct rx_context *context)
 
     if (context->buffer[0] == HEADER_BYTE)
     {
-        msg = processData(context->buffer);
-    }
-    
-    if (msg != NULL)
-    {
-        osStatus_t status = osMessageQueuePut(*data->received_messages_queue_handle, msg, 0, 0);
-        if (status != osOK)
-        {
-            LOG_INFO("[syscom][rx] Error occurred when putting message to queue\n");
-        }
+        msg = process_data(context->buffer);
     }
 
-    rx_start(this_mod, context);
+    if (msg != NULL)
+    {
+        struct message_subscription *subscription = data->subs;
+        for (int i = 0; i < data->subs_len; i++)
+        {
+            if (subscription->msg_id == msg->messageId)
+            {
+                if (osMessageQueuePut(*subscription->subscription_queue, msg, 0, 0) != osOK)
+                {
+                    LOG_INFO("[syscom][rx] Error occurred when putting message to queue\n");
+                }
+            }
+            ++subscription;
+        }
+    }
 }
