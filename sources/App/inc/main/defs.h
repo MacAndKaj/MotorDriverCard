@@ -70,11 +70,6 @@ struct SpeedValues
     double leftMotorSpeed, rightMotorSpeed; // [ROUNDS/s]
 };
 
-struct PlatformStatus
-{
-    struct SpeedValues speed;
-};
-
 struct InternalMessage
 {
     union 

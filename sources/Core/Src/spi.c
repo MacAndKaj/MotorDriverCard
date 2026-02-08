@@ -203,7 +203,7 @@ int start_spi_2_dma_transfer(uint8_t* data, uint16_t data_size)
         return -(int)err;
     }
 
-    memcpy(tx_buffer, data, (size_t)data_size);
+    memcpy(tx_buffer, data, data_size);
 
     HAL_StatusTypeDef status = HAL_SPI_Transmit_DMA(&hspi2, tx_buffer, data_size);
     if (status != HAL_OK)

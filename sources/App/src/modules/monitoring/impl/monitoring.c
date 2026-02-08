@@ -13,7 +13,10 @@
 #include <msg/defs/Message.h>
 #include <msg/message_ids.h>
 
+#include "FreeRTOS.h" // for pvPortMalloc
+
 #include <math.h>
+#include <memory.h>
 
 #define POLL_STATUS_BIT_SPEED 0x01
 #define POLL_STATUS_BIT_MODULE 0x02
@@ -29,10 +32,9 @@ struct monitoring_internal_data
 
 void monitoring_init(struct monitoring_data *handle)
 {
-    static struct monitoring_internal_data storage;
-    storage.speed_values_cache.leftMotorSpeed = 0;
-    storage.speed_values_cache.rightMotorSpeed = 0;
-    handle->internal_data = &storage;
+    handle->internal_data = pvPortMalloc(sizeof(struct monitoring_internal_data));
+    struct monitoring_internal_data *data = handle->internal_data;
+    memset(&data->speed_values_cache, 0, sizeof(struct SpeedValues));
 }
 
 void monitoring_work(struct monitoring_data *handle)
@@ -46,7 +48,7 @@ void monitoring_work(struct monitoring_data *handle)
         }
     }
 
-    struct Message msg;
+    Message msg;
     if (osMessageQueueGet(*handle->syscom_message_queue_handle, &msg, 0, 0) == osOK)
     {
         switch (msg.messageId)
@@ -73,13 +75,15 @@ void handle_status_polling(struct monitoring_data *handle, const struct Platform
         msg.msg.platformPollStatusResp.rSpeedF = get_fractional_speed_part(speed->rightMotorSpeed);
     }
     msg.messageId = PLATFORM_POLL_STATUS_RESP_ID;
+    LOG_INFO("Sending response to status polling request\n");
 
     handle->send_syscom_message(&msg);
+    LOG_INFO("Response to status polling request sent\n");
 }
 
 int8_t get_integral_speed_part(double speed)
 {
-    return (int8_t)speed;
+    return trunc(speed);
 }
 
 uint8_t get_fractional_speed_part(double speed)

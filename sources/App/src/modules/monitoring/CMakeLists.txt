@@ -20,6 +20,7 @@ target_include_directories(${LIBRARY_NAME}
 )
 
 target_link_libraries(${LIBRARY_NAME}
+    PUBLIC library_hal_drivers
     PUBLIC library_os
     PUBLIC library_mdc_app_main
     PUBLIC library_mdc_app_msg

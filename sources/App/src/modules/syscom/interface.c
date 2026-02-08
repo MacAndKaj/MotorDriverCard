@@ -8,6 +8,8 @@
   ******************************************************************************
   */
 
+#include "modules/log/interface.h"
+
 #include <modules/syscom/interface.h>
 
 #include <main/defs.h>
@@ -28,18 +30,19 @@ void syscom_module_work(struct module *this_mod)
     osThreadFlagsWait(DATA_RECEIVED_THREAD_FLAG | DATA_TX_BUFFERED_THREAD_FLAG, 
                       osFlagsWaitAny | osFlagsNoClear,
                       osWaitForever);
-    
-    if (osThreadFlagsGet() && DATA_RECEIVED_THREAD_FLAG)
+
+    if (osThreadFlagsGet() & DATA_TX_BUFFERED_THREAD_FLAG)
+    {
+        tx_work(this_mod, &internal_data.tx_ctx);
+        osThreadFlagsClear(DATA_TX_BUFFERED_THREAD_FLAG);
+    }
+
+    if (osThreadFlagsGet() & DATA_RECEIVED_THREAD_FLAG)
     {
         rx_work(this_mod, &internal_data.rx_ctx);
         osThreadFlagsClear(DATA_RECEIVED_THREAD_FLAG);
     }
 
-    if (osThreadFlagsGet() && DATA_TX_BUFFERED_THREAD_FLAG)
-    {
-        tx_work(this_mod, &internal_data.tx_ctx);
-        osThreadFlagsClear(DATA_TX_BUFFERED_THREAD_FLAG);
-    }
 }
 
 void syscom_module_init(struct module *syscom_module)
@@ -55,6 +58,11 @@ void syscom_module_init(struct module *syscom_module)
 
 void syscom_module_timer_callback(struct module *this_module)
 {
-    struct syscom_data *data = (struct syscom_data *)module_get_data(this_module);
+    struct syscom_data *data = module_get_data(this_module);
     data->comm_master_trigger_down();
+}
+
+void syscom_transfer_finished_callback(struct module* this_module)
+{
+    rx_start(this_module, &internal_data.rx_ctx);
 }

@@ -46,8 +46,9 @@ typedef StaticSemaphore_t osStaticMutexDef_t;
 
 enum event_callback_type
 {
-    DIRECT_CALL,
-    THREAD_FLAG
+    MODULE_CALL,
+    THREAD_FLAG,
+    RAW_CALLBACK
 };
 
 typedef void (*direct_call_callback_t)(struct module *);
@@ -64,6 +65,7 @@ struct thread_flag_callback_info
     uint32_t thread_flag;
 };
 
+typedef void (*raw_callback_t)();
 
 struct event_subscription
 {
@@ -74,6 +76,7 @@ struct event_subscription
     {
         struct direct_call_callback_info direct_call_callback_info;
         struct thread_flag_callback_info thread_flag_callback_info;
+        raw_callback_t raw_callback;
     } callback;
 };
 
@@ -444,7 +447,7 @@ void startFeedbackTask(void *argument)
 /* USER CODE BEGIN Header_startSyscomTask */
 static struct message_subscription syscom_subscriptions[] = {
     {.msg_id=PLATFORM_SET_MOTOR_SPEED_REQ_ID, .subscription_queue=&controllerMessageQueueHandle},
-    {.msg_id=PLATFORM_POLL_STATUS_REQ_ID, .subscription_queue=&monitoringInternalMessageQueueHandle}
+    {.msg_id=PLATFORM_POLL_STATUS_REQ_ID, .subscription_queue=&monitoringMessageQueueHandle}
 };
 
 static struct comm_ops syscom_comm_ops[] = {
@@ -456,7 +459,9 @@ static struct comm_ops syscom_comm_ops[] = {
 
 static struct syscom_data syscom_task_data = {
     .syscom_thread_handle=&syscomTaskHandle,
-    .transferred_messages_queue_handle=&syscomTxMessageQueueHandle
+    .transferred_messages_queue_handle=&syscomTxMessageQueueHandle,
+    .comm_master_trigger_up=spi_master_trigger_up,
+    .comm_master_trigger_down=spi_master_trigger_down
 };
 
 static struct module *syscom_module_handle;
@@ -507,11 +512,6 @@ void startSyscomTask(void *argument)
 
 /* USER CODE BEGIN Header_startMonitoringTask */
 
-static struct monitoring_data monitoring_task_data = {
-    .syscom_message_queue_handle=&monitoringMessageQueueHandle,
-    .internal_message_queue_handle=&monitoringInternalMessageQueueHandle,
-    .send_syscom_message=send_syscom_message_handler
-};
 
 static struct module *monitoring_module_handle;
 
@@ -526,10 +526,15 @@ void startMonitoringTask(void *argument)
   /* USER CODE BEGIN startMonitoringTask */
   (void)argument;
 
+  struct monitoring_data monitoring_task_data = {
+    .syscom_message_queue_handle=&monitoringMessageQueueHandle,
+    .internal_message_queue_handle=&monitoringInternalMessageQueueHandle,
+    .send_syscom_message=send_syscom_message_handler
+  };
   struct module monitoring_module;
 
   monitoring_module_handle = &monitoring_module;
-  module_set_data(syscom_module_handle, &monitoring_task_data);
+  module_set_data(monitoring_module_handle, &monitoring_task_data);
   monitoring_module_init(monitoring_module_handle);
   LOG_INFO("[monitoring] Start\n");
 
@@ -553,7 +558,8 @@ __weak void syscomMasterTriggerTimerCallback(void *argument)
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
 
-static struct event_subscription spi_subscriptions[] = {
+#define SUBSCRIPTIONS_LEN 3
+static struct event_subscription spi_subscriptions[SUBSCRIPTIONS_LEN] = {
     {
         .event_type=SPI_EVENT_RX_CPLT,
         .source=SPI_INSTANCE_2,
@@ -562,19 +568,36 @@ static struct event_subscription spi_subscriptions[] = {
             .thread_id=&syscomTaskHandle,
             .thread_flag=DATA_RECEIVED_THREAD_FLAG,
         }
+    },
+    {
+        .event_type=SPI_EVENT_TX_CPLT,
+        .source=SPI_INSTANCE_2,
+        .callback_type=MODULE_CALL,
+        .callback.direct_call_callback_info={
+            .cb=syscom_transfer_finished_callback,
+            .module_handle=&syscom_module_handle
+        }
+    },
+    {
+        .event_type=SPI_EVENT_TX_CPLT,
+        .source=SPI_INSTANCE_2,
+        .callback_type=RAW_CALLBACK,
+        .callback.raw_callback=spi_2_dma_transfer_cplt_callback
     }
 };
 
 void spi_event(uint8_t instance, uint8_t event)
 {
-    static int length = sizeof(spi_subscriptions) / sizeof(struct event_subscription);
-    struct event_subscription *ptr;
-    for (int i = 0; i < length; ++i)
+    struct event_subscription *ptr = spi_subscriptions;
+    for (int i = 0; i < SUBSCRIPTIONS_LEN; ++i)
     {
-        ptr = spi_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == RAW_CALLBACK)
+            {
+                ptr->callback.raw_callback();
+            }
+            else if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr);
             }
@@ -583,6 +606,7 @@ void spi_event(uint8_t instance, uint8_t event)
                 SET_FLAG(ptr)
             }
         }
+        ++ptr;
     }
 }
 
@@ -590,7 +614,7 @@ static struct event_subscription tim_subscriptions[] = {
     {
         .event_type=TIM_EVENT_IT,
         .source=TIM_INSTANCE_17,
-        .callback_type=DIRECT_CALL,
+        .callback_type=MODULE_CALL,
         .callback.direct_call_callback_info={
             .cb=feedback_timer_callback,
             .module_handle=&feedback_module_handle
@@ -607,7 +631,7 @@ void tim_event(uint8_t instance, uint8_t event_type)
         ptr = tim_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr)
             }
@@ -623,7 +647,7 @@ static struct event_subscription exti_subscriptions[] = {
     {
         .event_type=EXTI_EVENT_IT,
         .source=0,
-        .callback_type=DIRECT_CALL,
+        .callback_type=MODULE_CALL,
         .callback.direct_call_callback_info={
             .cb=NULL,
             .module_handle=&feedback_module_handle
@@ -640,7 +664,7 @@ void exti_event(uint8_t instance, uint8_t event_type)
         ptr = exti_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
-            if (ptr->callback_type == DIRECT_CALL)
+            if (ptr->callback_type == MODULE_CALL)
             {
                 CALL_DIRECTLY(ptr)
             }

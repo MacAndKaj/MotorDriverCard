@@ -44,8 +44,6 @@ void rx_work(struct module *this_mod, struct rx_context *context)
         msg = process_data(context->buffer);
     }
 
-    rx_start(this_mod, context);
-
     if (msg != NULL)
     {
         struct message_subscription *subscription = data->subs;

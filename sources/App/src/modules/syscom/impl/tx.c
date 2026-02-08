@@ -16,6 +16,8 @@
 
 #include <string.h>
 
+#define SPI_MASTER_TRIGGER_TICKS 50
+
 void tx_start(struct module * mod, struct tx_context *context)
 {
     (void)mod;
@@ -43,7 +45,7 @@ void tx_work(struct module *this_mod, struct tx_context *context)
             LOG_INFO_ARGS("[syscom][tx] Error when writing: %d\n", result);
         }
         data->comm_master_trigger_up();
-        if (osTimerStart(*data->syscom_timer_handle, 100) != osOK)
+        if (osTimerStart(*data->syscom_timer_handle, SPI_MASTER_TRIGGER_TICKS) != osOK)
         {
             LOG_INFO("[syscom][tx] Error when starting timer\n");
             data->comm_master_trigger_down();

@@ -33,5 +33,6 @@ struct syscom_data
 
 void syscom_module_init(struct module *syscom_module);
 void syscom_module_timer_callback(struct module *this_module);
+void syscom_transfer_finished_callback(struct module* this_module);
 
 #endif // MDC_TASKS_SYSCOM_INTERFACE_H
