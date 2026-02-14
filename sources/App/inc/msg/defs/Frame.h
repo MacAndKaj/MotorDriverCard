@@ -26,5 +26,6 @@ struct Frame
 typedef struct Frame Frame;
 
 #define FRAME_SIZE sizeof(Frame)
+#define FRAME_DATA_OFFSET (sizeof(Frame::header) + sizeof(Frame::id))
 
 #endif // MOTORDRIVER_APP_MSG_DEFS_FRAME_H

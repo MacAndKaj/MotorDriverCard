@@ -17,35 +17,28 @@
 
 #include <string.h>
 
+
 void rx_start(struct module *this_mod, struct rx_context *context)
 {
-    struct comm_ops *rx_comm_ops = (this_mod->ops.communication_ops) + SYSCOM_SPI_COMM_INDEX;
-
-    LOG_INFO("[syscom][rx] Waiting for message\n");
+    (void)this_mod;
     memset(context->buffer, 0, FRAME_SIZE);
-
-    int status = rx_comm_ops->read_non_blocking(context->buffer, FRAME_SIZE);
-    if (status != 0)
-    {
-        LOG_INFO_ARGS("[syscom][rx] ERROR when starting SPI reception using DMA: %d\n", status);
-    }
     LOG_INFO("[syscom][rx] SPI receiving\n");
 }
 
 void rx_work(struct module *this_mod, struct rx_context *context)
 {
-    struct syscom_data *data = (struct syscom_data *)module_get_data(this_mod);
-    struct Message* msg = NULL;
+    struct syscom_data *data = module_get_data(this_mod);
 
-    LOG_INFO("[syscom][rx] Received message\n");
-
-    if (context->buffer[0] == HEADER_BYTE)
-    {
-        msg = process_data(context->buffer);
-    }
-
+    // if (!check_crc(context->buffer))
+    // {
+    //     // handle crc error
+    //     LOG_INFO("[syscom][rx] CRC check failed\n");
+    //     return;
+    // }
+    const Message* msg = process_data(context->buffer);
     if (msg != NULL)
     {
+        LOG_INFO_ARGS("Received msg: id: %d\n", msg->messageId);
         struct message_subscription *subscription = data->subs;
         for (int i = 0; i < data->subs_len; i++)
         {

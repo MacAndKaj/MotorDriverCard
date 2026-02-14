@@ -24,6 +24,7 @@ typedef void (*gpio_exti_handler_t)(uint16_t);
 typedef void (*module_work_handler_t)(struct module*);
 typedef int (*read_func_t)(uint8_t*, uint16_t);
 typedef int (*write_func_t)(uint8_t*, uint16_t);
+typedef int (*write_and_read_func_t)(uint8_t*, uint8_t*, uint16_t);
 typedef void (*start_tim_func_t)();
 
 /**
@@ -68,6 +69,8 @@ struct comm_ops
     write_func_t write_blocking;
     read_func_t read_non_blocking;
     write_func_t write_non_blocking;
+    write_and_read_func_t write_and_read_blocking;
+    write_and_read_func_t write_and_read_non_blocking;
 };
 
 struct tim_ops

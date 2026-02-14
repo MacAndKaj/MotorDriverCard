@@ -9,12 +9,17 @@
 #ifndef MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H
 #define MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H
 
+#include <msg/defs/PlatformStatus.h>
+
 #include <stdint.h>
 
-#include "msg/defs/Frame.h"
+typedef struct InternalMessage InternalMessage;
+typedef struct Message Message;
 
-struct Message* process_data(const uint8_t* frame_data);
+Message* process_data(const uint8_t* frame_data);
 
-void process_message(const struct Message* message, uint8_t buffer[FRAME_SIZE]);
+void process_message(const InternalMessage *src_msg, PlatformStatus* dest_msg);
+
+void prepare_frame(const Message* status, uint8_t* out_buf);
 
 #endif // MDC_MODULES_SYSCOM_IMPL_MSG_PROCESSOR_H

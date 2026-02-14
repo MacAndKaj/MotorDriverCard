@@ -22,6 +22,7 @@
 
 /* USER CODE BEGIN 0 */
 #include "memory.h"
+#include "modules/log/interface.h"
 
 #define MAX_TX_BUFFER_SIZE 512
 /* USER CODE END 0 */
@@ -211,14 +212,36 @@ int start_spi_2_dma_transfer(uint8_t* data, uint16_t data_size)
         return status;
     }
 
-    HAL_GPIO_WritePin(SYSCOM_MASTER_TRIGGER_GPIO_Port, SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(SYSCOM_MASTER_TRIGGER_GPIO_Port, SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_SET);
 
     return 0;
 }
 
-void spi_2_dma_transfer_cplt_callback()
+int start_spi2_dma_transfer_and_reception(uint8_t* tx_data, uint8_t* rx_buffer, uint16_t data_size)
 {
-    HAL_GPIO_WritePin(SYSCOM_MASTER_TRIGGER_GPIO_Port, SYSCOM_MASTER_TRIGGER_Pin, GPIO_PIN_RESET);
+    // static uint8_t tx_buffer[MAX_TX_BUFFER_SIZE];
+
+    if (data_size > MAX_TX_BUFFER_SIZE)
+    {
+        return -0xFFFF;
+    }
+
+    uint32_t err = HAL_SPI_GetError(&hspi2);
+    if (err != HAL_SPI_ERROR_NONE)
+    {
+        return -(int)err;
+    }
+
+    // memcpy(tx_buffer, tx_data, data_size);
+
+    HAL_StatusTypeDef status = HAL_SPI_TransmitReceive_DMA(&hspi2, tx_data, rx_buffer, data_size);
+    if (status != HAL_OK)
+    {
+        return status;
+    }
+
+    return 0;
 }
+
 
 /* USER CODE END 1 */

@@ -54,7 +54,7 @@ void evaluate_speed(struct encoder_data *handle, double t)
 {
     if (fabs(t-0.) < 0.0001) return;
 
-    double pulses_done = (double)get_pulses(handle);
+    double pulses_done = get_pulses(handle);
     set_pulses(handle, 0);
 
     set_speed(handle, (2.*M_PI*pulses_done) / (t*PULSES_PER_ROUND));

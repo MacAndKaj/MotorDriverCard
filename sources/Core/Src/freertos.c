@@ -446,22 +446,21 @@ void startFeedbackTask(void *argument)
 
 /* USER CODE BEGIN Header_startSyscomTask */
 static struct message_subscription syscom_subscriptions[] = {
-    {.msg_id=PLATFORM_SET_MOTOR_SPEED_REQ_ID, .subscription_queue=&controllerMessageQueueHandle},
+    {.msg_id=CMD_SET_MOTOR_SPEED_ID, .subscription_queue=&controllerMessageQueueHandle},
     {.msg_id=PLATFORM_POLL_STATUS_REQ_ID, .subscription_queue=&monitoringMessageQueueHandle}
 };
 
 static struct comm_ops syscom_comm_ops[] = {
     [SYSCOM_SPI_COMM_INDEX] = {
         .read_non_blocking=start_spi_2_dma_reception,
-        .write_non_blocking=start_spi_2_dma_transfer
+        .write_non_blocking=start_spi_2_dma_transfer,
+        .write_and_read_non_blocking=start_spi2_dma_transfer_and_reception
     }
 };
 
 static struct syscom_data syscom_task_data = {
     .syscom_thread_handle=&syscomTaskHandle,
     .transferred_messages_queue_handle=&syscomTxMessageQueueHandle,
-    .comm_master_trigger_up=spi_master_trigger_up,
-    .comm_master_trigger_down=spi_master_trigger_down
 };
 
 static struct module *syscom_module_handle;
@@ -561,28 +560,13 @@ __weak void syscomMasterTriggerTimerCallback(void *argument)
 #define SUBSCRIPTIONS_LEN 3
 static struct event_subscription spi_subscriptions[SUBSCRIPTIONS_LEN] = {
     {
-        .event_type=SPI_EVENT_RX_CPLT,
+        .event_type=SPI_EVENT_TX_RX_CPLT,
         .source=SPI_INSTANCE_2,
         .callback_type=THREAD_FLAG,
         .callback.thread_flag_callback_info={
             .thread_id=&syscomTaskHandle,
             .thread_flag=DATA_RECEIVED_THREAD_FLAG,
         }
-    },
-    {
-        .event_type=SPI_EVENT_TX_CPLT,
-        .source=SPI_INSTANCE_2,
-        .callback_type=MODULE_CALL,
-        .callback.direct_call_callback_info={
-            .cb=syscom_transfer_finished_callback,
-            .module_handle=&syscom_module_handle
-        }
-    },
-    {
-        .event_type=SPI_EVENT_TX_CPLT,
-        .source=SPI_INSTANCE_2,
-        .callback_type=RAW_CALLBACK,
-        .callback.raw_callback=spi_2_dma_transfer_cplt_callback
     }
 };
 

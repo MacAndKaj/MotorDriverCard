@@ -84,6 +84,7 @@ struct InternalMessage
 // **************************************************************
 #define DATA_RECEIVED_THREAD_FLAG 0x01
 #define DATA_TX_BUFFERED_THREAD_FLAG 0x02
+#define DATA_TX_RX_TRANSFERRED_THREAD_FLAG 0x03
 // **************************************************************
 
 // **************************************************************

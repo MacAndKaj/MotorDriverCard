@@ -8,6 +8,7 @@
   */
 #include <modules/syscom/impl/tx.h>
 
+#include <main/defs.h>
 #include <main/module.h>
 #include <modules/syscom/interface.h>
 #include <modules/syscom/impl/msg_processor.h>
@@ -16,43 +17,35 @@
 
 #include <string.h>
 
-#define SPI_MASTER_TRIGGER_TICKS 50
+#include "msg/message_ids.h"
+
+#define SPI_MASTER_TRIGGER_TICKS 50 // 50 ticks = 50ms,
 
 void tx_start(struct module * mod, struct tx_context *context)
 {
     (void)mod;
-    (void)context;
+    context->status_to_send.messageId = PLATFORM_STATUS_MSG_ID;
     LOG_INFO("[syscom][tx] Initialized\n");
 }
 
 void tx_work(struct module *this_mod, struct tx_context *context)
 {
-    struct syscom_data *data = (struct syscom_data *)module_get_data(this_mod);
-    struct comm_ops *syscom_ops = this_mod->ops.communication_ops;
-    
-    Message message_buffer;
-    memset(&message_buffer, 0, sizeof(Message));
-    
-    LOG_INFO("[syscom][tx] Sending message\n");
-    
+    struct syscom_data *data = module_get_data(this_mod);
+
+    InternalMessage message_buffer = {0};
+    // tutaj trzeba przemyslec jak aktualizowac status do wyslania bo enkodery aktualizuja znacznie czesciej
+    // wiec trzeba jakos wspolnie odswiezac to - moze jakas wspolna funkcja do akutalizowania - mutex(grozi deadlockiem)
     if (osMessageQueueGet(*data->transferred_messages_queue_handle, &message_buffer, 0, 0) == osOK)
     {
-        process_message(&message_buffer, context->buffer);
-
-        int result = syscom_ops->write_non_blocking(context->buffer, FRAME_SIZE);
-        if (result != 0)
-        {
-            LOG_INFO_ARGS("[syscom][tx] Error when writing: %d\n", result);
-        }
-        data->comm_master_trigger_up();
-        if (osTimerStart(*data->syscom_timer_handle, SPI_MASTER_TRIGGER_TICKS) != osOK)
-        {
-            LOG_INFO("[syscom][tx] Error when starting timer\n");
-            data->comm_master_trigger_down();
-        }
+        LOG_INFO("[syscom][tx] Received message to process\n");
+        process_message(&message_buffer, &context->status_to_send.msg.platform_status);
     }
-    else
-    {
-        LOG_INFO("[syscom][tx] Error when getting message\n");
-    }
+    prepare_frame(&context->status_to_send, context->buffer);
 }
+
+void tx_callback(struct module *this_mod, struct tx_context *context)
+{
+    (void)this_mod;
+    (void)context;
+}
+

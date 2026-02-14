@@ -43,6 +43,7 @@ void MX_SPI2_Init(void);
 /* USER CODE BEGIN Prototypes */
 int start_spi_2_dma_reception(uint8_t* buffer, uint16_t buffer_size);
 int start_spi_2_dma_transfer(uint8_t* data, uint16_t data_size);
+int start_spi2_dma_transfer_and_reception(uint8_t* tx_data, uint8_t* rx_buffer, uint16_t data_size);
 void spi_2_dma_transfer_cplt_callback();
 /* USER CODE END Prototypes */
 

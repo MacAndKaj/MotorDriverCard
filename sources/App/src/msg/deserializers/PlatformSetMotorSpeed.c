@@ -17,16 +17,16 @@
 
 PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(char* data)
 {
-    PlatformSetMotorSpeedReq* msg = (PlatformSetMotorSpeedReq*)pvPortMalloc(sizeof(struct PlatformSetMotorSpeedReq));
+    PlatformSetMotorSpeedReq* msg = pvPortMalloc(sizeof(struct PlatformSetMotorSpeedReq));
 
-    memcpy(msg, data, sizeof(struct PlatformSetMotorSpeedReq));
+    memcpy(msg, data, sizeof(PlatformSetMotorSpeedReq));
     return msg;
 }
 
 PlatformSetMotorSpeedResp* deserialize_PlatformSetMotorSpeedResp(char* data)
 {
-    PlatformSetMotorSpeedResp* msg = (PlatformSetMotorSpeedResp*)pvPortMalloc(sizeof(struct PlatformSetMotorSpeedResp));
+    PlatformSetMotorSpeedResp* msg = pvPortMalloc(sizeof(struct PlatformSetMotorSpeedResp));
 
-    memcpy(msg, data, sizeof(struct PlatformSetMotorSpeedResp));
+    memcpy(msg, data, sizeof(PlatformSetMotorSpeedResp));
     return msg;
 }
