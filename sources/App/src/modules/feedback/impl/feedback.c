@@ -34,7 +34,7 @@ void feedback_work(struct feedback_data *handle)
         if (subscription->msg_id == SPEED_VALUES_MSG_ID)
         {
             osStatus_t status = osMessageQueuePut(*subscription->subscription_queue, &values, 0, 0);
-            if (status != osOK)
+            if (status != osOK && status != osErrorResource)
             {
                 LOG_INFO_ARGS("[feedback]Failed to send:%d\n", status);
             }

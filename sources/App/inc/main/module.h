@@ -26,6 +26,7 @@ typedef int (*read_func_t)(uint8_t*, uint16_t);
 typedef int (*write_func_t)(uint8_t*, uint16_t);
 typedef int (*write_and_read_func_t)(uint8_t*, uint8_t*, uint16_t);
 typedef void (*start_tim_func_t)();
+typedef uint32_t (*calculate_crc_func_t)(uint8_t *buf, size_t len);
 
 /**
  * @brief Structure containing callbacks for events occuring on UART peripheral.
@@ -71,6 +72,7 @@ struct comm_ops
     write_func_t write_non_blocking;
     write_and_read_func_t write_and_read_blocking;
     write_and_read_func_t write_and_read_non_blocking;
+    calculate_crc_func_t calculate_crc;
 };
 
 struct tim_ops

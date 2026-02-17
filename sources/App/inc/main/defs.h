@@ -104,6 +104,6 @@ struct message_subscription
 
 struct Message;
 
-typedef void (*send_syscom_message_func_t)(const struct Message*);
+typedef void (*send_to_syscom_func_t)(const struct Message*);
 
 #endif //MDC_MAIN_DEFS_H

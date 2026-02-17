@@ -19,7 +19,7 @@
  {
      osMessageQueueId_t  *syscom_message_queue_handle;
      osMessageQueueId_t  *internal_message_queue_handle;
-     send_syscom_message_func_t send_syscom_message;
+     send_to_syscom_func_t send_to_syscom;
      struct monitoring_internal_data *internal_data;
  };
  

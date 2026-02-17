@@ -21,14 +21,17 @@
 #include "usart.h"
 
 /* USER CODE BEGIN 0 */
+#include <string.h>
 //#include "modules/log/interface.h"
 
 #define TIMEOUT 1000
+#define MAX_PRINT_LEN 256
 
 //void uart2_tx_transmit_handler(UART_HandleTypeDef *huart);
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USART2 init function */
 
@@ -47,7 +50,7 @@ void MX_USART2_UART_Init(void)
   huart2.Init.WordLength = UART_WORDLENGTH_9B;
   huart2.Init.StopBits = UART_STOPBITS_2;
   huart2.Init.Parity = UART_PARITY_EVEN;
-  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.Mode = UART_MODE_TX;
   huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   huart2.Init.OverSampling = UART_OVERSAMPLING_16;
   huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
@@ -88,6 +91,23 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART2;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
+    /* USART2 DMA Init */
+    /* USART2_TX Init */
+    hdma_usart2_tx.Instance = DMA1_Channel7;
+    hdma_usart2_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_usart2_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart2_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart2_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart2_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart2_tx.Init.Mode = DMA_NORMAL;
+    hdma_usart2_tx.Init.Priority = DMA_PRIORITY_HIGH;
+    if (HAL_DMA_Init(&hdma_usart2_tx) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart2_tx);
+
     /* USART2 interrupt Init */
     HAL_NVIC_SetPriority(USART2_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(USART2_IRQn);
@@ -114,6 +134,9 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
     */
     HAL_GPIO_DeInit(GPIOA, USART_TX_Pin|USART_RX_Pin);
 
+    /* USART2 DMA DeInit */
+    HAL_DMA_DeInit(uartHandle->hdmatx);
+
     /* USART2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(USART2_IRQn);
   /* USER CODE BEGIN USART2_MspDeInit 1 */
@@ -131,9 +154,18 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 
 void transmit_uart2(const char *ptr, int len)
 {
-    HAL_StatusTypeDef status = HAL_UART_Transmit(&huart2, (uint8_t*)ptr, len, TIMEOUT);
+    while (HAL_UART_GetState(&huart2) != HAL_UART_STATE_READY)
+    {
+      // wait for previous transmission to complete
+    }
+    static char tx_buffer[MAX_PRINT_LEN] = {0};
+    const size_t print_len = len > MAX_PRINT_LEN ? MAX_PRINT_LEN : len;
+    memcpy(tx_buffer, ptr, print_len);
+
+    int status = HAL_UART_Transmit_DMA(&huart2, tx_buffer, print_len);
     if (status != HAL_OK)
     {
+        // Handle transmission error
         Error_Handler();
     }
 }

@@ -21,7 +21,7 @@
 #include "projdefs.h"
 #include "portmacro.h"
 
-#define SYSCOM_WORK_TICKS pdMS_TO_TICKS(2) // 2ms
+#define SYSCOM_WORK_TICKS pdMS_TO_TICKS(1) // 2ms
 #define FRAME_PREPARATION_OFFSET_TICKS pdMS_TO_TICKS(8) // 8ms, time between frame received and response status prepared
 
 // #define SYSCOM_WORK_TICKS (2) // 2ms
@@ -38,21 +38,18 @@ static struct syscom_internal_data internal_data;
 void syscom_module_work(struct module *this_mod)
 {
     osThreadFlagsWait(DATA_TX_RX_TRANSFERRED_THREAD_FLAG, osFlagsWaitAll | osFlagsNoClear, SYSCOM_WORK_TICKS);
-
     if (osThreadFlagsGet() & DATA_TX_RX_TRANSFERRED_THREAD_FLAG)
     {
-        // struct syscom_data *data = module_get_data(this_mod);
-        // int status = osTimerStart(*data->syscom_timer_handle, FRAME_PREPARATION_OFFSET_TICKS);
-        // if (status != osOK)
-        // {
-        //     LOG_INFO_ARGS("[syscom][rx] Error when starting timer, status: %d\n", status);
-        // }
+        tx_work(this_mod, &internal_data.tx_ctx);
         rx_work(this_mod, &internal_data.rx_ctx);
-        this_mod->ops.communication_ops->write_and_read_non_blocking(
+        int retval = this_mod->ops.communication_ops->write_and_read_non_blocking(
             internal_data.tx_ctx.buffer, internal_data.rx_ctx.buffer, FRAME_SIZE);
         osThreadFlagsClear(DATA_TX_RX_TRANSFERRED_THREAD_FLAG);
+        if (retval != 0)
+        {
+            LOG_INFO_ARGS("[syscom] Error when starting non-blocking transfer, %d\n", retval);
+        }
     }
-    tx_work(this_mod, &internal_data.tx_ctx);
 }
 
 void syscom_module_init(struct module *syscom_module)

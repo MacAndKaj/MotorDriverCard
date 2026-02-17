@@ -82,40 +82,42 @@ include_directories(${CMAKE_SOURCE_DIR}/Core/Inc
 )
 
 file(GLOB HAL_SOURCES
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_exti.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart.c;
-    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart_ex.c;
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_cortex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_crc.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_crc_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_dma.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_exti.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_flash_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_gpio.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_i2c_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_rcc_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_pwr_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_spi_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_tim_ex.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart.c
+    ${STM32_REPO_LOCATION}/Drivers/STM32F3xx_HAL_Driver/Src/stm32f3xx_hal_uart_ex.c
 )
 
 file(GLOB OS_SOURCES
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/list.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/queue.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/timers.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.c;
-    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c;
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/croutine.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/event_groups.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/list.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/queue.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/tasks.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/timers.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/portmacro.c
+    ${STM32_REPO_LOCATION}/Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.c
 )
 
 add_library(library_hal_drivers ${HAL_SOURCES})
@@ -143,6 +145,7 @@ set(CORE_HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc)
 set(CORE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src)
 
 file(GLOB SOURCES
+    ${CORE_HEADERS_DIR}/crc.h
     ${CORE_HEADERS_DIR}/dma.h
     ${CORE_HEADERS_DIR}/FreeRTOSConfig.h
     ${CORE_HEADERS_DIR}/gpio.h
@@ -153,6 +156,7 @@ file(GLOB SOURCES
     ${CORE_HEADERS_DIR}/tim.h
     ${CORE_HEADERS_DIR}/usart.h
 
+    ${CORE_SOURCE_DIR}/crc.c
     ${CORE_SOURCE_DIR}/dma.c
     ${CORE_SOURCE_DIR}/freertos.c
     ${CORE_SOURCE_DIR}/gpio.c
@@ -178,7 +182,6 @@ target_link_libraries(${PROJECT_NAME}.elf
     PUBLIC library_mdc_app_modules_controller
     PUBLIC library_mdc_app_modules_feedback
     PUBLIC library_mdc_app_modules_log
-    PUBLIC library_mdc_app_modules_monitoring
     PUBLIC library_mdc_app_modules_syscom
 )
 

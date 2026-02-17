@@ -37,10 +37,15 @@ void tx_work(struct module *this_mod, struct tx_context *context)
     // wiec trzeba jakos wspolnie odswiezac to - moze jakas wspolna funkcja do akutalizowania - mutex(grozi deadlockiem)
     if (osMessageQueueGet(*data->transferred_messages_queue_handle, &message_buffer, 0, 0) == osOK)
     {
-        LOG_INFO("[syscom][tx] Received message to process\n");
         process_message(&message_buffer, &context->status_to_send.msg.platform_status);
     }
     prepare_frame(&context->status_to_send, context->buffer);
+    uint32_t crc = this_mod->ops.communication_ops->calculate_crc(context->buffer, FRAME_SIZE-1);
+    if (crc == 0)
+    {
+        LOG_INFO("[syscom][tx] CRC is 0, this may indicate an error in CRC calculation\n");
+    }
+    context->buffer[FRAME_SIZE-1] = crc & 0xFF;
 }
 
 void tx_callback(struct module *this_mod, struct tx_context *context)
