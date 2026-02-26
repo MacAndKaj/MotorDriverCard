@@ -20,9 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "crc.h"
 
-#include "modules/log/interface.h"
-
 /* USER CODE BEGIN 0 */
+#include "modules/log/interface.h"
 
 /* USER CODE END 0 */
 

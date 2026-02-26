@@ -95,11 +95,11 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
-  MX_SPI2_Init();
   MX_TIM17_Init();
   MX_TIM8_Init();
   MX_TIM4_Init();
   MX_CRC_Init();
+  MX_SPI3_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -181,20 +181,9 @@ void SystemClock_Config(void)
 //    if (GPIO_Pin == RightMotorEncoderB_Pin) exti_event(RIGHT_MOTOR_ENODER_PIN_B, EXTI_EVENT_IT);
 //}
 
-void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-    // if (context->spiRxCompletedCb != NULL) context->spiRxCompletedCb(hspi);
-    if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_RX_CPLT);
-}
-
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_TX_RX_CPLT);
-}
-
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-    if (hspi->Instance == SPI2) spi_event(SPI_INSTANCE_2, SPI_EVENT_TX_CPLT);
+    if (hspi->Instance == SPI3) spi_event(SPI_INSTANCE_3, SPI_EVENT_TX_RX_CPLT);
 }
 
 /* USER CODE END 4 */

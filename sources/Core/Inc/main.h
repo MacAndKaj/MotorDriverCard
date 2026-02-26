@@ -73,22 +73,12 @@ void Error_Handler(void);
 #define LED_GPIO_Port GPIOA
 #define LeftMotorPWM_Pin GPIO_PIN_10
 #define LeftMotorPWM_GPIO_Port GPIOB
-#define SYSCOM_SPI_NSS_Pin GPIO_PIN_12
-#define SYSCOM_SPI_NSS_GPIO_Port GPIOB
-#define SYSCOM_SPI_SCK_Pin GPIO_PIN_13
-#define SYSCOM_SPI_SCK_GPIO_Port GPIOB
-#define SYSCOM_SPI_MISO_Pin GPIO_PIN_14
-#define SYSCOM_SPI_MISO_GPIO_Port GPIOB
-#define SYSCOM_SPI_MOSI_Pin GPIO_PIN_15
-#define SYSCOM_SPI_MOSI_GPIO_Port GPIOB
 #define LeftMotorIn1_Pin GPIO_PIN_7
 #define LeftMotorIn1_GPIO_Port GPIOC
 #define RightMotorIn1_Pin GPIO_PIN_8
 #define RightMotorIn1_GPIO_Port GPIOA
 #define RightMotorIn2_Pin GPIO_PIN_9
 #define RightMotorIn2_GPIO_Port GPIOA
-#define SYSCOM_MASTER_TRIGGER_Pin GPIO_PIN_10
-#define SYSCOM_MASTER_TRIGGER_GPIO_Port GPIOA
 #define RightMotorPWM_Pin GPIO_PIN_4
 #define RightMotorPWM_GPIO_Port GPIOB
 #define LeftMotorIn2_Pin GPIO_PIN_6
@@ -101,6 +91,7 @@ void Error_Handler(void);
 // deprecated #define RIGHT_MOTOR_ENODER_PIN_B  0x2
 // SPI instances
 #define SPI_INSTANCE_2            2
+#define SPI_INSTANCE_3            3
 // TIM instances
 #define TIM_INSTANCE_2            2
 #define TIM_INSTANCE_3            3

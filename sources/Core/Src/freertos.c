@@ -484,7 +484,7 @@ __weak void syscomMasterTriggerTimerCallback(void *argument)
 static struct event_subscription spi_subscriptions[SUBSCRIPTIONS_LEN] = {
     {
         .event_type=SPI_EVENT_TX_RX_CPLT,
-        .source=SPI_INSTANCE_2,
+        .source=SPI_INSTANCE_3,
         .callback_type=THREAD_FLAG,
         .callback.thread_flag_callback_info={
             .thread_id=&syscomTaskHandle,
