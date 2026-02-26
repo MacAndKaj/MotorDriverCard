@@ -27,10 +27,4 @@ struct PlatformSetMotorSpeedReq
 };
 typedef struct PlatformSetMotorSpeedReq PlatformSetMotorSpeedReq;
 
-struct PlatformSetMotorSpeedResp
-{
-    enum Status status;
-};
-typedef struct PlatformSetMotorSpeedResp PlatformSetMotorSpeedResp;
-
 #endif //MOTORDRIVER_MSG_DEFS_PLATFORMSETMOTORSPEED_H

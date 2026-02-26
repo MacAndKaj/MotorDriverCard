@@ -12,7 +12,6 @@
 
 #include "msg/defs/PlatformSetMotorSpeed.h"
 
-PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(char* data);
-PlatformSetMotorSpeedResp* deserialize_PlatformSetMotorSpeedResp(char* data);
+PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(const char* data);
 
 #endif //MOTORDRIVER_COM_INTERFACE_SER_DES_DESERIALIZERS_PLATFORMSETMOTORSPEED_H

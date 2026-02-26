@@ -15,12 +15,8 @@
 #include "msg/defs/Message.h"
 #include "msg/defs/Frame.h"
 #include "msg/defs/PlatformStatus.h"
-#include "msg/deserializers/PlatformPollStatus.h"
 #include "msg/deserializers/PlatformSetMotorSpeed.h"
 #include "msg/deserializers/PlatformSetMotorPwmValue.h"
-#include "msg/serializers/PlatformPollStatus.h"
-#include "msg/serializers/PlatformSetMotorSpeed.h"
-#include "msg/serializers/PlatformStatus.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -34,12 +30,6 @@ void serialize(const Message* msg, uint8_t *out_buf)
 {
     switch (msg->messageId)
     {
-        case PLATFORM_SET_MOTOR_SPEED_RESP_ID:
-            memcpy(out_buf, &msg->msg, sizeof(struct PlatformSetMotorSpeedResp));
-            break;
-        case PLATFORM_POLL_STATUS_RESP_ID:
-            memcpy(out_buf, &msg->msg, sizeof(struct PlatformPollStatusResp));
-            break;
         case PLATFORM_STATUS_MSG_ID:
             memcpy(out_buf, &msg->msg, sizeof(PlatformStatus));
             break;
@@ -55,18 +45,6 @@ Message* deserialize(char* data, uint8_t id)
     message.messageId = id;
     switch (id)
     {
-    case PLATFORM_SET_MOTOR_SPEED_REQ_ID:
-        LOG_INFO("[rx] PLATFORM_SET_MOTOR_SPEED_REQ\n");
-        message.msg.platformSetMotorSpeedReq = *deserialize_PlatformSetMotorSpeedReq(data);
-        return &message;
-    case PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID:
-        LOG_INFO("[rx] PLATFORM_SET_MOTOR_PWM_VALUE_REQ_ID\n");
-        message.msg.platformSetMotorPwmValueReq = *deserialize_PlatformSetMotorPwmValueReq(data);
-        return &message;
-    case PLATFORM_POLL_STATUS_REQ_ID:
-        LOG_INFO("[rx] PLATFORM_POLL_STATUS_REQ_ID\n");
-        message.msg.platformPollStatusReq = *deserialize_PlatformPollStatusReq(data);
-        return &message;
     case CMD_SET_MOTOR_SPEED_ID:
         message.msg.cmd_set_motor_speed = *deserialize_PlatformSetMotorSpeedReq(data);
         return &message;

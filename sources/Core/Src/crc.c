@@ -20,6 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "crc.h"
 
+#include "modules/log/interface.h"
+
 /* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
@@ -91,12 +93,16 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* crcHandle)
 /* USER CODE BEGIN 1 */
 uint32_t crc_calculate(uint8_t *buf, size_t len)
 {
-    if (buf == NULL || len == 0) return 0xFF; // Handle null pointer or zero length
+    if (buf == NULL || len == 0)
+    {
+        LOG_INFO("[ERROR] CRC returns 0x00 for null or len 0\n");
+        return 0x00; // Handle null pointer or zero length
+    }
 
     if (HAL_CRC_GetState(&hcrc) != HAL_CRC_STATE_READY)
     {
-        // Handle CRC peripheral not ready (e.g., return an error code or reset the peripheral)
-        return 0xFF; // Placeholder for error handling
+        LOG_INFO("[ERROR] CRC used when not ready\n");
+        return 0x00; // Placeholder for error handling
     }
     return HAL_CRC_Calculate(&hcrc, (uint32_t*)buf, len); // Calculate CRC using HAL function
 }

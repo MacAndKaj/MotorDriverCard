@@ -30,13 +30,4 @@ struct PlatformSetMotorPwmValueReq
 };
 typedef struct PlatformSetMotorPwmValueReq PlatformSetMotorPwmValueReq;
 
-/*
- * status - status of setting the value
- */
-struct PlatformSetMotorPwmValueResp
-{
-    enum Status status;
-};
-typedef struct PlatformSetMotorPwmValueResp PlatformSetMotorPwmValueResp;
-
 #endif //MOTORDRIVER_MSG_DEFS_PLATFORMSETMOTORMOTORVALUE_H

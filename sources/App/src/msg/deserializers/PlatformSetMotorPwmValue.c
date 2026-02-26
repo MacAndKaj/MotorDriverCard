@@ -15,18 +15,10 @@
 
 #include <memory.h>
 
-PlatformSetMotorPwmValueReq* deserialize_PlatformSetMotorPwmValueReq(char* data)
+PlatformSetMotorPwmValueReq* deserialize_PlatformSetMotorPwmValueReq(const char* data)
 {
     PlatformSetMotorPwmValueReq* msg = (PlatformSetMotorPwmValueReq*)pvPortMalloc(sizeof(struct PlatformSetMotorPwmValueReq));
 
     memcpy(msg, data, sizeof(struct PlatformSetMotorPwmValueReq));
-    return msg;
-}
-
-PlatformSetMotorPwmValueResp* deserialize_PlatformSetMotorPwmValueResp(char* data)
-{
-    PlatformSetMotorPwmValueResp* msg = (PlatformSetMotorPwmValueResp*)pvPortMalloc(sizeof(struct PlatformSetMotorPwmValueResp));
-
-    memcpy(msg, data, sizeof(struct PlatformSetMotorPwmValueResp));
     return msg;
 }

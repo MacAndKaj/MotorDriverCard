@@ -41,10 +41,6 @@ void tx_work(struct module *this_mod, struct tx_context *context)
     }
     prepare_frame(&context->status_to_send, context->buffer);
     uint32_t crc = this_mod->ops.communication_ops->calculate_crc(context->buffer, FRAME_SIZE-1);
-    if (crc == 0)
-    {
-        LOG_INFO("[syscom][tx] CRC is 0, this may indicate an error in CRC calculation\n");
-    }
     context->buffer[FRAME_SIZE-1] = crc & 0xFF;
 }
 

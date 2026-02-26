@@ -12,7 +12,6 @@
 
 #include "msg/defs/PlatformSetMotorPwmValue.h"
 
-PlatformSetMotorPwmValueReq* deserialize_PlatformSetMotorPwmValueReq(char* data);
-PlatformSetMotorPwmValueResp* deserialize_PlatformSetMotorPwmValueResp(char* data);
+PlatformSetMotorPwmValueReq* deserialize_PlatformSetMotorPwmValueReq(const char* data);
 
 #endif //MOTORDRIVER_COM_INTERFACE_SER_DES_DESERIALIZERS_PLATFORMSETMOTORPWMVALUE_H

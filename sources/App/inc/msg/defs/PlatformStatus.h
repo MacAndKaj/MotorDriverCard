@@ -27,6 +27,7 @@ typedef struct
     uint8_t l_speed_f;
     int8_t r_speed_i;
     uint8_t r_speed_f;
+
     uint16_t system_state;   // bitmask
     uint16_t fault_flags;
 

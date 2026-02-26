@@ -15,18 +15,10 @@
 
 #include <memory.h>
 
-PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(char* data)
+PlatformSetMotorSpeedReq* deserialize_PlatformSetMotorSpeedReq(const char* data)
 {
     PlatformSetMotorSpeedReq* msg = pvPortMalloc(sizeof(struct PlatformSetMotorSpeedReq));
 
     memcpy(msg, data, sizeof(PlatformSetMotorSpeedReq));
-    return msg;
-}
-
-PlatformSetMotorSpeedResp* deserialize_PlatformSetMotorSpeedResp(char* data)
-{
-    PlatformSetMotorSpeedResp* msg = pvPortMalloc(sizeof(struct PlatformSetMotorSpeedResp));
-
-    memcpy(msg, data, sizeof(PlatformSetMotorSpeedResp));
     return msg;
 }

@@ -63,18 +63,8 @@ void controller_work(struct controller_data *data)
         if (internal_message.msg_id == SPEED_VALUES_MSG_ID)
         {
             struct SpeedValues *speed_values = &internal_message.speed_values;
-            if (fabs(handle->left_motor_control_info.current_values.current_speed - speed_values->leftMotorSpeed) > 0.001 ||
-                fabs(handle->right_motor_control_info.current_values.current_speed - speed_values->rightMotorSpeed) > 0.001)
-            {
-                LOG_INFO_ARGS("l-(s:%0.3f,pwm:%d), r-(s:%0.3f,pwm:%d)\n",
-                            handle->left_motor_control_info.current_values.current_speed,
-                            get_pwm_duty(&handle->left_motor_control_info),
-                            handle->right_motor_control_info.current_values.current_speed,
-                            get_pwm_duty(&handle->right_motor_control_info));
-            }
             handle->left_motor_control_info.current_values.current_speed = speed_values->leftMotorSpeed;
             handle->right_motor_control_info.current_values.current_speed = speed_values->rightMotorSpeed;
-
 
             if (!handle->disable_pid)
             {
@@ -86,7 +76,6 @@ void controller_work(struct controller_data *data)
 
     if (osMessageQueueGet(*data->message_queue_handle, &message_buffer, 0, 0) == osOK)
     {
-        LOG_INFO("New message received\n");
         dispatch_message(&message_buffer);
     }
 
@@ -117,9 +106,6 @@ void closed_loop_control(struct motor_control_info *handle, const bool leftOrRig
 void handle_new_speed(struct controller_internal_data *handle, double leftSpeed, double rightSpeed)
 {
     handle->disable_pid = false;
-    LOG_INFO_ARGS("Current speed: l-%0.3f, r-%0.3f\n", 
-        handle->left_motor_control_info.current_values.current_speed,
-        handle->right_motor_control_info.current_values.current_speed);
     LOG_INFO_ARGS("New ref speed: l-%0.3f, r-%0.3f\n", leftSpeed, rightSpeed);
     handle->left_motor_control_info.current_values.ref_speed = leftSpeed;
     handle->right_motor_control_info.current_values.ref_speed = rightSpeed;
@@ -128,7 +114,6 @@ void handle_new_speed(struct controller_internal_data *handle, double leftSpeed,
 void handle_pwm_value(struct controller_internal_data *handle, int left_pwm, int right_pwm)
 {
     handle->disable_pid = true;
-    LOG_INFO_ARGS("Forced PWM value: l-%d, r-%d\n", left_pwm, right_pwm);
     motor_process_update_u(&handle->left_motor_control_info, left_pwm, true);
     motor_process_update_u(&handle->right_motor_control_info, right_pwm, false);
 }

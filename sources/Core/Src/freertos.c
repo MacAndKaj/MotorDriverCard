@@ -405,6 +405,7 @@ void startFeedbackTask(void *argument)
 /* USER CODE BEGIN Header_startSyscomTask */
 static struct message_subscription syscom_subscriptions[] = {
     {.msg_id=CMD_SET_MOTOR_SPEED_ID, .subscription_queue=&controllerMessageQueueHandle},
+    {.msg_id=CMD_SET_MOTOR_PWM_VALUE_ID, .subscription_queue=&controllerMessageQueueHandle},
 };
 
 static struct comm_ops syscom_comm_ops[] = {
