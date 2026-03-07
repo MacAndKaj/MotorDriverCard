@@ -149,6 +149,7 @@ file(GLOB SOURCES
     ${CORE_HEADERS_DIR}/dma.h
     ${CORE_HEADERS_DIR}/FreeRTOSConfig.h
     ${CORE_HEADERS_DIR}/gpio.h
+    ${CORE_HEADERS_DIR}/i2c.h
     ${CORE_HEADERS_DIR}/main.h
     ${CORE_HEADERS_DIR}/spi.h
     ${CORE_HEADERS_DIR}/stm32fxx_hal_conf.h
@@ -160,6 +161,7 @@ file(GLOB SOURCES
     ${CORE_SOURCE_DIR}/dma.c
     ${CORE_SOURCE_DIR}/freertos.c
     ${CORE_SOURCE_DIR}/gpio.c
+    ${CORE_SOURCE_DIR}/i2c.c
     ${CORE_SOURCE_DIR}/main.c
     ${CORE_SOURCE_DIR}/spi.c
     ${CORE_SOURCE_DIR}/stm32f3xx_hal_msp.c

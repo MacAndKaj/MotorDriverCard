@@ -122,12 +122,22 @@ void convert_speed_values_to_status(const struct SpeedValues* speed_values, Plat
     status->r_speed_f = (uint8_t)((speed_values->rightMotorSpeed - status->r_speed_i) * 100);
 }
 
+void convert_imu_values_to_status(const struct ImuValues* imu_values, PlatformStatus* status)
+{
+    status->acc_x = imu_values->acc_x;
+    status->acc_y = imu_values->acc_y;
+    status->gyro_z = imu_values->gyro_z;
+}
+
 void process_message(const struct InternalMessage *src_msg, PlatformStatus* dest_msg)
 {
     switch (src_msg->msg_id)
     {
     case SPEED_VALUES_MSG_ID:
         convert_speed_values_to_status(&src_msg->speed_values, dest_msg);
+        break;
+    case IMU_VALUES_MSG_ID:
+        convert_imu_values_to_status(&src_msg->imu_values, dest_msg);
         break;
     default:
         LOG_INFO("[tx] Unknown message for processing\n");

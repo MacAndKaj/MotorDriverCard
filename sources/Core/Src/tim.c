@@ -354,18 +354,18 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef* tim_encoderHandle)
     /* TIM8 clock enable */
     __HAL_RCC_TIM8_CLK_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOC_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**TIM8 GPIO Configuration
-    PA15     ------> TIM8_CH1
+    PC6     ------> TIM8_CH1
     PB8     ------> TIM8_CH2
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_15;
+    GPIO_InitStruct.Pin = GPIO_PIN_6;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF2_TIM8;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    GPIO_InitStruct.Alternate = GPIO_AF4_TIM8;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     GPIO_InitStruct.Pin = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
@@ -523,10 +523,10 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
     __HAL_RCC_TIM8_CLK_DISABLE();
 
     /**TIM8 GPIO Configuration
-    PA15     ------> TIM8_CH1
+    PC6     ------> TIM8_CH1
     PB8     ------> TIM8_CH2
     */
-    HAL_GPIO_DeInit(GPIOA, GPIO_PIN_15);
+    HAL_GPIO_DeInit(GPIOC, GPIO_PIN_6);
 
     HAL_GPIO_DeInit(GPIOB, GPIO_PIN_8);
 

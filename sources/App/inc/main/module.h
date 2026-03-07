@@ -17,9 +17,7 @@
 
 struct module;
 
-typedef void (*uart_handler_t)(UART_HandleTypeDef*);
 typedef void (*tim_handler_t)(TIM_HandleTypeDef*);
-typedef void (*spi_handler_t)(SPI_HandleTypeDef*);
 typedef void (*gpio_exti_handler_t)(uint16_t);
 typedef void (*module_work_handler_t)(struct module*);
 typedef int (*read_func_t)(uint8_t*, uint16_t);
@@ -27,32 +25,7 @@ typedef int (*write_func_t)(uint8_t*, uint16_t);
 typedef int (*write_and_read_func_t)(uint8_t*, uint8_t*, uint16_t);
 typedef void (*start_tim_func_t)();
 typedef uint32_t (*calculate_crc_func_t)(uint8_t *buf, size_t len);
-
-/**
- * @brief Structure containing callbacks for events occuring on UART peripheral.
- * 
- */
-struct uart_module_handlers
-{
-    uart_handler_t handle_tx_cplt;
-    uart_handler_t handle_rx_cplt;
-    uart_handler_t handle_tx_half_cplt;
-    uart_handler_t handle_rx_half_cplt;
-};
-
-/**
- * @brief Structure containing callbacks for events occuring on SPI peripheral.
- * 
- */
-struct spi_module_handlers
-{
-    spi_handler_t handle_tx_cplt;
-    spi_handler_t handle_rx_cplt;
-    spi_handler_t handle_tx_rx_cplt;
-    spi_handler_t handle_tx_half_cplt;
-    spi_handler_t handle_rx_half_cplt;
-    spi_handler_t handle_tx_rx_half_cplt;
-};
+typedef int (*read_ext_dev_mem_func_t)(uint8_t, uint8_t, uint8_t*, uint16_t);
 
 /**
  * @brief Structure containing callbacks for events occuring on TIM peripheral.
@@ -75,6 +48,12 @@ struct comm_ops
     calculate_crc_func_t calculate_crc;
 };
 
+struct ext_dev_ops
+{
+    read_ext_dev_mem_func_t read_ext_dev_mem;
+    read_ext_dev_mem_func_t read_ext_dev_mem_non_blocking;
+};
+
 struct tim_ops
 {
     start_tim_func_t start_tim;
@@ -88,13 +67,12 @@ struct tim_ops
 struct module_ops
 {
     // Peripherals callback handlers
-    gpio_exti_handler_t handle_ext_int;   
-    struct uart_module_handlers uart_handlers;
-    struct spi_module_handlers spi_handlers;
+    gpio_exti_handler_t handle_ext_int;
     struct tim_module_handlers tim_handlers;
 
     // Peripherals communication operations
     struct comm_ops *communication_ops;
+    struct ext_dev_ops *external_devices_ops;
 
     struct tim_ops *timers_ops;
 
@@ -110,12 +88,12 @@ struct module
 #define MODULE_WORK(mod) (mod)->ops.work_ops(mod)
 
 
-static inline void * module_get_data(const struct module *mod)
+inline void * module_get_data(const struct module *mod)
 {
 	return mod->data;
 }
 
-static inline void module_set_data(struct module *mod, void *data)
+inline void module_set_data(struct module *mod, void *data)
 {
 	mod->data = data;
 }

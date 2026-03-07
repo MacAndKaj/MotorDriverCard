@@ -69,12 +69,19 @@ struct SpeedValues
 {
     double leftMotorSpeed, rightMotorSpeed; // [ROUNDS/s]
 };
+struct ImuValues
+{
+    int16_t acc_x; // [mm/s^2]
+    int16_t acc_y; // [mm/s^2]
+    int16_t gyro_z; // [rad/s * 1000]
+};
 
 struct InternalMessage
 {
     union 
     {
         struct SpeedValues speed_values;
+        struct ImuValues imu_values;
     };
     int msg_id;
 };
@@ -92,6 +99,14 @@ struct InternalMessage
 // **************************************************************
 #define UNKNOWN_MSG_ID 0x00
 #define SPEED_VALUES_MSG_ID 0x01
+#define IMU_VALUES_MSG_ID 0x02
+// **************************************************************
+
+// **************************************************************
+// FEEDBACK DEFS
+// **************************************************************
+#define PROBING_TIMEOUT_CALLBACK 0x00000001U
+#define IMU_DATA_READY_FLAG 0x00000002U
 // **************************************************************
 
 struct message_subscription

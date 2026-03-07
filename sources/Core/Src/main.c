@@ -21,6 +21,7 @@
 #include "cmsis_os.h"
 #include "crc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -57,6 +58,7 @@ void MX_FREERTOS_Init(void);
 void spi_event(uint8_t spi_instance, uint8_t event_type);
 void tim_event(uint8_t tim_instance, uint8_t event_type);
 void exti_event(uint8_t gpio_instance, uint8_t event_type);
+void i2c_event(uint8_t i2c_instance, uint8_t event_type);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -100,6 +102,7 @@ int main(void)
   MX_TIM4_Init();
   MX_CRC_Init();
   MX_SPI3_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -161,10 +164,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_TIM17
-                              |RCC_PERIPHCLK_TIM8|RCC_PERIPHCLK_TIM2
-                              |RCC_PERIPHCLK_TIM34;
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART2|RCC_PERIPHCLK_I2C1
+                              |RCC_PERIPHCLK_TIM17|RCC_PERIPHCLK_TIM8
+                              |RCC_PERIPHCLK_TIM2|RCC_PERIPHCLK_TIM34;
   PeriphClkInit.Usart2ClockSelection = RCC_USART2CLKSOURCE_PCLK1;
+  PeriphClkInit.I2c1ClockSelection = RCC_I2C1CLKSOURCE_HSI;
   PeriphClkInit.Tim17ClockSelection = RCC_TIM17CLK_HCLK;
   PeriphClkInit.Tim8ClockSelection = RCC_TIM8CLK_HCLK;
   PeriphClkInit.Tim2ClockSelection = RCC_TIM2CLK_HCLK;
@@ -184,6 +188,11 @@ void SystemClock_Config(void)
 void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     if (hspi->Instance == SPI3) spi_event(SPI_INSTANCE_3, SPI_EVENT_TX_RX_CPLT);
+}
+
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hi2c)
+{
+    if (hi2c->Instance == I2C2) i2c_event(I2C_INSTANCE_2, I2C_EVENT_MEM_RX_CPLT);
 }
 
 /* USER CODE END 4 */

@@ -33,8 +33,6 @@ void tx_work(struct module *this_mod, struct tx_context *context)
     struct syscom_data *data = module_get_data(this_mod);
 
     InternalMessage message_buffer = {0};
-    // tutaj trzeba przemyslec jak aktualizowac status do wyslania bo enkodery aktualizuja znacznie czesciej
-    // wiec trzeba jakos wspolnie odswiezac to - moze jakas wspolna funkcja do akutalizowania - mutex(grozi deadlockiem)
     if (osMessageQueueGet(*data->transferred_messages_queue_handle, &message_buffer, 0, 0) == osOK)
     {
         process_message(&message_buffer, &context->status_to_send.msg.platform_status);

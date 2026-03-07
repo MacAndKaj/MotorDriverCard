@@ -92,6 +92,10 @@ void Error_Handler(void);
 // SPI instances
 #define SPI_INSTANCE_2            2
 #define SPI_INSTANCE_3            3
+// SPI instances
+#define I2C_INSTANCE_1            1
+#define I2C_INSTANCE_2            2
+#define I2C_INSTANCE_3            3
 // TIM instances
 #define TIM_INSTANCE_2            2
 #define TIM_INSTANCE_3            3
@@ -109,6 +113,13 @@ void Error_Handler(void);
 #define SPI_EVENT_TX_HALF_CPLT    0x24
 #define SPI_EVENT_RX_HALF_CPLT    0x25
 #define SPI_EVENT_TX_RX_HALF_CPLT 0x26
+// SPI events
+#define I2C_EVENT_MASTER_TX_CPLT  0x31
+#define I2C_EVENT_MASTER_RX_CPLT  0x32
+#define I2C_EVENT_SLAVE_TX_CPLT   0x33
+#define I2C_EVENT_SLAVE_RX_CPLT   0x34
+#define I2C_EVENT_MEM_TX_CPLT     0x35
+#define I2C_EVENT_MEM_RX_CPLT     0x36
 
 /* USER CODE END Private defines */
 

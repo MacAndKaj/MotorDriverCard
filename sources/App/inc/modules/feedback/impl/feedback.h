@@ -12,7 +12,7 @@
 
 void feedback_start(struct feedback_data *data);
 
-void feedback_work(struct feedback_data *data);
+void feedback_work(struct feedback_data *handle, uint8_t flag);
 
 void feedback_update(struct feedback_data *data);
 

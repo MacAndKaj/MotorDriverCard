@@ -14,6 +14,7 @@
 #include "stm32f3xx_hal.h"
 
 #define FEEDBACK_TIMER_INDEX 0
+#define ACCEL_AND_GYRO_DATA_SIZE 14
 
 struct module;
 typedef void (*start_tim_encoder_start_func_t)(void);
@@ -36,6 +37,7 @@ struct feedback_data
     int subs_len;
     struct encoder_data *left_encoder_data;
     struct encoder_data *right_encoder_data;
+    uint8_t accel_and_gyro_data_buffer[ACCEL_AND_GYRO_DATA_SIZE];
 };
 
 void feedback_module_init(struct module *this_module);

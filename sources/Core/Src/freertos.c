@@ -32,10 +32,10 @@
 #include <msg/message_ids.h> // Change to lowercase
 #include <modules/controller/interface.h>
 #include <modules/feedback/interface.h>
-#include <modules/monitoring/interface.h>
 #include <modules/syscom/interface.h>
 
 #include "crc.h"
+#include "i2c.h"
 
 /* USER CODE END Includes */
 
@@ -347,10 +347,16 @@ void startController(void *argument)
 static struct message_subscription feedback_subscribers[] = {
     {.msg_id=SPEED_VALUES_MSG_ID, .subscription_queue=&controllerInternalMessageQueueHandle},
     {.msg_id=SPEED_VALUES_MSG_ID, .subscription_queue=&syscomTxMessageQueueHandle},
+    {.msg_id=IMU_VALUES_MSG_ID, .subscription_queue=&syscomTxMessageQueueHandle},
 };
 
 static struct tim_ops feedback_timers_ops[] = {
     [FEEDBACK_TIMER_INDEX] = {.start_tim=start_tim_17_it}
+};
+
+static struct ext_dev_ops feedback_ext_dev_ops = {
+    .read_ext_dev_mem=read_i2c2_mem,
+    .read_ext_dev_mem_non_blocking=start_i2c2_dma_mem_reception
 };
 
 static struct encoder_data left_encoder_info = {
@@ -386,7 +392,8 @@ void startFeedbackTask(void *argument)
     feedback_internal_data.subs_len = ARRAY_LEN(feedback_subscribers);
 
     struct module feedback_module = {
-        .ops.timers_ops=feedback_timers_ops
+        .ops.timers_ops=feedback_timers_ops,
+        .ops.external_devices_ops=&feedback_ext_dev_ops
     };
     feedback_module_handle = &feedback_module;
 
@@ -569,6 +576,40 @@ void exti_event(uint8_t instance, uint8_t event_type)
     for (int i = 0; i < length; ++i)
     {
         ptr = exti_subscriptions + i;
+        if ((ptr->source == instance) && (ptr->event_type == event_type))
+        {
+            if (ptr->callback_type == MODULE_CALL)
+            {
+                CALL_DIRECTLY(ptr)
+            }
+            else if (ptr->callback_type == THREAD_FLAG)
+            {
+                SET_FLAG(ptr)
+            }
+        }
+    }
+}
+
+
+static struct event_subscription i2c_subscriptions[] = {
+    {
+        .event_type=I2C_EVENT_MEM_RX_CPLT,
+        .source=I2C_INSTANCE_2,
+        .callback_type=THREAD_FLAG,
+        .callback.thread_flag_callback_info={
+            .thread_id=&feedbackTaskHandle,
+            .thread_flag=IMU_DATA_READY_FLAG,
+        }
+    },
+};
+
+void i2c_event(uint8_t instance, uint8_t event_type)
+{
+    static int length = sizeof(i2c_subscriptions) / sizeof(struct event_subscription);
+    struct event_subscription *ptr;
+    for (int i = 0; i < length; ++i)
+    {
+        ptr = i2c_subscriptions + i;
         if ((ptr->source == instance) && (ptr->event_type == event_type))
         {
             if (ptr->callback_type == MODULE_CALL)
