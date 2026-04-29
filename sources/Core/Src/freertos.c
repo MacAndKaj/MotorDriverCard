@@ -33,10 +33,11 @@
 #include <modules/controller/interface.h>
 #include <modules/feedback/interface.h>
 #include <modules/syscom/interface.h>
+#include <modules/scan/interface.h>
 
 #include "crc.h"
 #include "i2c.h"
-
+#include "tim.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -149,6 +150,18 @@ const osThreadAttr_t syscomTask_attributes = {
   .stack_size = sizeof(syscomTaskBuffer),
   .priority = (osPriority_t) osPriorityAboveNormal,
 };
+/* Definitions for scanTask */
+osThreadId_t scanTaskHandle;
+uint32_t scanTaskBuffer[ 320 ];
+osStaticThreadDef_t scanTaskControlBlock;
+const osThreadAttr_t scanTask_attributes = {
+  .name = "scanTask",
+  .cb_mem = &scanTaskControlBlock,
+  .cb_size = sizeof(scanTaskControlBlock),
+  .stack_mem = &scanTaskBuffer[0],
+  .stack_size = sizeof(scanTaskBuffer),
+  .priority = (osPriority_t) osPriorityNormal,
+};
 /* Definitions for controllerMessageQueue */
 osMessageQueueId_t controllerMessageQueueHandle;
 uint8_t controllerMessageQueueBuffer[ 1 * sizeof( struct Message ) ];
@@ -173,7 +186,7 @@ const osMessageQueueAttr_t controllerInternalMessageQueue_attributes = {
 };
 /* Definitions for syscomTxMessageQueue */
 osMessageQueueId_t syscomTxMessageQueueHandle;
-uint8_t syscomTxMessageQueueBuffer[ 3 * sizeof( struct InternalMessage ) ];
+uint8_t syscomTxMessageQueueBuffer[ 5 * sizeof( struct InternalMessage ) ];
 osStaticMessageQDef_t syscomTxMessageQueueControlBlock;
 const osMessageQueueAttr_t syscomTxMessageQueue_attributes = {
   .name = "syscomTxMessageQueue",
@@ -213,6 +226,7 @@ void send_syscom_message_handler(const struct Message *msg);
 void startController(void *argument);
 void startFeedbackTask(void *argument);
 void startSyscomTask(void *argument);
+void startScanTask(void *argument);
 void syscomMasterTriggerTimerCallback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -255,7 +269,7 @@ void MX_FREERTOS_Init(void) {
   controllerInternalMessageQueueHandle = osMessageQueueNew (2, sizeof(struct InternalMessage), &controllerInternalMessageQueue_attributes);
 
   /* creation of syscomTxMessageQueue */
-  syscomTxMessageQueueHandle = osMessageQueueNew (3, sizeof(struct InternalMessage), &syscomTxMessageQueue_attributes);
+  syscomTxMessageQueueHandle = osMessageQueueNew (5, sizeof(struct InternalMessage), &syscomTxMessageQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
@@ -270,6 +284,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of syscomTask */
   syscomTaskHandle = osThreadNew(startSyscomTask, NULL, &syscomTask_attributes);
+
+  /* creation of scanTask */
+  scanTaskHandle = osThreadNew(startScanTask, NULL, &scanTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -473,6 +490,42 @@ void startSyscomTask(void *argument)
         MODULE_WORK(syscom_module_handle);
     }
   /* USER CODE END startSyscomTask */
+}
+
+/* USER CODE BEGIN Header_startScanTask */
+
+static struct scan_data scan_module_data = {
+    .scan_thread_handle = &scanTaskHandle,
+    .start_pwm = start_tim_15_pwm_dma,
+};
+
+static struct module *scan_module_handle;
+
+/**
+* @brief Function implementing the scanTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_startScanTask */
+void startScanTask(void *argument)
+{
+  /* USER CODE BEGIN startScanTask */
+    (void)argument;
+
+    struct module scan_module;
+    scan_module_handle = &scan_module;
+
+    module_set_data(scan_module_handle, &scan_module_data);
+    scan_module_init(scan_module_handle);
+
+    LOG_INFO("[scan] Start\n");
+
+    /* Infinite loop */
+    for(;;)
+    {
+        MODULE_WORK(scan_module_handle);
+    }
+  /* USER CODE END startScanTask */
 }
 
 /* syscomMasterTriggerTimerCallback function */

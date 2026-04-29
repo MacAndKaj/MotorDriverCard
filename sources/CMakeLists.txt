@@ -185,6 +185,7 @@ target_link_libraries(${PROJECT_NAME}.elf
     PUBLIC library_mdc_app_modules_feedback
     PUBLIC library_mdc_app_modules_log
     PUBLIC library_mdc_app_modules_syscom
+    PUBLIC library_mdc_app_modules_scan
 )
 
 add_custom_command(TARGET ${PROJECT_NAME}.elf POST_BUILD

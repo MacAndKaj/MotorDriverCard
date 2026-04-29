@@ -40,6 +40,8 @@ extern TIM_HandleTypeDef htim4;
 
 extern TIM_HandleTypeDef htim8;
 
+extern TIM_HandleTypeDef htim15;
+
 extern TIM_HandleTypeDef htim17;
 
 /* USER CODE BEGIN Private defines */
@@ -50,6 +52,7 @@ void MX_TIM2_Init(void);
 void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
 void MX_TIM8_Init(void);
+void MX_TIM15_Init(void);
 void MX_TIM17_Init(void);
 
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
@@ -58,6 +61,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void start_tim_17_it(void);
 void start_tim_2_pwm_dma(uint32_t* pwm_source);
 void start_tim_3_pwm_dma(uint32_t* pwm_source);
+void start_tim_15_pwm_dma(uint16_t* pwm_source);
 void start_tim_8_encoder(void);
 void start_tim_4_encoder(void);
 int16_t get_tim_8_encoder_count(void);

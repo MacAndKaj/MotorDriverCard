@@ -57,11 +57,13 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SERVO_TIM15_PERIOD (20000-1)
 #define TIM3_PRESCALER 0
 #define TIM2_PERIOD (10000-1)
 #define TIM16_PERIOD (8000-1)
 #define TIM3_PERIOD (10000 - 1)
 #define TIM17_PRESCALER (16-1)
+#define SERVO_TIM15_PRESCALER (8-1)
 #define TIM2_PRESCALER 0
 #define TIM17_PERIOD (50000-1)
 #define TIM16_PRESCALER (2000-1)
@@ -73,6 +75,8 @@ void Error_Handler(void);
 #define LED_GPIO_Port GPIOA
 #define LeftMotorPWM_Pin GPIO_PIN_10
 #define LeftMotorPWM_GPIO_Port GPIOB
+#define Scan_Servo_PWM_Pin GPIO_PIN_14
+#define Scan_Servo_PWM_GPIO_Port GPIOB
 #define LeftMotorIn1_Pin GPIO_PIN_7
 #define LeftMotorIn1_GPIO_Port GPIOC
 #define RightMotorIn1_Pin GPIO_PIN_8

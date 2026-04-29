@@ -33,6 +33,11 @@
 // Word length in bytes
 #define ONE_WORD 1
 
+// GPIO defs
+#define MDC_GPIO_SET 1
+#define MDC_GPIO_UNSET 0
+
+
 
 /*
 
