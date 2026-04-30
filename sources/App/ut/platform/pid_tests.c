@@ -7,27 +7,23 @@
   ******************************************************************************
   */
 
-#include <unity.h>
+#include <tests.h>
 
-#include <MDC/platform/pid.h>
-
-#include <stdlib.h>
-
-PID* sut;
+#include <modules/controller/impl/pid.h>
 
 void setUp(void)
 {
-	sut = createPid(1.0, 1.0, 1.0);
+	/* Initialize before each test */
 }
 
 void tearDown(void)
 {
-	free(sut);
+	/* Cleanup after each test */
 }
-
 
 void test_evaluate_ShouldReturnOutputEqualToErrorIfDtIsZero(void)
 {
 	static const double sampleError = 10.;
-	TEST_ASSERT_EQUAL_DOUBLE(evaluate(sut, sampleError, 0.), sampleError);
+	struct pid sut = create_pid(1.0, 1.0, 1.0);
+	TEST_ASSERT_EQUAL_DOUBLE(sampleError, pid_evaluate(&sut, sampleError, 0.));
 }
